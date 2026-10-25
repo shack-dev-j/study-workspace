@@ -108,6 +108,55 @@ test('habits tick + SAT import', async page => {
   ok(sat.tests.length === 2 && sat.tests.some(t => t.total === 1210), 'SAT import merges by date + total (1 new)');
 });
 
+test('universities import, detail edit, documents, deadlines, plans', async page => {
+  await page.goto(base + '/#/universities');
+  await page.click('text=Import from research report');
+  await page.waitForSelector('.modal:has-text("to add")');
+  await page.click('.modal .btn.primary');
+  await page.waitForSelector('a.title:has-text("KAIST")');
+  let u = readData('universities').items;
+  ok(u.length >= 15 && u.find(x => x.name === 'NUS').qs_rank === '10', 'import adds universities with report ranks');
+  await page.click('a.title:has-text("KAIST")');
+  await page.waitForSelector('.card h2:has-text("KAIST")');
+  ok(await page.isVisible('.badge.verify'), 'verify badges shown on the detail page');
+  const dl = page.locator('label.field:has-text("Deadline") input[type=date]').last();
+  await dl.fill('2028-01-14'); await dl.dispatchEvent('change');
+  await page.locator('.doc-row').first().locator('select').selectOption('ready');
+  await sleep(700);
+  const k = readData('universities').items.find(x => x.name === 'KAIST');
+  ok(k.deadline === '2028-01-14' && !k.verify.includes('deadline'), 'deadline saved and no longer marked verify');
+  ok(k.docs.length === 12 && k.docs[0].status === 'ready', 'documents checklist created, status saved');
+  await page.goto(base + '/#/deadlines');
+  await page.click('.tabs button:has-text("All")');
+  ok(await page.isVisible('text=KAIST: deadline'), 'KAIST deadline shows in the timeline');
+  ok(await page.isVisible('text=Stipendium Hungaricum'), 'scholarship deadline shows in the timeline');
+  await page.goto(base + '/#/plans');
+  await page.waitForSelector('.route');
+  ok(await page.isVisible('.route:has-text("Route 1") >> text=NUS'), 'Plan B route 1 lists NUS');
+  ok(await page.isVisible('.plan-list >> text=KAIST'), 'Plan A lists KAIST');
+});
+
+test('essays versions + activities counter', async page => {
+  await page.goto(base + '/#/essays');
+  await page.click('text=New essay');
+  await page.fill('.modal textarea', 'Why KAIST?');
+  await page.click('.modal .btn.primary');
+  await page.waitForSelector('.essay-text');
+  await page.fill('.essay-text', 'First draft words here');
+  await page.click('button:has-text("Save version")');
+  await page.fill('.essay-text', 'Second draft');
+  await sleep(500);
+  await page.click('button:has-text("Restore")');
+  await page.click('.modal .btn.primary');
+  await sleep(700);
+  const e = readData('essays').items[0];
+  ok(e.text === 'First draft words here' && e.versions.length === 2 && e.versions[1].text === 'Second draft', 'restore keeps the current text as a version');
+  await page.goto(base + '/#/activities');
+  await page.click('button:has-text("Add activity")');
+  await page.fill('.activity input[type=text]', 'x'.repeat(55));
+  ok(await page.isVisible('.counter.over'), 'counter turns red past the limit');
+});
+
 (async () => {
   const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
