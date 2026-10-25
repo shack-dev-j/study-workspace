@@ -11,8 +11,9 @@ import time
 import webbrowser
 from http.server import ThreadingHTTPServer
 
-from . import APP_NAME, VERSION, backup, reminders
+from . import APP_NAME, VERSION, backup, focus, planner, reminders, secrets_store, todoist
 from .files import FileStore
+from .notifier import PlanNotifier
 from .handler import Handler
 from .paths import Paths, ensure_data
 from .storage import atomic_write_json, Storage
@@ -42,6 +43,9 @@ class App:
         self.files = FileStore(paths.files, paths.trash)
         self.windows = WindowTracker()
         self.stopping = threading.Event()
+        self._cache = {}
+        self.focus = focus.FocusEngine(self.storage, self.notify, plan_now=self._plan_now, overdue=self._overdue)
+        self.plan_notifier = PlanNotifier(self.storage, self.notify)
         self.httpd = self._bind(host, port)
         self.httpd.ctx = self
         self.port = self.httpd.server_address[1]
@@ -90,6 +94,64 @@ class App:
         except (OSError, ValueError):
             pass
 
+    # ----- live helpers (plan, focus) -----
+    def notify(self, title, body, urgency=None):
+        return reminders.send_desktop(title, body, self.icon_png(), urgency)
+
+    def _cached(self, key, seconds, fn):
+        hit = self._cache.get(key)
+        if hit and time.time() - hit[0] < seconds:
+            return hit[1]
+        value = fn()
+        self._cache[key] = (time.time(), value)
+        return value
+
+    def _plan_now(self):
+        def get():
+            now = dt.datetime.now()
+            plan = planner.get_day(self.storage, now.date(), now)
+            return planner.now_info(plan["blocks"], now)["current"]
+        return self._cached("plan_now", 20, get)
+
+    def _overdue(self):
+        def get():
+            src = planner.load_sources(self.storage)
+            return [m["title"] for m in planner.must_do(src, dt.date.today()) if m.get("overdue")]
+        return self._cached("overdue", 120, get)
+
+    def keep_running(self):
+        """Stay on after the last window closes (focus mode and plan notifications need it)."""
+        try:
+            return self.storage.read("settings").get("keepRunning", True) is not False
+        except Exception:
+            return True
+
+    def _live_loop(self):
+        """Fast loop: focus mode every 4 s, plan notifications every 20 s, Todoist every 15 min."""
+        last_plan = last_todoist = 0.0
+        time.sleep(2.0)
+        while not self.stopping.is_set():
+            try:
+                self.focus.tick()
+            except Exception as e:
+                self.log(f"focus error: {e!r}")
+            now = time.time()
+            if now - last_plan >= 20:
+                last_plan = now
+                try:
+                    self.plan_notifier.tick()
+                except Exception as e:
+                    self.log(f"plan notify error: {e!r}")
+            if now - last_todoist >= 15 * 60:
+                last_todoist = now
+                token = secrets_store.get(self.paths.data, "todoist_token")
+                if token:
+                    try:
+                        todoist.sync(self.storage, token)
+                    except Exception as e:
+                        self.log(f"todoist sync: {e}")
+            self.stopping.wait(4)
+
     # ----- background jobs -----
     def _jobs_loop(self):
         last_backup_day = None
@@ -112,7 +174,7 @@ class App:
 
     def _watch_windows(self):
         while not self.stopping.wait(2):
-            if self.windows.should_exit():
+            if self.windows.should_exit() and not self.keep_running():
                 self.request_shutdown("no windows left")
                 return
 
@@ -128,6 +190,7 @@ class App:
         self.log(f"{APP_NAME} {VERSION} on {self.url} data={self.paths.data}")
         if self.jobs:
             threading.Thread(target=self._jobs_loop, daemon=True).start()
+            threading.Thread(target=self._live_loop, daemon=True).start()
         if self.exit_when_idle:
             threading.Thread(target=self._watch_windows, daemon=True).start()
         try:

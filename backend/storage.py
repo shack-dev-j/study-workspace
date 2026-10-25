@@ -22,6 +22,7 @@ MODULES = {
     "timelog", "timetable", "habits", "sat", "portfolio", "universities",
     "scholarships", "documents", "deadlines", "essays", "activities", "cyber",
     "thm", "challenges", "writeups", "review", "reminders",
+    "planner", "focus", "todoist",
 }
 
 MAX_JSON_BYTES = 20 * 1024 * 1024

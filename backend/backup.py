@@ -28,6 +28,8 @@ def make_backup(data_dir, backups_dir, day=None, force=False):
     tmp = target.with_suffix(".zip.tmp")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
         for p in sorted(Path(data_dir).glob("*.json")):
+            if p.name == "secrets.json":  # API keys stay out of backups
+                continue
             z.write(p, "data/" + p.name)
     tmp.replace(target)
     prune(backups_dir)

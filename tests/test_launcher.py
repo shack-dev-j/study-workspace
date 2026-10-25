@@ -53,6 +53,9 @@ class ServerLifecycleTests(unittest.TestCase):
         self.assertIsNone(launcher.running_url(self.paths))
 
     def test_server_stops_after_last_window_closes(self):
+        # Only when "keep running in the background" is off (it is on by default).
+        self.paths.data.mkdir(parents=True, exist_ok=True)
+        (self.paths.data / "settings.json").write_text('{"schema_version": 1, "keepRunning": false}')
         url = launcher.ensure_server(self.paths, port=18865, exit_when_idle=True)
         launcher.post(url, "/api/window/open", {"id": "a"})
         launcher.post(url, "/api/window/open", {"id": "b"})
@@ -65,6 +68,13 @@ class ServerLifecycleTests(unittest.TestCase):
                 break
             time.sleep(0.25)
         self.assertIsNone(launcher.health(url))
+
+    def test_keeps_running_by_default(self):
+        url = launcher.ensure_server(self.paths, port=18965, exit_when_idle=True)
+        launcher.post(url, "/api/window/open", {"id": "a"})
+        launcher.post(url, "/api/window/close", {"id": "a"})
+        time.sleep(11)  # longer than the close grace time
+        self.assertIsNotNone(launcher.health(url))
 
 
 class WindowTrackerTests(unittest.TestCase):

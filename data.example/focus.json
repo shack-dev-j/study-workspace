@@ -1,0 +1,22 @@
+{
+ "schema_version": 1,
+ "config": {
+  "enabled": false,
+  "mode": "strict",
+  "tone": "angry",
+  "auto_plan": true,
+  "nag": true,
+  "grace": 20,
+  "rules": [
+   {"type": "app", "pattern": "steam", "label": "Steam"},
+   {"type": "app", "pattern": "discord", "label": "Discord"},
+   {"type": "app", "pattern": "telegram", "label": "Telegram"},
+   {"type": "title", "pattern": "YouTube", "label": "YouTube"},
+   {"type": "title", "pattern": "Instagram", "label": "Instagram"},
+   {"type": "title", "pattern": "TikTok", "label": "TikTok"},
+   {"type": "title", "pattern": "Netflix", "label": "Netflix"}
+  ]
+ },
+ "active": null,
+ "sessions": []
+}

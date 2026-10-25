@@ -81,6 +81,12 @@ class Handler(BaseHTTPRequestHandler):
         except (UnicodeDecodeError, ValueError):
             raise ApiError(400, "invalid JSON")
 
+    def read_object(self):
+        body = self.read_json()
+        if not isinstance(body, dict):
+            raise ApiError(400, "expected a JSON object")
+        return body
+
     def query(self):
         return urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
 
@@ -232,6 +238,16 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"app": APP_NAME, "version": VERSION, "pid": os.getpid(),
                                    "data": str(ctx.paths.data), "portable": ctx.paths.portable,
                                    "notify": reminders.notifier_available()})
+
+        if head in ("plan", "backpack", "now", "theme", "secrets", "todoist", "ai", "focus"):
+            from . import day_api
+            try:
+                out = day_api.handle(ctx, method, head, parts, self.query(), self.read_object)
+            except day_api.Problem as p:
+                raise ApiError(p.status, p.message)
+            if out is not day_api.NOT_HANDLED:
+                return self.send_json(out)
+            raise ApiError(404, "not found")
 
         if head == "data" and len(parts) == 2:
             module = parts[1]
