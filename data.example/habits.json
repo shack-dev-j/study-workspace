@@ -1,1 +1,17 @@
-{"schema_version": 1, "items": []}
+{
+ "schema_version": 1,
+ "items": [
+  {
+   "id": "s1",
+   "sample": true,
+   "name": "SAT practice 1 hour",
+   "days": {}
+  },
+  {
+   "id": "s2",
+   "sample": true,
+   "name": "Read 20 pages",
+   "days": {}
+  }
+ ]
+}

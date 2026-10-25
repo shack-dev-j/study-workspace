@@ -1,0 +1,23 @@
+{
+ "schema_version": 1,
+ "slots": [
+  {
+   "id": "s1",
+   "sample": true,
+   "day": 0,
+   "start": "08:30",
+   "end": "09:15",
+   "title": "Maths",
+   "room": ""
+  },
+  {
+   "id": "s2",
+   "sample": true,
+   "day": 0,
+   "start": "09:25",
+   "end": "10:10",
+   "title": "Physics",
+   "room": ""
+  }
+ ]
+}

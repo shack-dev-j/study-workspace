@@ -1,0 +1,225 @@
+{
+ "schema_version": 1,
+ "tests": [
+  {
+   "id": "s1",
+   "sample": true,
+   "date": "2026-10-01",
+   "total": 1000,
+   "math": 520,
+   "rw": 480,
+   "source": "Bluebook test 1"
+  }
+ ],
+ "skills": [
+  {
+   "id": "k0",
+   "section": "Math",
+   "domain": "Algebra",
+   "name": "Linear equations in one variable",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k1",
+   "section": "Math",
+   "domain": "Algebra",
+   "name": "Linear functions",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k2",
+   "section": "Math",
+   "domain": "Algebra",
+   "name": "Systems of two linear equations",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k3",
+   "section": "Math",
+   "domain": "Algebra",
+   "name": "Linear inequalities",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k4",
+   "section": "Math",
+   "domain": "Advanced Math",
+   "name": "Equivalent expressions",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k5",
+   "section": "Math",
+   "domain": "Advanced Math",
+   "name": "Nonlinear equations and systems",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k6",
+   "section": "Math",
+   "domain": "Advanced Math",
+   "name": "Nonlinear functions",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k7",
+   "section": "Math",
+   "domain": "Problem-Solving and Data Analysis",
+   "name": "Ratios, rates, proportions, units",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k8",
+   "section": "Math",
+   "domain": "Problem-Solving and Data Analysis",
+   "name": "Percentages",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k9",
+   "section": "Math",
+   "domain": "Problem-Solving and Data Analysis",
+   "name": "One- and two-variable data",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k10",
+   "section": "Math",
+   "domain": "Problem-Solving and Data Analysis",
+   "name": "Probability",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k11",
+   "section": "Math",
+   "domain": "Geometry and Trigonometry",
+   "name": "Area and volume",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k12",
+   "section": "Math",
+   "domain": "Geometry and Trigonometry",
+   "name": "Lines, angles, triangles",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k13",
+   "section": "Math",
+   "domain": "Geometry and Trigonometry",
+   "name": "Right triangles and trigonometry",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k14",
+   "section": "Math",
+   "domain": "Geometry and Trigonometry",
+   "name": "Circles",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k15",
+   "section": "Reading and Writing",
+   "domain": "Information and Ideas",
+   "name": "Central ideas and details",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k16",
+   "section": "Reading and Writing",
+   "domain": "Information and Ideas",
+   "name": "Command of evidence",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k17",
+   "section": "Reading and Writing",
+   "domain": "Information and Ideas",
+   "name": "Inferences",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k18",
+   "section": "Reading and Writing",
+   "domain": "Craft and Structure",
+   "name": "Words in context",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k19",
+   "section": "Reading and Writing",
+   "domain": "Craft and Structure",
+   "name": "Text structure and purpose",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k20",
+   "section": "Reading and Writing",
+   "domain": "Craft and Structure",
+   "name": "Cross-text connections",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k21",
+   "section": "Reading and Writing",
+   "domain": "Expression of Ideas",
+   "name": "Rhetorical synthesis",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k22",
+   "section": "Reading and Writing",
+   "domain": "Expression of Ideas",
+   "name": "Transitions",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k23",
+   "section": "Reading and Writing",
+   "domain": "Standard English Conventions",
+   "name": "Boundaries",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "k24",
+   "section": "Reading and Writing",
+   "domain": "Standard English Conventions",
+   "name": "Form, structure and sense",
+   "level": 0,
+   "notes": ""
+  }
+ ],
+ "weeklyPlan": {
+  "mon": "Math module (35 min) + review mistakes",
+  "tue": "R&W module (32 min) + review",
+  "wed": "Weakest skill drills",
+  "thu": "Math module + review",
+  "fri": "R&W module + review",
+  "sat": "Full Bluebook practice test",
+  "sun": "Review the test, log score"
+ }
+}
