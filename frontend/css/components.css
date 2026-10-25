@@ -214,3 +214,26 @@ mark { background: var(--warn-soft); color: inherit; border-radius: 3px; padding
 .prose img { max-width: 100%; border-radius: 8px; }
 .prose ul, .prose ol { padding-left: 1.4em; }
 .prose blockquote { border-left: 3px solid var(--border-strong); margin: 0; padding-left: 12px; color: var(--muted); }
+
+/* ---------- PDF viewer ---------- */
+.pdf-viewer { display: flex; flex-direction: column; min-height: 0; height: 100%; }
+.pdf-toolbar { display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; padding: 8px 10px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; }
+.pdf-page-input { width: 64px !important; height: 30px !important; text-align: center; }
+.pdf-search { width: 180px !important; height: 30px !important; }
+.pdf-zoom { min-width: 42px; text-align: center; }
+.pdf-status { padding: 12px; }
+.pdf-stage { flex: 1; overflow: auto; background: var(--panel-2); border: 1px solid var(--border); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); padding: 12px; outline: none; min-height: 300px; }
+.pdf-page { position: relative; margin: 0 auto; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.25); }
+.pdf-canvas { display: block; }
+.pdf-viewer.dark .pdf-canvas { filter: invert(.92) hue-rotate(180deg); }
+.pdf-viewer.dark .pdf-page { background: #111; }
+.textLayer { position: absolute; inset: 0; overflow: clip; line-height: 1; text-align: initial; transform-origin: 0 0; z-index: 0; -webkit-text-size-adjust: none; text-size-adjust: none; }
+.textLayer :is(span, br) { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.textLayer span.markedContent { top: 0; height: 0; }
+.textLayer ::selection { background: rgba(0, 100, 255, .3); }
+.textLayer .pdf-hit { background: rgba(255, 200, 0, .45); border-radius: 2px; }
+.preview-modal { max-width: 1100px; }
+.preview-pdf { height: 75vh; }
+.preview-img { text-align: center; }
+.preview-img img { max-width: 100%; max-height: 75vh; border-radius: 8px; }
+@media (max-width: 600px) { .pdf-search { width: 120px !important; } .preview-pdf { height: calc(100vh - 140px); } }
