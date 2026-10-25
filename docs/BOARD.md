@@ -8,12 +8,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in the pull request to be merged.
 
-## Backlog (39)
+## Backlog (35)
 
-- [#9](https://github.com/shack-dev-j/study-workspace/issues/9) App icon and .desktop file (M1)
-- [#10](https://github.com/shack-dev-j/study-workspace/issues/10) install.sh and uninstall.sh for Arch (M1)
-- [#11](https://github.com/shack-dev-j/study-workspace/issues/11) PKGBUILD (optional makepkg install) (M1)
-- [#13](https://github.com/shack-dev-j/study-workspace/issues/13) M1 tests and docs/ARCH_TEST.md (M1)
 - [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
 - [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
 - [#16](https://github.com/shack-dev-j/study-workspace/issues/16) Homework and assignments (M2)
@@ -50,13 +46,11 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#48](https://github.com/shack-dev-j/study-workspace/issues/48) Full QA and data safety check (M6)
 - [#49](https://github.com/shack-dev-j/study-workspace/issues/49) README, CLAUDE.md, HANDOFF.md and final summary (M6)
 
-## In Progress (3)
+## In Progress (1)
 
-- [#8](https://github.com/shack-dev-j/study-workspace/issues/8) Desktop launcher `study-workspace` (M1)
-- [#12](https://github.com/shack-dev-j/study-workspace/issues/12) Deadline reminders with notify-send (M1)
 - [#18](https://github.com/shack-dev-j/study-workspace/issues/18) Vendor PDF.js (M2)
 
-## Review (7)
+## Review (13)
 
 - [#1](https://github.com/shack-dev-j/study-workspace/issues/1) Python server skeleton (M1)
 - [#2](https://github.com/shack-dev-j/study-workspace/issues/2) Data folder: XDG vs portable mode, first-run setup (M1)
@@ -65,6 +59,12 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#5](https://github.com/shack-dev-j/study-workspace/issues/5) Automatic daily backup (M1)
 - [#6](https://github.com/shack-dev-j/study-workspace/issues/6) Export everything to a zip and restore from it (M1)
 - [#7](https://github.com/shack-dev-j/study-workspace/issues/7) App shell: sidebar, router, themes, API client (M1)
+- [#8](https://github.com/shack-dev-j/study-workspace/issues/8) Desktop launcher `study-workspace` (M1)
+- [#9](https://github.com/shack-dev-j/study-workspace/issues/9) App icon and .desktop file (M1)
+- [#10](https://github.com/shack-dev-j/study-workspace/issues/10) install.sh and uninstall.sh for Arch (M1)
+- [#11](https://github.com/shack-dev-j/study-workspace/issues/11) PKGBUILD (optional makepkg install) (M1)
+- [#12](https://github.com/shack-dev-j/study-workspace/issues/12) Deadline reminders with notify-send (M1)
+- [#13](https://github.com/shack-dev-j/study-workspace/issues/13) M1 tests and docs/ARCH_TEST.md (M1)
 
 ## Done (0)
 
