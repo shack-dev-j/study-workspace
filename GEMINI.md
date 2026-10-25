@@ -1,11 +1,12 @@
 # GEMINI.md
 
-You are continuing **Study Workspace** together with Claude.
-Read **HANDOFF.md** first, then build each issue from **docs/specs/FEATURES.md**: it has the architecture, API contract, how to add
-a page, the design system, the rules, and who owns which issues.
-Also follow **CLAUDE.md** (stack and data rules apply to every agent).
+Notes for any other AI agent (Gemini, Codex, …) working on **Study Workspace**.
 
-Your part: feature pages (issues marked "Gemini" in HANDOFF.md).
-Don't change `backend/` core files, `frontend/css/base.css`,
-`frontend/css/components.css` or `frontend/js/core/*` without noting why in
-HANDOFF.md; ask for a new shared helper instead of copying one.
+The project is complete: all 49 issues are built (see `HANDOFF.md` §1–§2).
+For any change, read **HANDOFF.md** first (architecture, API, data shapes, how to
+add or change a page), then follow **CLAUDE.md** (stack and data rules apply to
+every agent).
+
+- Never commit anything in `data/`, `backups/` or `exports/`.
+- Keep the data shapes in HANDOFF.md §4; if a format must change, back up first and add a migration.
+- Run `python -m unittest discover tests` and the browser checks in `scripts/` before pushing.

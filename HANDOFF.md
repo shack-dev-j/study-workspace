@@ -1,49 +1,45 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. Everything below is on `main`. Start new work from `main`.
-Read this file alone and you can continue the project. **Exact build specs per feature: `docs/specs/FEATURES.md`.** Rules: `CLAUDE.md`.
-Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`),
-status in `docs/BOARD.md`.
+Last update: 2026-10-25. **All 49 issues are built.** Read this file alone and you can continue the project.
+Rules: `CLAUDE.md`. Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`), status in `docs/BOARD.md`.
+Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.md`.
 
-## 1. Who does what
+## 1. Status
 
-The work is split between two AI agents:
+- M1 core + Arch desktop app: merged (#50–#54).
+- M2–M6 (all feature pages, polish, docs): pull requests #55 (M2), #56 (M3), #57 (M4), #58 (M5), and the M6 PR.
+  Each PR is branched from the one before it and targets `main`: merge them in order.
+- Tests: `python -m unittest discover tests` (backend, 55 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (every page at 1280/360 px, dark/light, console errors, sideways scroll, unnamed controls) and `node scripts/e2e.js` (9 main flows). Both use a temporary data folder.
+- Still to do by the user on the real machine: `docs/ARCH_TEST.md` (window, Hyprland, notifications, big linked PDFs).
 
-- **Claude: core system + design.** Server, data layer, API, launcher,
-  install, notifications, and the design system (layout, theme, shared
-  components, CSS).
-- **Gemini: feature pages.** Each page in `frontend/js/modules/`, built on
-  the core helpers and the API below.
+## 2. Pages
 
-| Owner | Issues |
-| --- | --- |
-| Claude (core/design) | #1–#13 done · #18 PDF.js + viewer, shared components for #17/#19/#22/#28/#45, #46 Ctrl+K search, #21 linked-folder backend (done), #31 universities import backend, #47 responsive/a11y pass, #48 QA, #49 docs |
-| Gemini (features) | #14–#17, #19, #20, #22–#30, #32–#45 (UI parts of #21 and #31 too). #38 is research (ICO, with sources). |
-
-## 2. What works now
-
-- `python server.py` → http://127.0.0.1:8765 (opens a browser tab;
-  `--no-browser`, `--port`, `--data-root`, `--exit-when-idle`, `--help`).
-- App shell: sidebar with every section, collapses under 800px, dark/light
-  toggle (remembered), hash router, placeholder page per unbuilt section
-  linking its issue, **Settings** page (export, restore, back up now,
-  remove sample items, list backups).
-- Backend (all tested, `python -m unittest discover tests`, 30 tests):
-  safe JSON storage with revisions and migrations, file upload/download
-  with path checks and Range requests, daily backup (keep 14),
-  export/restore zip with zip-slip checks, linked folders, reminders
-  logic, window tracking for auto-shutdown.
-- PDF.js 4.10.38 vendored in `vendor/pdfjs/` (Apache-2.0).
-
-- Desktop app (#8–#13): `desktop/study-workspace` launcher (`backend/launcher.py`):
-  reuses or starts the server, opens pywebview → Chromium/Brave `--app` →
-  default browser, server stops after the last window closes. Icons (SVG +
-  PNG 16–512), `.desktop` file, `install.sh` / `uninstall.sh` (keeps data),
-  `packaging/arch/PKGBUILD`, hourly `notify-send` reminders,
-  `docs/ARCH_TEST.md`. 44 tests.
-
-Not built yet: everything listed under "Gemini" above. `backend/research_import.py` (#31) does not
-exist yet; the `/api/import/universities` route expects it.
+| Route | File | Issue(s) | What it does |
+| --- | --- | --- | --- |
+| `today` (home) | today.js | #44 | homework due ≤3 days, SAT + cyber task, habits, lessons, deadlines, continue reading, reminders |
+| `subjects/<id>` | subjects.js | #14 #15 | topics 0–5, weakest first, notes, bookmark count; 9618 Hub JSON import |
+| `homework/<id>` | homework.js | #16 #17 #19 | homework / assignments / projects, quick add, filters, overdue, attachments |
+| `library`, `library/<id>/<page>` | library.js | #20–#23 | uploads + linked folders, PDF reader (last page, dark mode), bookmarks |
+| `pastpapers/<id>` | pastpapers.js | #24 | papers, scores, links to paper / mark scheme |
+| `time` | time.js | #25 | one-click timers per area, top bar chip, totals |
+| `timetable` | timetable.js | #26 | week grid; one day per screen on phones |
+| `habits` | habits.js | #27 | streaks, 30-day strip |
+| `sat` | sat.js | #28 | scores chart, skills, weakest 5, weekly plan, JSON import |
+| `portfolio/<id>` | portfolio.js | #29 | projects, competitions, awards, files |
+| `universities/<id>` | universities.js | #30 #31 #33 | table, report import, detail page with documents checklist |
+| `scholarships/<id>` | scholarships.js | #32 | report facts, verify badges |
+| `deadlines` | deadlines.js | #34 | timeline from universities, scholarships and own deadlines |
+| `documents` | documents.js | #33 | shared documents + checklist overview |
+| `activities` | activities.js | #35 | title/description with character limits |
+| `essays/<id>` | essays.js | #36 | editor, word count, versions, restore |
+| `plans` | plans.js | #37 | Plan A / Plan B (EYUF routes by QS rank) |
+| `cyber` | cyber.js | #39 #40 | ICO topics, weekly plan to the selection date |
+| `thm/<id>` | thm.js | #41 | TryHackMe rooms, progress per topic |
+| `challenges/<id>` | challenges.js | #42 | 12 offline CTF challenges, SHA-256 flag check |
+| `writeups/<id>` | writeups.js | #43 | markdown notes linked to challenges / rooms |
+| `review/<date>` | review.js | #45 | minutes per area vs last week, finished, overdue, notes |
+| `settings` | settings.js | #5 #21 | preferences, linked folders, export / restore / backups |
+| `components` (hidden) | components.js | — | live demo of shared components |
 
 ## 3. Architecture
 
@@ -61,13 +57,15 @@ backend/linked.py            linked library folders (no copying)
 backend/reminders.py         deadline reminders + notify-send
 backend/windows.py           open-window tracking
 backend/samples.py           remove items with "sample": true
+backend/research_import.py   import universities from docs/research/universities.md (#31)
 frontend/index.html          shell
 frontend/css/base.css        theme tokens + layout
 frontend/css/components.css  buttons, cards, forms, tables, modal, toasts, tabs, badges, levels, charts, palette, prose
 frontend/css/modules.css     page-specific styles (one section per page)
 frontend/js/main.js          nav, router, theme, heartbeat
 frontend/js/core/*.js        shared helpers (see §5)
-frontend/js/modules/*.js     one file per page
+frontend/js/modules/*.js     one file per page (route = file name, see the table in §2)
+scripts/smoke.js, e2e.js     headless browser checks (developer tools, need Playwright)
 ```
 
 Data root: portable mode = repo folder (`data/`, `backups/`); installed
@@ -95,7 +93,8 @@ All write requests must send header `X-Requested-By: study-workspace`
 | `GET /api/linked?path=` | serve a file inside a linked folder |
 | `GET /api/reminders` / `POST /api/reminders` | current reminders / send desktop notifications now |
 | `POST /api/window/open\|ping\|close {id}` | window tracking |
-| `POST /api/import/universities {dryRun}` | (#31, not built) import from docs/research/universities.md |
+| `POST /api/import/universities {dryRun}` | import from docs/research/universities.md (`dryRun: true` = preview only) |
+| `GET /api/example/<module>` | built-in content from `data.example/` (used to add new practice challenges) |
 | `POST /api/samples` | remove sample items |
 | `POST /api/shutdown` | stop the server |
 
@@ -105,7 +104,7 @@ universities, scholarships, documents, deadlines, essays, activities, cyber,
 thm, challenges, writeups, review, reminders. Add a new one there (and a
 file in `data.example/`) if you need it.
 
-### Data shapes (planned; keep to these so reminders/search/today work)
+### Data shapes (keep to these so reminders, search and Today work)
 
 Every file: `{schema_version: 1, _rev, ...}`. Lists live in `items` unless noted.
 Ids: `uid()` from `core/dom.js`. Dates: `"YYYY-MM-DD"`. Attached files: arrays
@@ -124,34 +123,26 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
 - portfolio: `items[{id, type, title, date, description, role, result, links[], files[]}]`
 - universities: `items[{id, name, country, city, program, qs_rank, the_rank, qs_cs_rank, eyuf: yes|no|check, tuition, living_cost, scholarships, alevel, sat: required|optional|not used, open_date, deadline, early_deadline, deadline_estimate, status: Researching|Preparing|Applied|Offer|Rejected|Accepted, priority, notes, sources[], verify[], docs[{id, name, status, files[]}]}]` (reminders read deadline, early_deadline, status)
 - scholarships: `items[{id, name, pays, requirements, deadline, deadline_estimate, obligation, link, status}]`
-- deadlines: `items[{id, title, date, estimate, done}]`
+- deadlines: `items[{id, title, date, estimate, done, notes}]`
+- documents: `{shared[{id, name, status, files[]}]}` · activities: `items[{id, title, description, portfolioId}]`, `titleLimit`, `descLimit` · review: `weeks{"2026-W44": {notes}}`
+- homework items get `done_at` (date) when ticked; library items get `lastPage`, `opened`, `missing` (linked file gone); challenges get `solved`, `attempts`
 - essays: `items[{id, university, prompt, limit, text, versions[{at, text}]}]`
-- cyber: `{topics[{id, name, level, notes}], plan{...}}`, thm `items[{id, name, url, topic, status, finished, notes}]`, challenges `items[{id, title, topic, difficulty, story, files, hint, solution, flag_sha256}]`, writeups `items[{id, title, linkType, linkId, body, files}]`
+- cyber: `{topics[{id, name, level, notes}], plan{selectionDate, minutesPerDay, weeks[{start, focus[], tasks[{id, text, done}]}]}}`, thm `items[{id, name, url, topic, status, finished, notes}]`, challenges `items[{id, title, topic, difficulty, story, files, hint, solution, flag_sha256}]`, writeups `items[{id, title, linkType, linkId, body, files}]`
 
-## 5. How to add a page (Gemini)
+## 5. How to add or change a page
 
-1. Create `frontend/js/modules/<route>.js`:
-   ```js
-   import { h } from '../core/dom.js';
-   import { load, save, list } from '../core/store.js';
-   import { formDialog, toast, button, pageHead, empty } from '../core/ui.js';
-   export default {
-     async render(el, args) {          // args = parts after #/<route>/
-       const data = await load('homework');
-       const items = list(data);       // data.items, created if missing
-       // ...build DOM with h(); after a change: save('homework');
-       // optional: return a cleanup function
-     },
-   };
-   ```
-2. In `frontend/js/main.js` add the route to `BUILT`.
-3. Page CSS goes in `frontend/css/modules.css` under a comment header.
-4. Backend tests if you add backend code; check the page in a browser at
-   360px and 1280px width, dark and light.
+1. Create `frontend/js/modules/<route>.js` exporting `default { async render(el, args) { ... } }` (it may return a cleanup function).
+2. Add the route to `NAV` and `BUILT` in `frontend/js/main.js`.
+3. `const data = await load('<module>'); const items = list(data);` and after every change `save('<module>')`.
+4. For list pages use `core/crud.js`: `table()` (sortable, cards on phones), `editItem()` (add/edit/delete dialog, optional attachments), `searchBox`, `filterSelect`, `stat`.
+5. Use `fill(el, ...)` from `core/dom.js` to redraw (it skips null children).
+6. Page CSS goes in `frontend/css/modules.css` under a header. Colours only via the CSS variables.
+7. Run the unit tests, `scripts/smoke.js` and `scripts/e2e.js`.
 
 ### Core helpers
 
-- `core/dom.js`: `h(tag, attrs, ...children)`, `$`, `$$`, `clear`, `esc`, `uid`, `debounce`, `highlight`, `plural`, `fmtSize`
+- `core/dom.js`: `h(tag, attrs, ...children)`, `$`, `$$`, `clear`, `esc`, `uid`, `debounce`, `highlight`, `plural`, `fmtSize`, `fill`, `safeHref`
+- `core/crud.js`: `table`, `cmp`, `editItem`, `searchBox`, `filterSelect`, `matches`, `stat`
 - `core/icons.js`: `icon(name)`; names: today subjects homework library papers time calendar habits sat portfolio uni scholarship deadline docs activities essay plan shield flag terminal note chart settings search plus x menu sun moon upload download trash edit link play stop left right bookmark zoomin zoomout file folder eye bell copy key review
 - `core/api.js`: `api.get/put/post/del/postRaw`, `uploadFile(file, onProgress)`, `fileUrl(meta, download)`, `linkedUrl(path)`
 - `core/store.js`: `load(module)`, `save(module)` (debounced, serialized, handles 409), `list(data, key)`, `on(module, fn)`, `flushAll()`
@@ -198,17 +189,27 @@ Shared components (ready; live demo at `#/components`):
   are in it.
 - Work happens on short branches with pull requests into `main`; commits say "Closes #N" so issues close on merge. Don't stack PRs on other unmerged branches (a stacked PR merges into its base branch, not `main`).
 - University data: only facts from `docs/research/universities.md`; empty +
-  "verify" otherwise; dates for 2028 marked as estimates.
+  "verify" otherwise; dates for 2028 marked as estimates. Scholarships were
+  seeded the same way (7 items, `data.example/scholarships.json`).
+- ICO: two different olympiads exist (ICO, Tunisia 2026; ICOA, Sydney 2026).
+  The Uzbek selection site points to Sydney. Open question for the user, see
+  `docs/research/ico.md`. Cyber topics follow the ICO syllabus.
+- Practice challenges store only the SHA-256 of the flag.
+- Milestone PRs #55–#58 were each branched from the previous one but target
+  `main`, so they can be merged in order (#55, #56, #57, #58, then M6).
 
 ## 7. How to run / test
 
 ```bash
 python server.py                      # app at http://127.0.0.1:8765
 python -m unittest discover tests     # backend tests
+NODE_PATH=$(npm root -g) node scripts/smoke.js   # every page, headless
+NODE_PATH=$(npm root -g) node scripts/e2e.js     # main flows, headless
 ```
 
-## 8. Known issues
+## 8. Known issues / open questions
 
-- The GUI window, Hyprland app-id and notifications can't be tested from the cloud: the user runs `docs/ARCH_TEST.md`.
-- `data.example/` only has empty modules; real sample data and syllabus
-  topics still to add (#14 etc.).
+- The GUI window, Hyprland app id and notifications can't be tested from the cloud: the user runs `docs/ARCH_TEST.md`.
+- ICO vs ICOA (which olympiad the Uzbek 2027 selection is for) is unknown: ask the user.
+- University facts marked "verify" and 2028 dates marked "estimate" need checking on official pages.
+- EPUB / DOCX library files open outside the app (download); PDFs and images open inside.

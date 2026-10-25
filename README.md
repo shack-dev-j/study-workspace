@@ -5,8 +5,26 @@ homework, textbooks with a built-in PDF reader, SAT prep, university
 applications, and cybersecurity olympiad (ICO) training. Everything in one
 fast, calm, offline app.
 
-> Status: core system, design system and the Arch desktop app are built.
-> Feature pages are being added (see `HANDOFF.md` and `docs/BOARD.md`).
+> Status: version 1.0, every feature is built. Developer notes: `HANDOFF.md`.
+
+## What is inside
+
+| Area | Pages |
+| --- | --- |
+| **Today** | One screen for the day: homework due soon, SAT and cyber task, habits, lessons, deadlines, the book you were reading, reminders |
+| **Study** | Subjects (syllabus topics rated 0–5, 9618 Hub import) · Homework and projects with files · Library with a built-in PDF reader and bookmarks · Past papers · Time log with timers · Timetable · Habits · SAT (scores chart, skills, weekly plan) |
+| **Applications** | Universities (imported from your research report, "verify" marks) · Scholarships · Deadlines timeline · Documents checklists · Activities list · Essays with versions · Plan A / Plan B |
+| **Cyber / ICO** | Topics and a weekly plan to the selection date · TryHackMe tracker · 12 offline practice challenges · Writeups |
+| **Me** | Portfolio · Weekly review with charts · Settings (backups, export/restore, linked folders) |
+
+Press **Ctrl+K** anywhere to search everything.
+
+## First steps
+
+1. Open **Settings**: check the SAT date and target, set the ICO selection date if you know it, and link your folder of textbooks.
+2. **Settings → Remove sample items** deletes the few fake examples (your syllabus topics, SAT skills, scholarships and challenges stay).
+3. **Universities → Import from research report** adds the universities from `docs/research/universities.md`.
+4. **Subjects**: rate each topic 0–5. **Cyber**: rate topics, then press Generate plan.
 
 ## Main ideas
 
@@ -82,4 +100,7 @@ committed.
 
 ```bash
 python -m unittest discover tests
+# optional, needs Playwright: every page and the main flows in a headless browser
+NODE_PATH=$(npm root -g) node scripts/smoke.js
+NODE_PATH=$(npm root -g) node scripts/e2e.js
 ```

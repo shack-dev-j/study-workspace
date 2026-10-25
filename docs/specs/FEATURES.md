@@ -1,4 +1,6 @@
-# Feature specs for Gemini (just build these)
+# Feature specs (all built)
+
+These were the build specs for #14–#45. Everything here is now built; the file is kept as a reference for how each page is meant to behave. Current details are in HANDOFF.md.
 
 Every page follows the same recipe. Read HANDOFF.md §4 (data shapes) and §5 (helpers) once.
 
