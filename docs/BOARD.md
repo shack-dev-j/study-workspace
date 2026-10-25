@@ -8,10 +8,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in a pull request. "Done" means merged into main.
 
-## Backlog (5)
+## Backlog (3)
 
-- [#44](https://github.com/shack-dev-j/study-workspace/issues/44) Today screen (M5)
-- [#45](https://github.com/shack-dev-j/study-workspace/issues/45) Weekly review with charts (M5)
 - [#47](https://github.com/shack-dev-j/study-workspace/issues/47) Responsive and accessibility pass (M6)
 - [#48](https://github.com/shack-dev-j/study-workspace/issues/48) Full QA and data safety check (M6)
 - [#49](https://github.com/shack-dev-j/study-workspace/issues/49) README, CLAUDE.md, HANDOFF.md and final summary (M6)
@@ -19,7 +17,7 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 ## In Progress (0)
 
 
-## Review (29)
+## Review (31)
 
 - [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
 - [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
@@ -50,6 +48,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#41](https://github.com/shack-dev-j/study-workspace/issues/41) TryHackMe tracker (M4)
 - [#42](https://github.com/shack-dev-j/study-workspace/issues/42) Practice CTF challenges (M4)
 - [#43](https://github.com/shack-dev-j/study-workspace/issues/43) Writeups notebook (M4)
+- [#44](https://github.com/shack-dev-j/study-workspace/issues/44) Today screen (M5)
+- [#45](https://github.com/shack-dev-j/study-workspace/issues/45) Weekly review with charts (M5)
 
 ## Done (15)
 
