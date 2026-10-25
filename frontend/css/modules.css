@@ -153,6 +153,7 @@
 .key-form input:placeholder-shown { font-family: inherit; }
 .brand-dot { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; }
 .brand-dot.todoist { background: #e44332; }
+.brand-dot.groq { background: #f55036; }
 .brand-dot.gemini { background: linear-gradient(135deg, #4796e3, #9177c7 60%, #ca6673); }
 .routines { display: flex; flex-direction: column; gap: 8px; }
 .routine-row { display: grid; grid-template-columns: minmax(140px, 1fr) 140px 140px auto 32px; gap: 8px; align-items: center; }

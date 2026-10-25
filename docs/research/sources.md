@@ -33,3 +33,10 @@ Checked on 2026-10-25 from the cloud session (web search + page fetch). Content 
 
 Universities and scholarships come from `docs/research/universities.md` (the user's research report).
 Nothing was invented: no rankings or dates were added beyond that report.
+
+## AI services (v3.1)
+
+- Groq API: OpenAI-compatible chat completions with tool calling at `https://api.groq.com/openai/v1`.
+  Models: https://console.groq.com/docs/models (checked 2026-10-25: production chat models
+  `openai/gpt-oss-120b`, `openai/gpt-oss-20b`, `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`).
+  Keys: https://console.groq.com/keys

@@ -129,7 +129,7 @@ Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js
 - [ ] Press **Stop session**: no more warnings; it does not start again in the same block.
 - [ ] **Todoist**: paste your token in Settings → Connections, Sync now: your tasks show in My day.
       Tick one in the app: it is closed in Todoist.
-- [ ] **Gemini**: paste your key, Check key, then on a study block: ⋯ → Split into steps.
+- [ ] **Groq**: paste your key in the Groq card: the model box fills in, Check key says it works. On a study block: ⋯ → Split into steps.
 - [ ] `study-workspace --now` prints the current block.
 
 ## 12. Version 3 (assistant, built-in content)
@@ -139,7 +139,7 @@ Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js
       app: it does not come back.
 - [ ] Past papers → "Paper ↗" opens the PDF in your browser (try one Maths, one Physics, one Computer
       Science paper). Note any link that 404s here: ______
-- [ ] Assistant (needs the Gemini key): "Add homework: Physics P2 s23 for Thursday, 75 minutes" adds it,
+- [ ] Assistant (needs the Groq key): "Add homework: Physics P2 s23 for Thursday, 75 minutes" adds it,
       shows a card, and My day plans it. Press Undo: it is gone.
 - [ ] "Delete the Physics P2 homework": a Delete / Keep card appears; nothing is deleted until you press Delete.
 - [ ] "I'm good at quadratics now": Subjects → Maths shows the new level.
@@ -147,3 +147,13 @@ Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js
 ## Notes
 
 Write anything odd here (screenshots help).
+
+## 13. Version 3.1 (Groq)
+
+- [ ] Settings → Connections: "AI service" shows Groq selected. Paste your Groq key (gsk_…) and Save:
+      the Groq card shows "connected" and the Model box lists models.
+- [ ] Assistant: "What should I do now?" gets an answer. "Add homework: Maths P1 s24 v2 for Friday, 90
+      minutes" adds it with an Undo card.
+- [ ] Change the model to `llama-3.3-70b-versatile`, ask again: it still answers.
+- [ ] If you have a Gemini key: switch AI service to Gemini, ask a question: it answers. Switch back.
+- [ ] My day → ⋯ → Split into steps and "Ask the coach" work with Groq.

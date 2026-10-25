@@ -1,6 +1,6 @@
 """Gemini AI helper (optional, needs internet and a Google AI Studio API key).
 
-Used for two small things:
+Also holds the prompts used with any AI service (Groq or Gemini):
 - break_down(): split a big task into short steps.
 - coach(): a short, honest comment on the day's plan.
 
@@ -71,8 +71,9 @@ def _json(text):
     return json.loads(text)
 
 
-def break_down(key, title, details="", minutes=None, model=None, opener=None):
-    """Return a list of {step, minutes} for a task."""
+def break_down(key, title, details="", minutes=None, model=None, opener=None, gen=None):
+    """Return a list of {step, minutes} for a task. gen: the generate() of the AI service (default Gemini)."""
+    gen = gen or generate
     prompt = (
         "You help a 10th grade student (Cambridge AS Level, Digital SAT, cybersecurity olympiad) plan work.\n"
         f"Task: {title}\n" + (f"Details: {details}\n" if details else "")
@@ -80,17 +81,18 @@ def break_down(key, title, details="", minutes=None, model=None, opener=None):
         + "Split it into 3 to 7 concrete steps that can each be done in 10 to 40 minutes. "
           'Reply only with JSON: {"steps": [{"step": "short imperative sentence", "minutes": 20}]}'
     )
-    text = generate(key, prompt, model=model, json_mode=True, opener=opener)
+    text = gen(key, prompt, model=model, json_mode=True, opener=opener)
     try:
         steps = _json(text).get("steps", [])
         return [{"step": str(s.get("step", ""))[:200], "minutes": int(s.get("minutes") or 15)}
                 for s in steps if s.get("step")][:10]
     except (ValueError, AttributeError, TypeError):
-        raise net.NetError("Gemini's answer could not be read")
+        raise net.NetError("the AI's answer could not be read")
 
 
-def coach(key, plan, tone="strict", model=None, opener=None):
+def coach(key, plan, tone="strict", model=None, opener=None, gen=None):
     """A short comment (max ~80 words) on the day's plan."""
+    gen = gen or generate
     lines = [f"{b['start']}-{b['end']} {b['kind']}: {b['title']}" for b in plan.get("blocks", [])
              if b.get("kind") not in ("sleep",)][:40]
     must = [f"- {m['title']} ({m.get('why', '')})" for m in plan.get("must_do", []) if not m.get("done")][:15]
@@ -103,4 +105,4 @@ def coach(key, plan, tone="strict", model=None, opener=None):
         + f"\nIn at most 80 words: say what matters most today, one risk in the plan, and one tip. Be {style} "
           "Plain text, no markdown."
     )
-    return generate(key, prompt, model=model, opener=opener, max_tokens=2048)
+    return gen(key, prompt, model=model, opener=opener, max_tokens=2048)

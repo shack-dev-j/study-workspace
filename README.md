@@ -11,7 +11,7 @@ fast, calm, offline app.
 
 | Area | Pages |
 | --- | --- |
-| **Assistant** | Chat with Gemini about your studies. It can add and change homework, deadlines, past papers, lessons, topic levels and plan your day. Every change has an Undo button, and it never deletes without asking |
+| **Assistant** | Chat with an AI (Groq by default, or Gemini) about your studies. It can add and change homework, deadlines, past papers, lessons, topic levels and plan your day. Every change has an Undo button, and it never deletes without asking |
 | **Ready on day one** | 210 Cambridge past papers (9709, 9702, 9618, 2021–2025) with links to the paper and mark scheme, 38 checked resource links (syllabuses, SAT practice, cyber training), 23 TryHackMe rooms, universities from your research report and default habits. New content is added on updates without touching your own data |
 | **My day** | Your day in time blocks: what to do now, when to take a break, what is next, a must-do list, what to pack in your backpack for tomorrow's lessons. Plans itself from homework, deadlines, Todoist, SAT and cyber plans, your timetable and routines |
 | **Focus** | Focus mode for Hyprland: warns about, then closes distracting apps (your list) during study blocks, and nags when work is overdue. Off until you turn it on |
@@ -34,15 +34,20 @@ user (no sudo), adds it to your app launcher, and starts it in the background af
 Running it again updates the app and never touches your data. Options: `--check`, `--no-service`.
 Build the file yourself with `scripts/make_installer.sh` (or use `./install.sh` from the repo).
 
-## Connect Todoist and Gemini (optional)
+## Connect Groq, Todoist or Gemini (optional)
 
 Open **Settings → Connections**:
 
 - **Todoist**: in Todoist open Settings → Integrations → Developer, copy the API token, paste it, Save.
   Tasks sync every 15 minutes and go into your day plan; finishing them in the app closes them in Todoist.
-- **Gemini**: get a free key at https://aistudio.google.com/apikey, paste it, Save, then **Check key**.
-  It powers the **Assistant** page (chat that can add, change and plan things, with Undo).
-  It adds "Split into steps" to study blocks and a "Coach" button on My day.
+- **Groq** (default AI): get a free key at https://console.groq.com/keys (Create API key, starts with
+  `gsk_`), paste it in the **Groq** card, Save. The model list fills in by itself; the default model is
+  `openai/gpt-oss-120b`, and you can pick another (e.g. `llama-3.3-70b-versatile`).
+- **Gemini** (optional second AI): get a free key at https://aistudio.google.com/apikey and paste it in
+  the **Gemini** card. Use the **AI service** switch at the top to choose Groq or Gemini.
+
+The AI powers the **Assistant** page (chat that can add, change and plan things, with Undo), "Split into
+steps" on study blocks and the "Coach" button on My day.
 
 Keys are saved only in `data/secrets.json` on your computer (only you can read it). They are never in
 backups, exports or git. Without keys everything else still works offline.

@@ -1,4 +1,4 @@
-"""API routes for the v2 features: day plan, backpack, focus, theme, Todoist, Gemini.
+"""API routes for the v2 features: day plan, backpack, focus, theme, Todoist, AI (Groq or Gemini).
 
 handle() returns the JSON reply, or NOT_HANDLED so handler.py can try its
 other routes. Problems are raised as Problem(status, message).
@@ -13,10 +13,10 @@ other routes. Problems are raised as Problem(status, message).
   POST /api/backpack {date,text,packed}
   GET  /api/now                       current and next block (for bars / scripts)
   GET  /api/theme                     Caelestia colours, or {"source": "builtin"}
-  GET  /api/secrets                   which keys are set (never the keys)
-  PUT  /api/secrets {todoist_token, gemini_key}   "" removes a key
+  GET  /api/secrets                   which keys are set (never the keys) + the active AI service
+  PUT  /api/secrets {todoist_token, groq_key, gemini_key}   "" removes a key
   POST /api/todoist/sync | /api/todoist/close {id} | /api/todoist/add {content,due,priority,minutes}
-  GET  /api/ai/models                 Gemini models for the key
+  GET  /api/ai/models[?provider=groq|gemini]   models the key can use (default: the active service)
   POST /api/ai/breakdown {title,details,minutes}  |  POST /api/ai/coach {date}
   GET  /api/focus                     config, active session, today's stats, Hyprland found?
   POST /api/focus/start {minutes,title} | POST /api/focus/stop
@@ -26,7 +26,7 @@ other routes. Problems are raised as Problem(status, message).
 
 import datetime as dt
 
-from . import assistant, focus, gemini, net, planner, secrets_store, theme, todoist
+from . import ai, assistant, focus, gemini, net, planner, secrets_store, theme, todoist
 
 NOT_HANDLED = object()
 
@@ -245,12 +245,13 @@ def handle(ctx, method, head, parts, query, read_json):
 
     if head == "secrets":
         if method == "GET":
-            return secrets_store.status(ctx.paths.data)
+            return ai.status(ctx.storage.read("settings"), ctx.paths.data)
         if method == "PUT":
             body = read_json()
             if not isinstance(body, dict):
                 raise Problem(400, "expected a JSON object")
-            return secrets_store.write(ctx.paths.data, {k: str(v) for k, v in body.items() if k in secrets_store.KEYS})
+            secrets_store.write(ctx.paths.data, {k: str(v) for k, v in body.items() if k in secrets_store.KEYS})
+            return ai.status(ctx.storage.read("settings"), ctx.paths.data)
 
     if head == "todoist" and method == "POST":
         token = _key(ctx, "todoist_token", "Todoist API token")
@@ -284,28 +285,34 @@ def handle(ctx, method, head, parts, query, read_json):
             raise Problem(400, str(e))
 
     if head == "ai":
-        key = _key(ctx, "gemini_key", "Gemini API key")
-        model = ctx.storage.read("settings").get("geminiModel") or gemini.DEFAULT_MODEL
+        settings = ctx.storage.read("settings")
+        name = ai.active(settings, ctx.paths.data)
+        if method == "GET" and sub == "models" and q("provider") in ai.PROVIDERS:
+            name = q("provider")
+        mod, secret, label, _ = ai.PROVIDERS[name]
+        key = _key(ctx, secret, label)
+        model = ai.model_of(name, settings)
         if method == "GET" and sub == "models":
-            return {"models": _online(gemini.list_models, key), "current": model}
+            return {"models": _online(mod.list_models, key), "current": model, "provider": name}
         if method == "POST" and sub == "breakdown":
             body = read_json()
             title = str(body.get("title") or "").strip()[:300]
             if not title:
                 raise Problem(400, "title is required")
             return {"steps": _online(gemini.break_down, key, title, str(body.get("details") or "")[:1500],
-                                     body.get("minutes"), model)}
+                                     body.get("minutes"), model, gen=mod.generate)}
         if method == "POST" and sub == "chat":
             body = read_json()
             try:
-                return _online(assistant.send, ctx.storage, key, str(body.get("chat") or ""), body.get("message"), model)
+                return _online(assistant.send, ctx.storage, key, str(body.get("chat") or ""), body.get("message"), model,
+                               provider=name)
             except assistant.ToolError as e:
                 raise Problem(400, str(e))
         if method == "POST" and sub == "coach":
             body = read_json()
             plan = planner.get_day(ctx.storage, _day(body.get("date"), dt.date.today()))
             tone = ctx.storage.read("focus").get("config", {}).get("tone", "strict")
-            return {"text": _online(gemini.coach, key, plan, tone, model)}
+            return {"text": _online(gemini.coach, key, plan, tone, model, gen=mod.generate)}
 
     if head == "focus":
         if method == "GET" and not sub:

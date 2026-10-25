@@ -106,7 +106,7 @@ function audit() {
   for (let i = 0; i < 50; i++) { try { await fetch(base + '/api/health'); break; } catch (e) { await new Promise(r => setTimeout(r, 200)); } }
   // A sample chat so the assistant page is audited with messages, change cards and a delete request.
   const H = { 'Content-Type': 'application/json', 'X-Requested-By': 'study-workspace' };
-  await fetch(base + '/api/secrets', { method: 'PUT', headers: H, body: JSON.stringify({ gemini_key: 'smoke-test' }) });
+  await fetch(base + '/api/secrets', { method: 'PUT', headers: H, body: JSON.stringify({ groq_key: 'smoke-test', gemini_key: 'smoke-test' }) });
   const now = '2026-10-25T10:00:00';
   await fetch(base + '/api/data/assistant', { method: 'PUT', headers: H, body: JSON.stringify({
     _rev: 0, chats: [{ id: 'demo', title: 'Plan my week', created: now, updated: now, messages: [

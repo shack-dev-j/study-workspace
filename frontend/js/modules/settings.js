@@ -194,32 +194,74 @@ async function connectionsTab(box, settings) {
       h('p', { class: 'hint' }, 'Find it in Todoist: Settings → Integrations → Developer → API token.'));
   }
 
-  function drawGemini() {
-    const modelIn = h('input', { type: 'text', value: settings.geminiModel || 'gemini-2.5-flash', 'aria-label': 'Gemini model', list: 'gm-models', spellcheck: 'false' });
-    const dl = h('datalist', { id: 'gm-models' });
-    const saveModel = () => { settings.geminiModel = modelIn.value.trim() || 'gemini-2.5-flash'; save('settings'); };
-    modelIn.addEventListener('change', saveModel);
-    fill(gmBox, h('div', { class: 'card-head' }, h('span', { class: 'brand-dot gemini', 'aria-hidden': 'true' }), h('h2', null, 'Gemini AI'), keys.gemini ? badge('connected', 'ok') : badge('not connected')),
-      h('p', { class: 'muted small' }, 'Optional. Used for "Steps" (split a task into small steps) and "Ask the coach" on My day. Only the task titles and your day plan are sent, nothing else.'),
-      keys.gemini ? h('div', { class: 'form-grid' },
-        h('label', { class: 'field' }, h('span', { class: 'lbl' }, 'Model'), modelIn, dl, h('div', { class: 'hint' }, 'Default: gemini-2.5-flash. "Check key" lists the models your key can use.')),
-        h('div', { class: 'row', style: { alignSelf: 'end' } },
-          button('Check key', async () => {
-            try {
-              const r = await api.get('/api/ai/models');
-              fill(dl, r.models.map(m => h('option', { value: m })));
-              toast(`Key works. ${r.models.length} models available.`, 'ok');
-            } catch (e) { toast('Gemini: ' + e.message, 'error'); }
-          }, { icon: 'check' }),
-          button('Remove key', async () => {
-            if (!await confirmDialog('Remove the Gemini key from this computer?', { ok: 'Remove' })) return;
-            keys = await api.put('/api/secrets', { gemini_key: '' }); drawGemini();
-          }, { kind: 'ghost' })))
-        : keyForm('gemini_key', 'Gemini API key', 'Paste your Google AI Studio API key', async () => drawGemini()),
-      h('p', { class: 'hint' }, 'Get a free key at aistudio.google.com → Get API key.'));
+  // AI services: Groq (default) and Gemini. One is active; both cards stay so you can switch.
+  const AI = {
+    groq: { name: 'Groq', secret: 'groq_key', setting: 'groqModel', model: 'openai/gpt-oss-120b',
+      placeholder: 'Paste your Groq API key (starts with gsk_)', hint: 'Get a free key at console.groq.com/keys → Create API key.',
+      models: ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
+      modelHint: 'Default: openai/gpt-oss-120b (best with the Assistant). Faster: llama-3.3-70b-versatile or openai/gpt-oss-20b.' },
+    gemini: { name: 'Gemini', secret: 'gemini_key', setting: 'geminiModel', model: 'gemini-2.5-flash',
+      placeholder: 'Paste your Google AI Studio API key', hint: 'Get a free key at aistudio.google.com → Get API key.',
+      models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+      modelHint: 'Default: gemini-2.5-flash.' },
+  };
+  const aiBox = h('section', { class: 'card' });
+  const boxes = { groq: h('section', { class: 'card' }), gemini: gmBox };
+
+  function drawChoice() {
+    const cur = keys.provider || 'groq';
+    fill(aiBox, h('div', { class: 'card-head' }, icon('sparkle'), h('h2', null, 'AI service'), keys.ai ? badge(AI[cur].name + ' active', 'ok') : badge('no key yet')),
+      h('p', { class: 'muted small' }, 'Used by the Assistant chat, "Steps" (split a task into small steps) and "Ask the coach" on My day. Pick which service answers. Only your messages, task titles and the app data the Assistant looks up are sent.'),
+      tabs([{ value: 'groq', label: 'Groq' }, { value: 'gemini', label: 'Gemini' }], cur, async v => {
+        settings.aiProvider = v; await save('settings', { now: true });
+        keys = await api.get('/api/secrets'); drawAll();
+        toast(`${AI[v].name} will answer from now on.`, 'ok');
+      }));
   }
-  drawTodoist(); drawGemini();
-  fill(box, tdBox, gmBox,
+
+  function drawAiCard(p) {
+    const c = AI[p], box = boxes[p], has = keys[p];
+    const active = (keys.provider || 'groq') === p;
+    const modelIn = h('input', { type: 'text', value: settings[c.setting] || c.model, 'aria-label': c.name + ' model', list: p + '-models', spellcheck: 'false' });
+    // Known models first; "Check key" replaces them with the list your key can use.
+    const dl = h('datalist', { id: p + '-models' }, c.models.map(m => h('option', { value: m })));
+    modelIn.addEventListener('change', () => { settings[c.setting] = modelIn.value.trim() || c.model; save('settings'); toast('Model saved.', 'ok'); });
+    const loadModels = async () => {
+      try {
+        const r = await api.get('/api/ai/models?provider=' + p);
+        fill(dl, r.models.map(m => h('option', { value: m })));
+        toast(`Key works. ${r.models.length} models available.`, 'ok');
+      } catch (e) { toast(c.name + ': ' + e.message, 'error'); }
+    };
+    fill(box, h('div', { class: 'card-head' }, h('span', { class: 'brand-dot ' + p, 'aria-hidden': 'true' }), h('h2', null, c.name),
+      active ? h('span', { class: 'badge' }, 'in use') : null, has ? badge('connected', 'ok') : badge('not connected')),
+      has ? h('div', { class: 'form-grid' },
+        h('label', { class: 'field' }, h('span', { class: 'lbl' }, 'Model'), modelIn, dl, h('div', { class: 'hint' }, c.modelHint + ' "Check key" lists all models your key can use.')),
+        h('div', { class: 'row', style: { alignSelf: 'end' } },
+          button('Check key', loadModels, { icon: 'check' }),
+          button('Remove key', async () => {
+            if (!await confirmDialog(`Remove the ${c.name} key from this computer?`, { ok: 'Remove' })) return;
+            keys = await api.put('/api/secrets', { [c.secret]: '' }); drawAll();
+          }, { kind: 'ghost' })))
+        : keyForm(c.secret, c.name + ' API key', c.placeholder, async () => {
+          if (!settings.aiProvider) { settings.aiProvider = p; await save('settings', { now: true }); }
+          keys = await api.get('/api/secrets'); drawAll();
+          checkAfterSave(p);
+        }),
+      h('p', { class: 'hint' }, c.hint));
+  }
+  // Right after a key is saved, test it once so you know at once if it works.
+  async function checkAfterSave(p) {
+    try {
+      const r = await api.get('/api/ai/models?provider=' + p);
+      const dl = document.getElementById(p + '-models');
+      if (dl) fill(dl, r.models.map(m => h('option', { value: m })));
+      toast(`${AI[p].name} key works. ${r.models.length} models available.`, 'ok');
+    } catch (e) { toast(`${AI[p].name} key saved, but the check failed: ${e.message}`, 'error'); }
+  }
+  const drawAll = () => { drawChoice(); drawAiCard('groq'); drawAiCard('gemini'); };
+  drawTodoist(); drawAll();
+  fill(box, aiBox, boxes.groq, gmBox, tdBox,
     h('section', { class: 'card' }, h('div', { class: 'card-head' }, icon('shield'), h('h2', null, 'Privacy')),
       h('ul', { class: 'small muted plain-list' },
         h('li', null, 'Keys are saved only on this computer, in ', h('code', null, 'data/secrets.json'), ' (only your user can read it).'),

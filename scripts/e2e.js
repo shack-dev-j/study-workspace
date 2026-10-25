@@ -14,7 +14,7 @@ const ok = (cond, msg) => { console.log((cond ? '✓ ' : '✗ ') + msg); if (!co
 const readData = m => JSON.parse(fs.readFileSync(path.join(home, 'data', m + '.json'), 'utf8'));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// A fake Gemini for the assistant test (SW_GEMINI_BASE points the server at it).
+// A fake Groq and Gemini for the assistant tests (SW_GROQ_BASE / SW_GEMINI_BASE point the server at it).
 const http = require('http');
 const gport = 8700 + Math.floor(Math.random() * 90);
 function fakeGemini(body) {
@@ -35,9 +35,31 @@ function fakeGemini(body) {
   if (!fr) return call('add_item', { module: 'homework', fields_json: JSON.stringify({ title: 'Chemistry revision', subject: 'Chemistry', due: '2030-01-10', minutes: 45 }) });
   return reply([{ text: 'Added **Chemistry revision** for 10 January.' }]);
 }
+// Groq speaks the OpenAI format: tool_calls out, role "tool" messages back.
+function fakeGroq(body) {
+  const msgs = body.messages || [];
+  const last = msgs[msgs.length - 1] || {};
+  const userText = [...msgs].reverse().find(m => m.role === 'user')?.content || '';
+  const toolName = last.role === 'tool' ? msgs.flatMap(m => m.tool_calls || []).find(c => c.id === last.tool_call_id)?.function.name : null;
+  const result = last.role === 'tool' ? JSON.parse(last.content) : null;
+  const reply = m => ({ choices: [{ index: 0, message: { role: 'assistant', ...m }, finish_reason: m.tool_calls ? 'tool_calls' : 'stop' }] });
+  const call = (name, args) => reply({ content: null, tool_calls: [{ id: 'call_' + msgs.length, type: 'function', function: { name, arguments: JSON.stringify(args) } }] });
+  if (/delete/i.test(userText)) {
+    if (!toolName) return call('list_items', { module: 'homework', query: 'Chemistry revision' });
+    if (toolName === 'list_items') return call('delete_item', { module: 'homework', id: result.items[0].id, reason: 'you asked' });
+    return reply({ content: 'Please confirm the delete below.' });
+  }
+  if (!toolName) return call('add_item', { module: 'homework', fields_json: JSON.stringify({ title: 'Chemistry revision', subject: 'Chemistry', due: '2030-01-10', minutes: 45 }) });
+  return reply({ content: 'Added **Chemistry revision** for 10 January.' });
+}
 const gsrv = http.createServer((req, res) => {
   let b = ''; req.on('data', d => (b += d)); req.on('end', () => {
     res.setHeader('Content-Type', 'application/json');
+    if (req.url.startsWith('/openai/v1/models')) return res.end(JSON.stringify({ data: [{ id: 'openai/gpt-oss-120b' }, { id: 'llama-3.3-70b-versatile' }, { id: 'whisper-large-v3' }] }));
+    if (req.url.startsWith('/openai/v1/chat/completions')) {
+      if (req.headers.authorization !== 'Bearer gsk_fake') { res.statusCode = 401; return res.end('{"error":{"message":"Invalid API Key"}}'); }
+      return res.end(JSON.stringify(fakeGroq(JSON.parse(b || '{}'))));
+    }
     res.end(JSON.stringify(fakeGemini(JSON.parse(b || '{}'))));
   });
 });
@@ -303,8 +325,8 @@ test('settings: planner, keys, appearance', async page => {
   await sleep(800);
   ok(readData('planner').config.focus === 45, 'planner settings saved');
   await page.goto(base + '/#/settings/connections');
-  await page.fill('input[aria-label="Todoist API token"], input[type=password] >> nth=0', 'fake-token-123');
-  await page.locator('form:has(input[type=password]) .btn.primary').first().click();
+  await page.fill('input[aria-label="Todoist API token"]', 'fake-token-123');
+  await page.locator('form:has(input[aria-label="Todoist API token"]) .btn.primary').click();
   await sleep(800);
   const sec = JSON.parse(fs.readFileSync(path.join(home, 'data', 'secrets.json'), 'utf8'));
   ok(sec.todoist_token === 'fake-token-123', 'token saved in data/secrets.json');
@@ -322,8 +344,29 @@ test('settings: planner, keys, appearance', async page => {
   ok(await page.evaluate(() => document.documentElement.dataset.theme) === 'light', 'light theme applied');
 });
 
-test('assistant: add, undo, confirm delete; content is preloaded', async page => {
-  await fetch(base + '/api/secrets', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Requested-By': 'study-workspace' }, body: JSON.stringify({ gemini_key: 'fake-key' }) });
+test('settings: add a Groq key, see models, switch to Gemini and back', async page => {
+  await page.goto(base + '/#/settings/connections');
+  await page.waitForSelector('input[aria-label="Groq API key"]');
+  ok(await page.isVisible('.card:has-text("AI service") .tabs button.on:has-text("Groq")'), 'Groq is the default service');
+  await page.fill('input[aria-label="Groq API key"]', 'gsk_fake');
+  await page.click('.card:has(input[aria-label="Groq API key"]) button:has-text("Save")');
+  await page.waitForSelector('input[aria-label="Groq model"]');
+  ok(!JSON.stringify(await (await fetch(base + '/api/secrets')).json()).includes('gsk_fake'), 'key never sent back');
+  await page.waitForSelector('.toast:has-text("Groq key works. 2 models")');
+  await page.waitForFunction(() => document.querySelectorAll('#groq-models option').length === 2);
+  ok(await page.inputValue('input[aria-label="Groq model"]') === 'openai/gpt-oss-120b', 'default model shown');
+  await page.click('.card:has-text("AI service") .tabs button:has-text("Gemini")');
+  await page.waitForSelector('.card:has-text("AI service") .tabs button.on:has-text("Gemini")');
+  ok(readData('settings').aiProvider === 'gemini', 'Gemini chosen');
+  await page.goto(base + '/#/chat');
+  ok(await page.waitForSelector('a:has-text("Add Gemini key")', { timeout: 8000 }).then(() => true, () => false), 'chat asks for the Gemini key when Gemini is chosen');
+  await page.goto(base + '/#/settings/connections');
+  await page.click('.card:has-text("AI service") .tabs button:has-text("Groq")');
+  await page.waitForSelector('.card:has-text("AI service") .tabs button.on:has-text("Groq")');
+  ok(readData('settings').aiProvider === 'groq', 'back to Groq');
+});
+
+test('assistant (Groq): add, undo, confirm delete; content is preloaded', async page => {
   await page.goto(base + '/#/chat');
   await page.waitForSelector('.idea');
   await page.fill('textarea[aria-label="Message"]', 'Add chemistry revision');
@@ -356,7 +399,7 @@ test('assistant: add, undo, confirm delete; content is preloaded', async page =>
 
 (async () => {
   await new Promise(r => gsrv.listen(gport, '127.0.0.1', r));
-  const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home, SW_GEMINI_BASE: `http://127.0.0.1:${gport}/v1beta` } });
+  const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home, SW_GEMINI_BASE: `http://127.0.0.1:${gport}/v1beta`, SW_GROQ_BASE: `http://127.0.0.1:${gport}/openai/v1` } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
   for (let i = 0; i < 50; i++) { try { await fetch(base + '/api/health'); break; } catch (e) { await sleep(200); } }
   const browser = await chromium.launch();
