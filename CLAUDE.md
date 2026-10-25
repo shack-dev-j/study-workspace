@@ -6,7 +6,7 @@ university applications for fall 2027; ICO cybersecurity olympiad). The main
 target is an **Arch Linux desktop app**. The user's days are packed: the app
 must be fast and simple.
 
-Read `HANDOFF.md` (once it exists) for current status, then `docs/PRD.md`,
+Read `HANDOFF.md` for current status, then `docs/PRD.md`,
 `docs/ROADMAP.md`, and `docs/ISSUES.md` / GitHub issues.
 
 ## Stack (do not change without asking the user)
