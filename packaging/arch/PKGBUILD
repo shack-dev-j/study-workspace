@@ -3,7 +3,7 @@
 #   cd packaging/arch && makepkg -si
 # Data is stored per user in ~/.local/share/study-workspace (never in /usr).
 pkgname=study-workspace
-pkgver=2.0.0
+pkgver=2.1.0
 pkgrel=1
 pkgdesc="Personal study and life-tracking app (homework, textbooks, SAT, applications, cyber training)"
 arch=('any')
@@ -50,5 +50,6 @@ package() {
   sed "s|@EXEC@|/usr/bin/study-workspace|" "$src/desktop/study-workspace.service" \
     | install -Dm644 /dev/stdin "$pkgdir/usr/lib/systemd/user/study-workspace.service"
   install -Dm644 "$src/vendor/rubik/OFL.txt" "$pkgdir/usr/share/licenses/$pkgname/rubik-OFL.txt"
+  install -Dm644 "$src/vendor/inter/LICENSE.txt" "$pkgdir/usr/share/licenses/$pkgname/inter-OFL.txt"
   install -Dm644 "$src/vendor/pdfjs/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/pdfjs-LICENSE"
 }

@@ -57,6 +57,9 @@ def inside(base, target):
         return False
 
 
+mimetypes.add_type("font/woff2", ".woff2")  # not known to every Python install
+
+
 def guess_type(name):
     return mimetypes.guess_type(name)[0] or "application/octet-stream"
 

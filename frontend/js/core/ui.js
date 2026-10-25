@@ -185,7 +185,10 @@ export const LEVEL_NAMES = ['Not started', 'Very weak', 'Weak', 'OK', 'Good', 'E
 
 /* ---------- small pieces ---------- */
 export function badge(text, kind = '') { return h('span', { class: 'badge ' + kind }, text); }
-export function empty(text, action) { return h('div', { class: 'empty' }, h('p', null, text), action || null); }
+/** Empty state: icon tile, one helpful sentence, at most one action (docs/research/design.md). */
+export function empty(text, action, ic = 'inbox') {
+  return h('div', { class: 'empty' }, h('span', { class: 'empty-icon' }, icon(ic)), h('p', null, text), action || null);
+}
 export function pageHead(intro, ...actions) { return h('div', { class: 'page-head' }, intro ? h('p', { class: 'intro' }, intro) : null, h('div', { class: 'row' }, actions)); }
 export function button(label, onclick, { kind = '', icon: ic, title, small } = {}) {
   return h('button', { class: ['btn', kind, small && 'small'], type: 'button', onclick, title }, ic ? icon(ic) : null, label);

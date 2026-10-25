@@ -15,6 +15,14 @@ class ServerTests(unittest.TestCase):
             self.assertIn(b"<html", html.lower())
             self.assertTrue(h["Content-Type"].startswith("text/html"))
 
+    def test_vendored_font_served(self):
+        # The UI font (design v2.1) is vendored and must load offline.
+        with TempApp() as t:
+            s, body, h = t.req("GET", "/vendor/inter/InterVariable.woff2", raw=True)
+            self.assertEqual(s, 200)
+            self.assertEqual(h["Content-Type"], "font/woff2")
+            self.assertEqual(body[:4], b"wOF2")
+
     def test_example_data_route(self):
         with TempApp() as t:
             s, d = t.req("GET", "/api/example/challenges")

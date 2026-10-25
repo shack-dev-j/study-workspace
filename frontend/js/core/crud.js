@@ -11,7 +11,7 @@
 
 import { h, clear, uid } from './dom.js';
 import { save } from './store.js';
-import { formDialog, confirmDialog, toast } from './ui.js';
+import { formDialog, confirmDialog, toast, empty } from './ui.js';
 import { attachmentsBox } from './attachments.js';
 
 /** Sortable table. Clicking a header with `sort` sorts by it (click again to flip). */
@@ -25,7 +25,7 @@ export function table({ columns, rows, onRow, rowClass, sort = null, empty: empt
   }
   function draw() {
     clear(wrap);
-    if (!rows.length) { wrap.append(h('div', { class: 'empty', style: { border: 0 } }, emptyText)); return; }
+    if (!rows.length) { wrap.append(empty(emptyText)); return; }
     const head = h('tr', null, columns.map((c, k) => h('th', {
       class: c.sort ? 'sortable' : '', scope: 'col',
       'aria-sort': state && state.key === k ? (state.dir > 0 ? 'ascending' : 'descending') : null,

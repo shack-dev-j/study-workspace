@@ -29,6 +29,7 @@ class InstallTests(unittest.TestCase):
             self.assertIn(f"Exec={launcher}", desktop)
             self.assertTrue((share / "icons/hicolor/48x48/apps/study-workspace.png").exists())
             self.assertTrue((app / "vendor/rubik/OFL.txt").exists())
+            self.assertTrue((app / "vendor/inter/InterVariable.woff2").exists())
             # No systemd user bus here, so it falls back to an autostart entry.
             auto = home / ".config/autostart/study-workspace-background.desktop"
             self.assertIn(f"Exec={launcher} --no-window", auto.read_text())

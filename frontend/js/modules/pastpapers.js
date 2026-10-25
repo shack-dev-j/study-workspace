@@ -29,7 +29,7 @@ export default {
       { key: 'notes', label: 'Notes / mistakes', type: 'textarea', wide: true },
     ];
     let q = '', fSubject = '', fDone = '';
-    const stats = h('div', { class: 'grid cols-4 mb' });
+    const stats = h('div', { class: 'stats-row mb' });
     const box = h('div');
 
     async function edit(item) {
@@ -41,9 +41,10 @@ export default {
       const per = subjects.concat([...new Set(items.map(p => p.subject))].filter(s => s && !subjects.includes(s))).map(s => {
         const ps = done.map(pct).filter((v, i) => v != null && done[i].subject === s);
         return [s, ps.length ? Math.round(ps.reduce((a, b) => a + b, 0) / ps.length) : null, ps.length];
-      }).filter(([, , n]) => n);
+      });
+      // Always four numbers: papers done + up to three subjects (— until a paper is marked).
       fill(stats, stat('Papers done', `${done.length}`, `of ${items.length} listed`),
-        ...per.map(([s, avg, n]) => stat(s, avg + '%', `average of ${n} marked`)));
+        ...per.slice(0, 3).map(([s, avg, n]) => stat(s, n ? avg + '%' : '—', n ? `average of ${n} marked` : 'no marked papers yet')));
       const shown = items.filter(p => (!fSubject || p.subject === fSubject) && (fDone === '' || String(!!p.done) === fDone) && matches(q, p.subject, p.session, p.paper, p.notes));
       fill(box, table({
         rows: shown, onRow: edit, rowClass: p => p.done && 'is-done-soft',

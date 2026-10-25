@@ -238,7 +238,14 @@ async function appearanceTab(box, settings) {
       h('section', { class: 'card' }, h('div', { class: 'card-head' }, icon('palette'), h('h2', null, 'Theme')),
         tabs([{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }], theme, v => { setTheme(v); if (settings.followShellMode !== false && currentScheme()) set('followShellMode', false); else draw(); }),
         h('div', { class: 'swatches mt', 'aria-label': 'Current colours' }, swatches.map(k => h('div', { class: 'swatch', style: { background: `var(--c-${k})` }, title: k }))),
-        h('p', { class: 'hint' }, 'The app uses the Rubik font and the same colour roles as the Caelestia shell.')),
+        h('p', { class: 'hint' }, 'The app uses the same colour roles as the Caelestia shell.')),
+      h('section', { class: 'card' }, h('div', { class: 'card-head' }, icon('note'), h('h2', null, 'Font')),
+        tabs([{ value: 'inter', label: 'Inter (default)' }, { value: 'rubik', label: 'Rubik (Caelestia)' }], document.documentElement.dataset.font || 'inter', v => {
+          if (v === 'rubik') document.documentElement.dataset.font = 'rubik'; else delete document.documentElement.dataset.font;
+          try { localStorage.setItem('sw-font', v); } catch (e) { /* private mode */ }
+          draw();
+        }),
+        h('p', { class: 'hint' }, 'Inter is sharper at small sizes. Rubik matches the Caelestia shell.')),
       h('section', { class: 'card' }, h('div', { class: 'card-head' }, icon('sparkle'), h('h2', null, 'Caelestia shell'),
         s ? badge('found', 'ok') : badge('not found')),
         h('p', { class: 'muted small' }, s
