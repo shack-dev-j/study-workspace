@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. Branches (stacked, merge in order): `build/v1` (core + design, PR #50) → `build/desktop` (desktop app, PR #51) → `build/shared` (shared components + search).
+Last update: 2026-10-25. Everything below is on `main`. Start new work from `main`.
 Read this file alone and you can continue the project. Rules: `CLAUDE.md`.
 Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`),
 status in `docs/BOARD.md`.
@@ -17,7 +17,7 @@ The work is split between two AI agents:
 
 | Owner | Issues |
 | --- | --- |
-| Claude (core/design) | #1–#13 done (desktop app in branch `build/desktop`) · #18 PDF.js + viewer, shared components for #17/#19/#22/#28/#45, #46 Ctrl+K search (branch `build/shared`), #21 linked-folder backend (done), #31 universities import backend, #47 responsive/a11y pass, #48 QA, #49 docs |
+| Claude (core/design) | #1–#13 done · #18 PDF.js + viewer, shared components for #17/#19/#22/#28/#45, #46 Ctrl+K search, #21 linked-folder backend (done), #31 universities import backend, #47 responsive/a11y pass, #48 QA, #49 docs |
 | Gemini (features) | #14–#17, #19, #20, #22–#30, #32–#45 (UI parts of #21 and #31 too). #38 is research (ICO, with sources). |
 
 ## 2. What works now
@@ -159,7 +159,7 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
   - form field types: text, textarea, number, date, time, url, select (options), checkbox, level (0–5), tags, links
 - `core/dates.js`: `today`, `iso`, `parse`, `addDays`, `daysUntil`, `weekStart`, `weekKey`, `weekday`, `fmt`, `fmtShort`, `relative`, `minutesText`, `clock`, `DAYS`
 
-Shared components (ready, branch `build/shared`; live demo at `#/components`):
+Shared components (ready; live demo at `#/components`):
 
 - `core/attachments.js`: `attachmentsBox({files, onChange, accept, readOnly})`: drop zone + picker, upload progress, list with thumbnails, preview, download, remove (to trash). Store the `files` array on your item.
 - `core/preview.js`: `previewFile(meta)` or `previewFile({url, name, type})`: images and PDFs in a modal, others as download. `isImage`, `isPdf`.
@@ -196,8 +196,7 @@ Shared components (ready, branch `build/shared`; live demo at `#/components`):
 - No GitHub Projects board: the Projects API needs GraphQL, blocked from the
   cloud session. `docs/BOARD.md` is the board; steps to create the real one
   are in it.
-- One working branch `build/v1` with a draft PR; issues close when it's merged
-  (commits say "Closes #N").
+- Work happens on short branches with pull requests into `main`; commits say "Closes #N" so issues close on merge. Don't stack PRs on other unmerged branches (a stacked PR merges into its base branch, not `main`).
 - University data: only facts from `docs/research/universities.md`; empty +
   "verify" otherwise; dates for 2028 marked as estimates.
 

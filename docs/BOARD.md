@@ -6,7 +6,7 @@ To make the real board: GitHub → your profile → Projects → New project →
 "Study Workspace", add columns Backlog / In Progress / Review / Done, then "Add items" →
 search `repo:shack-dev-j/study-workspace` and add all issues.
 
-"Review" means: built and tested, waiting in the pull request to be merged.
+"Review" means: built and tested, waiting in a pull request. "Done" means merged into main.
 
 ## Backlog (34)
 
@@ -48,7 +48,10 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 ## In Progress (0)
 
 
-## Review (15)
+## Review (0)
+
+
+## Done (15)
 
 - [#1](https://github.com/shack-dev-j/study-workspace/issues/1) Python server skeleton (M1)
 - [#2](https://github.com/shack-dev-j/study-workspace/issues/2) Data folder: XDG vs portable mode, first-run setup (M1)
@@ -65,6 +68,3 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#13](https://github.com/shack-dev-j/study-workspace/issues/13) M1 tests and docs/ARCH_TEST.md (M1)
 - [#18](https://github.com/shack-dev-j/study-workspace/issues/18) Vendor PDF.js (M2)
 - [#46](https://github.com/shack-dev-j/study-workspace/issues/46) Global search (Ctrl+K) (M5)
-
-## Done (0)
-
