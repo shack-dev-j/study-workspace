@@ -1,5 +1,5 @@
 // TryHackMe tracker (#41).
-import { h, fill } from '../core/dom.js';
+import { h, fill, safeHref } from '../core/dom.js';
 import { load, list } from '../core/store.js';
 import { fmtShort, today } from '../core/dates.js';
 import { pageHead, button, badge } from '../core/ui.js';
@@ -37,7 +37,7 @@ export default {
       fill(box, table({
         rows: shown, onRow: edit, sort: { key: 2, dir: 1 },
         columns: [
-          { label: 'Room', cls: 'title-cell', cell: r => h('span', null, h('span', { class: 'title' }, r.name), r.url ? h('span', null, ' ', h('a', { href: r.url, target: '_blank', rel: 'noopener', class: 'small' }, 'open ↗')) : null), sort: r => r.name },
+          { label: 'Room', cls: 'title-cell', cell: r => h('span', null, h('span', { class: 'title' }, r.name), safeHref(r.url) ? h('span', null, ' ', h('a', { href: safeHref(r.url), target: '_blank', rel: 'noopener', class: 'small' }, 'open ↗')) : null), sort: r => r.name },
           { label: 'Topic', cell: r => r.topic || '', sort: r => r.topic },
           { label: 'Status', cell: r => badge(...(STATUS[r.status] || STATUS.todo)), sort: r => ['doing', 'todo', 'done'].indexOf(r.status) },
           { label: 'Finished', cell: r => (r.finished ? fmtShort(r.finished) : ''), sort: r => r.finished },

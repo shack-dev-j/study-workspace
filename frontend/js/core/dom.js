@@ -71,3 +71,9 @@ export function fmtSize(b) {
   if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
   return (b / 1073741824).toFixed(2) + ' GB';
 }
+
+/** Only allow web and mail links from user-typed text (blocks javascript: URLs). */
+export function safeHref(u) {
+  u = String(u || '').trim();
+  return /^(https?:\/\/|mailto:)/i.test(u) ? u : null;
+}

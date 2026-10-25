@@ -1,5 +1,5 @@
 // Scholarships list (#32). Seeded from the research report (facts only).
-import { h, fill } from '../core/dom.js';
+import { h, fill, safeHref } from '../core/dom.js';
 import { load, list } from '../core/store.js';
 import { fmtShort, relative } from '../core/dates.js';
 import { pageHead, button, badge } from '../core/ui.js';
@@ -38,7 +38,7 @@ export default {
           { label: 'Obligation', cell: s => h('span', { class: 'small' }, s.obligation || '', ' ', vb(s, 'obligation')) },
           { label: 'Deadline', cell: s => (s.deadline ? h('span', { class: 'nowrap', title: relative(s.deadline) }, fmtShort(s.deadline), s.deadline_estimate ? h('span', null, ' ', badge('estimate', 'warn')) : null) : vb(s, 'deadline')), sort: s => s.deadline },
           { label: 'Status', cell: s => badge(s.status || 'Researching'), sort: s => STATUSES.indexOf(s.status) },
-          { label: 'Link', cell: s => (s.link ? h('a', { href: s.link, target: '_blank', rel: 'noopener' }, 'Open') : vb(s, 'link')) },
+          { label: 'Link', cell: s => (safeHref(s.link) ? h('a', { href: safeHref(s.link), target: '_blank', rel: 'noopener' }, 'Open') : vb(s, 'link')) },
         ],
         empty: items.length ? 'Nothing matches.' : 'No scholarships yet.',
       }));

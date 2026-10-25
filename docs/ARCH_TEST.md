@@ -98,6 +98,20 @@ cd packaging/arch && makepkg -si
 - [ ] Data is still read from `~/.local/share/study-workspace/data`.
 - [ ] `sudo pacman -R study-workspace` removes it; data stays.
 
+## 10. Feature check (10 minutes, in the app window)
+
+Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js`). These are the parts that need your real machine:
+
+- [ ] **Library**: link a real folder of PDFs in Settings → Linked library folders, then Library → Scan linked folders. A big textbook opens fast, text can be selected, search inside the PDF works.
+- [ ] Close the book and open it again: it continues at the same page. Dark reading mode is remembered.
+- [ ] **Homework**: drag a photo of a worksheet onto a homework item; it previews.
+- [ ] **Time log**: start a timer, close the window, open the app again: the timer is still running (top bar chip).
+- [ ] **Subjects → Computer Science → Import 9618 Hub progress**: pick the JSON exported from your Revision Hub.
+- [ ] **Universities → Import from research report**: about 17 universities appear, missing facts marked "verify".
+- [ ] **Challenges**: download a file, solve it, the flag is accepted.
+- [ ] Phone-size window (or `Super`+drag the window narrow): the menu collapses and pages stay readable.
+- [ ] Light mode looks right on every page you use.
+
 ## Notes
 
 Write anything odd here (screenshots help).
