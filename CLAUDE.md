@@ -54,6 +54,11 @@ Read `HANDOFF.md` for current status, then `docs/PRD.md`,
   upload and backup. Run: `python -m unittest discover tests`.
 - The GUI cannot be tested from the cloud: test server and launcher logic
   headless, and keep `docs/ARCH_TEST.md` up to date for manual checks.
+- Before pushing UI changes run `scripts/smoke.js` and `scripts/e2e.js`
+  (`NODE_PATH=$(npm root -g) node scripts/...`). They use Playwright and are
+  developer tools only: the app itself never needs Node or npm.
+- List pages use `frontend/js/core/crud.js`; keep the data shapes in
+  `HANDOFF.md` §4 so search, reminders and the Today page keep working.
 
 ## Folder structure
 

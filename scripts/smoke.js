@@ -43,6 +43,12 @@ const ROUTES = only.length ? only : ['today', 'subjects', 'homework', 'library',
         if (scroll) errs.push('horizontal page scroll');
         const bad = /(^|\W)(null|undefined|NaN|\[object Object\])(\W|$)/.exec(txt);
         if (bad) errs.push('stray text: ' + bad[2]);
+        // Accessibility: every control needs a name screen readers can read.
+        const unnamed = await page.evaluate(() => [...document.querySelectorAll('button, a[href], input, select, textarea')]
+          .filter(e => e.offsetParent !== null && e.type !== 'hidden')
+          .filter(e => !(e.getAttribute('aria-label') || e.textContent.trim() || e.title || (e.labels && e.labels.length) || e.querySelector('img[alt]:not([alt=""])')))
+          .map(e => e.outerHTML.slice(0, 90)));
+        if (unnamed.length) errs.push('controls without a name: ' + unnamed.slice(0, 3).join(' ; '));
         if (errs.length) { problems++; console.log(`✗ ${r} ${w}px ${theme}:`, errs.join(' | ')); }
         await page.screenshot({ path: path.join(out, `${r}-${w}-${theme}.png`), fullPage: true });
       }

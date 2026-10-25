@@ -29,6 +29,7 @@ ROUTES.components = ['components', 'UI components', 'settings', null];
 const app = document.querySelector('.app');
 const main = document.getElementById('main');
 let cleanup = null;
+let navigated = false;
 
 function buildNav() {
   const nav = document.getElementById('nav');
@@ -45,17 +46,23 @@ async function route() {
   document.getElementById('pageTitle').textContent = r[1];
   document.title = r[1] + ' · Study Workspace';
   app.classList.remove('nav-open');
+  document.getElementById('menuBtn').setAttribute('aria-expanded', 'false');
   if (typeof cleanup === 'function') cleanup();
   cleanup = null;
   clear(main);
+  if (navigated) scrollTo(0, 0);
   if (!BUILT.has(r[0])) {
     main.append(h('div', { class: 'empty' }, h('p', null, `${r[1]} is planned but not built yet.`),
-      h('p', { class: 'small' }, h('a', { href: `https://github.com/shack-dev-j/study-workspace/issues/${r[3]}`, target: '_blank' }, `Issue #${r[3]}`))));
+      r[3] ? h('p', { class: 'small' }, h('a', { href: `https://github.com/shack-dev-j/study-workspace/issues/${r[3]}`, target: '_blank' }, `Issue #${r[3]}`)) : null));
     return;
   }
   try {
     const mod = await import(`./modules/${r[0]}.js`);
     cleanup = await mod.default.render(main, args);
+    // Move focus to the page for keyboard and screen reader users (not on first load,
+    // and not when a dialog opened itself).
+    if (navigated && !document.querySelector('.modal-back')) main.focus({ preventScroll: true });
+    navigated = true;
   } catch (e) {
     console.error(e);
     main.append(h('div', { class: 'empty' }, 'Could not open this page: ' + e.message));
@@ -87,8 +94,10 @@ setTheme(document.documentElement.dataset.theme || 'dark');
 document.getElementById('themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 const menuBtn = document.getElementById('menuBtn');
 menuBtn.append(icon('menu'));
-menuBtn.onclick = () => app.classList.toggle('nav-open');
-document.getElementById('scrim').onclick = () => app.classList.remove('nav-open');
+const setNav = open => { app.classList.toggle('nav-open', open); menuBtn.setAttribute('aria-expanded', String(open)); };
+menuBtn.onclick = () => setNav(!app.classList.contains('nav-open'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && app.classList.contains('nav-open')) setNav(false); });
+document.getElementById('scrim').onclick = () => setNav(false);
 document.getElementById('searchBtn').onclick = openSearch;
 setSearchPages(NAV.flatMap(([, items]) => items.map(([r, label]) => ({ title: label, href: '#/' + r }))));
 installSearchShortcut();

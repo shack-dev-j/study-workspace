@@ -248,7 +248,7 @@ export function markdown(src) {
       while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) {
         const t = lines[i].replace(/^\s*([-*]|\d+\.)\s+/, '');
         const cb = /^\[( |x)\]\s+/.exec(t);
-        buf.push('<li>' + (cb ? `<input type="checkbox" disabled ${cb[1] === 'x' ? 'checked' : ''}> ` + inline(t.slice(4)) : inline(t)) + '</li>');
+        buf.push('<li>' + (cb ? `<input type="checkbox" disabled aria-label="${cb[1] === "x" ? "done" : "not done"}" ${cb[1] === "x" ? "checked" : ""}> ` + inline(t.slice(4)) : inline(t)) + '</li>');
         i++;
       }
       out.push(ordered ? `<ol>${buf.join('')}</ol>` : `<ul>${buf.join('')}</ul>`); continue;
