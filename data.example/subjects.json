@@ -1,1 +1,281 @@
-{"schema_version": 1, "items": []}
+{
+ "schema_version": 1,
+ "items": [
+  {
+   "id": "maths",
+   "name": "Maths",
+   "code": "9709 (P1 + P5)",
+   "color": "#7aa7ff",
+   "topics": [
+    {
+     "id": "m1",
+     "name": "P1 Quadratics",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m2",
+     "name": "P1 Functions",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m3",
+     "name": "P1 Coordinate geometry",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m4",
+     "name": "P1 Circular measure",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m5",
+     "name": "P1 Trigonometry",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m6",
+     "name": "P1 Series",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m7",
+     "name": "P1 Differentiation",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m8",
+     "name": "P1 Integration",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m9",
+     "name": "P5 Representation of data",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m10",
+     "name": "P5 Permutations and combinations",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m11",
+     "name": "P5 Probability",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m12",
+     "name": "P5 Discrete random variables",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "m13",
+     "name": "P5 The normal distribution",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    }
+   ]
+  },
+  {
+   "id": "physics",
+   "name": "Physics",
+   "code": "9702 AS",
+   "color": "#6fd3c1",
+   "topics": [
+    {
+     "id": "p1",
+     "name": "Physical quantities and units",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p2",
+     "name": "Kinematics",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p3",
+     "name": "Dynamics",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p4",
+     "name": "Forces, density and pressure",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p5",
+     "name": "Work, energy and power",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p6",
+     "name": "Deformation of solids",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p7",
+     "name": "Waves",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p8",
+     "name": "Superposition",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p9",
+     "name": "Electricity",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p10",
+     "name": "D.C. circuits",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "p11",
+     "name": "Particle physics",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    }
+   ]
+  },
+  {
+   "id": "cs",
+   "name": "Computer Science",
+   "code": "9618 AS",
+   "color": "#f2c14e",
+   "topics": [
+    {
+     "id": "c1",
+     "name": "Information representation",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c2",
+     "name": "Communication",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c3",
+     "name": "Hardware",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c4",
+     "name": "Processor fundamentals",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c5",
+     "name": "System software",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c6",
+     "name": "Security, privacy and data integrity",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c7",
+     "name": "Ethics and ownership",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c8",
+     "name": "Databases",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c9",
+     "name": "Algorithm design and problem-solving",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c10",
+     "name": "Data types and structures",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c11",
+     "name": "Programming",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    },
+    {
+     "id": "c12",
+     "name": "Software development",
+     "confidence": 0,
+     "notes": "",
+     "reviewed": ""
+    }
+   ]
+  }
+ ]
+}

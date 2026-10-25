@@ -1,1 +1,29 @@
-{"schema_version": 1, "items": []}
+{
+ "schema_version": 1,
+ "items": [
+  {
+   "id": "s1",
+   "sample": true,
+   "kind": "homework",
+   "subject": "Physics",
+   "title": "Kinematics worksheet Q1-10",
+   "description": "",
+   "due": "2026-10-28",
+   "status": "todo",
+   "priority": "normal",
+   "files": []
+  },
+  {
+   "id": "s2",
+   "sample": true,
+   "kind": "assignment",
+   "subject": "Computer Science",
+   "title": "Databases mini project",
+   "description": "ER diagram + SQL",
+   "due": "2026-11-15",
+   "status": "doing",
+   "priority": "high",
+   "files": []
+  }
+ ]
+}

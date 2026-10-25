@@ -1,0 +1,58 @@
+{
+ "schema_version": 1,
+ "topics": [
+  {
+   "id": "t0",
+   "name": "Networking",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t1",
+   "name": "Linux",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t2",
+   "name": "Web security",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t3",
+   "name": "Cryptography",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t4",
+   "name": "Forensics",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t5",
+   "name": "Reverse engineering",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t6",
+   "name": "OSINT",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t7",
+   "name": "Social engineering",
+   "level": 0,
+   "notes": ""
+  }
+ ],
+ "plan": {
+  "selectionDate": "",
+  "minutesPerDay": 45,
+  "weeks": []
+ }
+}

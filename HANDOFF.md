@@ -1,7 +1,7 @@
 # HANDOFF: Study Workspace
 
 Last update: 2026-10-25. Everything below is on `main`. Start new work from `main`.
-Read this file alone and you can continue the project. Rules: `CLAUDE.md`.
+Read this file alone and you can continue the project. **Exact build specs per feature: `docs/specs/FEATURES.md`.** Rules: `CLAUDE.md`.
 Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`),
 status in `docs/BOARD.md`.
 
