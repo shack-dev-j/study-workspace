@@ -14,7 +14,7 @@ export default {
     let files = [];
     const pdfBox = h('div', { style: { height: '520px' } }, empty('Choose a PDF to try the reader.'));
     let viewer = null;
-    const pdfIn = h('input', { type: 'file', accept: '.pdf', onchange: async () => {
+    const pdfIn = h('input', { type: 'file', accept: '.pdf', 'aria-label': 'Choose a PDF', onchange: async () => {
       const meta = await uploadFile(pdfIn.files[0]);
       viewer && viewer.destroy();
       viewer = await createPdfViewer(pdfBox, { url: fileUrl(meta), onPage: (n, t) => console.log('page', n, t) });

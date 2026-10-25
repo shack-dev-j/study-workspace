@@ -239,3 +239,5 @@ mark { background: var(--warn-soft); color: inherit; border-radius: 3px; padding
 @media (max-width: 600px) { .pdf-search { width: 120px !important; } .preview-pdf { height: calc(100vh - 140px); } }
 @media (max-width: 700px) { table.list td:empty { display: none; } }
 .grid > .card + .card, .grid > .stat + .stat { margin-top: 0; }
+@media (max-width: 520px) { .card-head { flex-wrap: wrap; } .card-head h2 { flex-basis: 100%; } }
+@media (max-width: 520px) { .grid.cols-4 { grid-template-columns: 1fr 1fr; gap: 10px; } .stat .value { font-size: 1.3rem; } }
