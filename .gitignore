@@ -1,0 +1,30 @@
+# Personal data and uploaded files: never commit
+data/
+backups/
+exports/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Packaging build output
+packaging/arch/pkg/
+packaging/arch/src/
+*.pkg.tar.*
+dist/
+*.zip
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
