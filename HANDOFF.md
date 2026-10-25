@@ -197,7 +197,6 @@ Shared components (ready; live demo at `#/components`):
   cloud session. `docs/BOARD.md` is the board; steps to create the real one
   are in it.
 - Work happens on short branches with pull requests into `main`; commits say "Closes #N" so issues close on merge. Don't stack PRs on other unmerged branches (a stacked PR merges into its base branch, not `main`).
-  (commits say "Closes #N").
 - University data: only facts from `docs/research/universities.md`; empty +
   "verify" otherwise; dates for 2028 marked as estimates.
 
