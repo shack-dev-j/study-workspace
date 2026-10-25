@@ -7,10 +7,11 @@ import { icon, hydrateIcons } from './core/icons.js';
 import { api } from './core/api.js';
 import { flushAll } from './core/store.js';
 import { openSearch, installSearchShortcut, setSearchPages } from './core/search.js';
+import { setTheme as applyTheme, startThemeSync, onThemeChange } from './core/theme.js';
 
 // [route, label, icon, issue]  (issue = not built yet)
 const NAV = [
-  ['', [['today', 'Today', 'today', 44]]],
+  ['', [['day', 'My day', 'day', null], ['focus', 'Focus', 'target', null], ['today', 'Overview', 'today', 44]]],
   ['Study', [['subjects', 'Subjects', 'subjects', 14], ['homework', 'Homework', 'homework', 16], ['library', 'Library', 'library', 20],
     ['pastpapers', 'Past papers', 'papers', 24], ['time', 'Time log', 'time', 25], ['timetable', 'Timetable', 'calendar', 26],
     ['habits', 'Habits', 'habits', 27], ['sat', 'SAT', 'sat', 28]]],
@@ -21,7 +22,7 @@ const NAV = [
     ['challenges', 'Challenges', 'flag', 42], ['writeups', 'Writeups', 'note', 43]]],
   ['Me', [['portfolio', 'Portfolio', 'portfolio', 29], ['review', 'Weekly review', 'review', 45], ['settings', 'Settings', 'settings', null]]],
 ];
-const BUILT = new Set(['settings', 'components', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat', 'portfolio', 'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans', 'cyber', 'thm', 'challenges', 'writeups', 'today', 'review']);  // add a route here when its module exists
+const BUILT = new Set(['day', 'focus', 'settings', 'components', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat', 'portfolio', 'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans', 'cyber', 'thm', 'challenges', 'writeups', 'today', 'review']);  // add a route here when its module exists
 const ROUTES = Object.fromEntries(NAV.flatMap(([, items]) => items.map(i => [i[0], i])));
 // Hidden page (not in the menu): live demo of the shared components, for developers.
 ROUTES.components = ['components', 'UI components', 'settings', null];
@@ -40,8 +41,8 @@ function buildNav() {
 }
 
 async function route() {
-  const [name = 'today', ...args] = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
-  const r = ROUTES[name] || ROUTES.today;
+  const [name = 'day', ...args] = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
+  const r = ROUTES[name] || ROUTES.day;
   document.querySelectorAll('.nav-link').forEach(a => a.classList.toggle('active', a.dataset.route === r[0]));
   document.getElementById('pageTitle').textContent = r[1];
   document.title = r[1] + ' · Study Workspace';
@@ -69,11 +70,23 @@ async function route() {
   }
 }
 
-function setTheme(t) {
-  document.documentElement.dataset.theme = t;
-  try { localStorage.setItem('sw-theme', t); } catch (e) { /* private mode */ }
+function drawThemeBtn() {
+  const t = document.documentElement.dataset.theme;
   const b = document.getElementById('themeBtn');
-  clear(b).append(icon(t === 'dark' ? 'sun' : 'moon'), t === 'dark' ? 'Light mode' : 'Dark mode');
+  clear(b).append(icon(t === 'dark' ? 'sun' : 'moon'));
+  b.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  b.title = b.getAttribute('aria-label');
+}
+
+// Focus chip in the top bar while a focus session runs.
+async function focusChip() {
+  const chip = document.getElementById('focusChip');
+  try {
+    const f = await api.get('/api/focus');
+    const a = f.active;
+    chip.hidden = !a;
+    if (a) chip.textContent = `Focus · ${Math.max(0, Math.round((new Date(a.until) - new Date()) / 60000))} min`;
+  } catch (e) { chip.hidden = true; }
 }
 
 // Tell the server this window is open, so it can stop when the last one closes.
@@ -90,8 +103,12 @@ function heartbeat() {
 
 buildNav();
 hydrateIcons();
-setTheme(document.documentElement.dataset.theme || 'dark');
-document.getElementById('themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+drawThemeBtn();
+onThemeChange(drawThemeBtn);
+startThemeSync();
+document.getElementById('themeBtn').onclick = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+focusChip();
+setInterval(() => { if (!document.hidden) focusChip(); }, 30000);
 const menuBtn = document.getElementById('menuBtn');
 menuBtn.append(icon('menu'));
 const setNav = open => { app.classList.toggle('nav-open', open); menuBtn.setAttribute('aria-expanded', String(open)); };

@@ -3,7 +3,7 @@
 #   cd packaging/arch && makepkg -si
 # Data is stored per user in ~/.local/share/study-workspace (never in /usr).
 pkgname=study-workspace
-pkgver=1.0.0
+pkgver=2.0.0
 pkgrel=1
 pkgdesc="Personal study and life-tracking app (homework, textbooks, SAT, applications, cyber training)"
 arch=('any')
@@ -16,6 +16,7 @@ optdepends=(
   'webkit2gtk-4.1: GTK backend for pywebview'
   'chromium: fallback window in app mode'
   'libnotify: desktop notifications for deadlines (notify-send)'
+  'hyprland: focus mode (warns about and closes distracting apps)'
 )
 source=()
 
@@ -45,5 +46,9 @@ package() {
     s="$(basename "$d")"
     install -Dm644 "$d/study-workspace.png" "$pkgdir/usr/share/icons/hicolor/$s/apps/study-workspace.png"
   done
+  # Background service (off by default): systemctl --user enable --now study-workspace
+  sed "s|@EXEC@|/usr/bin/study-workspace|" "$src/desktop/study-workspace.service" \
+    | install -Dm644 /dev/stdin "$pkgdir/usr/lib/systemd/user/study-workspace.service"
+  install -Dm644 "$src/vendor/rubik/OFL.txt" "$pkgdir/usr/share/licenses/$pkgname/rubik-OFL.txt"
   install -Dm644 "$src/vendor/pdfjs/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/pdfjs-LICENSE"
 }

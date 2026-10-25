@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. **All 49 issues are built.** Read this file alone and you can continue the project.
+Last update: 2026-10-25. **v2.0: day planner, focus mode, Todoist, Gemini, Caelestia design.** v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
 Rules: `CLAUDE.md`. Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`), status in `docs/BOARD.md`.
 Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.md`.
 
@@ -9,14 +9,37 @@ Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.
 - M1 core + Arch desktop app: merged (#50–#54).
 - M2–M6 (all feature pages, polish, docs): pull requests #55 (M2), #56 (M3), #57 (M4), #58 (M5), and the M6 PR.
   Each PR is branched from the one before it and targets `main`: merge them in order.
-- Tests: `python -m unittest discover tests` (backend, 55 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (every page at 1280/360 px, dark/light, console errors, sideways scroll, unnamed controls) and `node scripts/e2e.js` (9 main flows). Both use a temporary data folder.
+- Tests: `python -m unittest discover tests` (backend, 97 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (30 pages at 5 sizes, dark/light: console errors, sideways scroll, unnamed controls, design audit) and `node scripts/e2e.js` (12 flows). Both use a temporary data folder.
 - Still to do by the user on the real machine: `docs/ARCH_TEST.md` (window, Hyprland, notifications, big linked PDFs).
+
+### v2.0 (branch `build/v2-planner`)
+
+The user asked for: Todoist sync, a daily schedule with time blocks (now / next / breaks / what to prepare),
+a must-do list, a backpack list per lesson, OS integration that blocks or closes apps and gets
+"angry", optional Gemini, a design matching the Caelestia shell, and one file to install.
+
+- **My day** (`day.js`, new home page): now card (ring, what to do, next), timeline of the day, must-do
+  checklist, backpack for the next school day, coming up, focus card. Built by `backend/planner.py`.
+- **Focus** (`focus.js`): Hyprland focus mode (`backend/focus.py`). Off by default. Warn / strict / hard;
+  calm / strict / angry messages; user block list. Closes windows with `hyprctl dispatch closewindow`
+  only (never kills processes, never touches the shell, the terminal or this app). Starts by itself in
+  focus blocks; nags when work is overdue.
+- **Connections** (Settings): Todoist token and Gemini key. Stored only in `data/secrets.json` (mode 600),
+  never in backups, exports, the API or git. Both are optional; everything works offline.
+- **Design**: Material 3 colour roles from Caelestia (`~/.local/state/caelestia/scheme.json`, read by
+  `GET /api/theme`, polled every 30 s), Rubik font (vendored), every control styled. `scripts/smoke.js`
+  fails on any default-looking control, tiny text or low contrast.
+- **Background**: install.sh adds a systemd user service (`--serve`) so reminders, plan notifications and
+  focus mode run with the window closed. Closing the window keeps the server (`keepRunning`).
+- **One-file installer**: `scripts/make_installer.sh` → `study-workspace-install.sh` (self-extracting).
 
 ## 2. Pages
 
 | Route | File | Issue(s) | What it does |
 | --- | --- | --- | --- |
-| `today` (home) | today.js | #44 | homework due ≤3 days, SAT + cyber task, habits, lessons, deadlines, continue reading, reminders |
+| `day/<date>` (home) | day.js | v2 | now card, timeline, must-do, backpack, coming up |
+| `focus` | focus.js | v2 | focus mode switch, strictness, block list, sessions |
+| `today` (Overview) | today.js | #44 | homework due ≤3 days, SAT + cyber task, habits, lessons, deadlines, continue reading, reminders |
 | `subjects/<id>` | subjects.js | #14 #15 | topics 0–5, weakest first, notes, bookmark count; 9618 Hub JSON import |
 | `homework/<id>` | homework.js | #16 #17 #19 | homework / assignments / projects, quick add, filters, overdue, attachments |
 | `library`, `library/<id>/<page>` | library.js | #20–#23 | uploads + linked folders, PDF reader (last page, dark mode), bookmarks |
@@ -38,7 +61,7 @@ Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.
 | `challenges/<id>` | challenges.js | #42 | 12 offline CTF challenges, SHA-256 flag check |
 | `writeups/<id>` | writeups.js | #43 | markdown notes linked to challenges / rooms |
 | `review/<date>` | review.js | #45 | minutes per area vs last week, finished, overdue, notes |
-| `settings` | settings.js | #5 #21 | preferences, linked folders, export / restore / backups |
+| `settings/<tab>` | settings.js | #5 #21 v2 | tabs: general, planner (times, routines, backpack), connections (Todoist, Gemini), appearance, data |
 | `components` (hidden) | components.js | — | live demo of shared components |
 
 ## 3. Architecture
@@ -58,6 +81,16 @@ backend/reminders.py         deadline reminders + notify-send
 backend/windows.py           open-window tracking
 backend/samples.py           remove items with "sample": true
 backend/research_import.py   import universities from docs/research/universities.md (#31)
+backend/planner.py           v2: builds the day plan (blocks), must-do, backpack
+backend/day_api.py           v2: /api/plan, backpack, now, theme, secrets, todoist, ai, focus routes
+backend/focus.py             v2: Hyprland focus engine (hyprctl), sessions, nag
+backend/notifier.py          v2: plan notifications (lesson in 5 min, block starts, wind down)
+backend/todoist.py           v2: Todoist API v1 sync / close / add (stdlib urllib)
+backend/gemini.py            v2: Gemini generateContent (steps for a task, coach)
+backend/net.py               v2: small JSON-over-HTTPS helper
+backend/secrets_store.py     v2: data/secrets.json (600), never exported
+backend/theme.py             v2: reads Caelestia scheme.json
+frontend/js/core/theme.js    v2: applies shell colours, dark/light
 frontend/index.html          shell
 frontend/css/base.css        theme tokens + layout
 frontend/css/components.css  buttons, cards, forms, tables, modal, toasts, tabs, badges, levels, charts, palette, prose
@@ -97,11 +130,26 @@ All write requests must send header `X-Requested-By: study-workspace`
 | `GET /api/example/<module>` | built-in content from `data.example/` (used to add new practice challenges) |
 | `POST /api/samples` | remove sample items |
 | `POST /api/shutdown` | stop the server |
+| `GET /api/plan?date=` | `{date, blocks[], now, next, must_do[], backpack, upcoming[], config}` (built on first read) |
+| `POST /api/plan/rebuild {date}` | plan again (keeps past and done blocks) |
+| `POST /api/plan/block {date, id, state: done\|skipped\|open}` | block state |
+| `POST /api/plan/finish {source, id}` | finish the task behind a block (homework, deadline, cyber, habit, todoist) |
+| `PUT /api/plan/settings {config, backpack}` | validated planner settings |
+| `GET/POST /api/backpack {date, text, packed}` | backpack list / tick |
+| `GET /api/now` | one line of text for bars (`study-workspace --now`) |
+| `GET /api/theme` | Caelestia colours or `{available: false}` |
+| `GET/PUT /api/secrets` | GET → `{todoist: bool, gemini: bool}` only; PUT `{todoist_token\|gemini_key: "..."}` ("" removes) |
+| `POST /api/todoist/sync\|close\|add` | sync now / close a task / add a task |
+| `GET /api/ai/models`, `POST /api/ai/breakdown\|coach` | Gemini |
+| `GET /api/focus`, `POST /api/focus/start {minutes, title}\|stop`, `PUT /api/focus/config {config}` | focus mode |
+
+The server writes `planner`, `focus` and `todoist` itself, so the frontend changes them only through
+the routes above (never `PUT /api/data/...`), to avoid 409 conflicts.
 
 Modules allowed (`backend/storage.py` MODULES): settings, subjects, homework,
 library, bookmarks, pastpapers, timelog, timetable, habits, sat, portfolio,
 universities, scholarships, documents, deadlines, essays, activities, cyber,
-thm, challenges, writeups, review, reminders. Add a new one there (and a
+thm, challenges, writeups, review, reminders, planner, focus, todoist. Add a new one there (and a
 file in `data.example/`) if you need it.
 
 ### Data shapes (keep to these so reminders, search and Today work)
@@ -128,6 +176,12 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
 - homework items get `done_at` (date) when ticked; library items get `lastPage`, `opened`, `missing` (linked file gone); challenges get `solved`, `attempts`
 - essays: `items[{id, university, prompt, limit, text, versions[{at, text}]}]`
 - cyber: `{topics[{id, name, level, notes}], plan{selectionDate, minutesPerDay, weeks[{start, focus[], tasks[{id, text, done}]}]}}`, thm `items[{id, name, url, topic, status, finished, notes}]`, challenges `items[{id, title, topic, difficulty, story, files, hint, solution, flag_sha256}]`, writeups `items[{id, title, linkType, linkId, body, files}]`
+
+- planner: `{config{wake, sleep, focus, short_break, long_break, long_every, min_block, wind_down, max_per_task, school_gap, after_school, study_before_school, routines[{id, title, start, end, days[0-6]}]}, backpack{always[], lessons{"<lesson title>": [items]}}, days{"YYYY-MM-DD": {blocks[{id, kind: lesson|break|routine|event|focus|free|sleep, start, end, title, sub, why, ref{source, id}, state}], packed{"item": true}}}}` (last 60 days kept)
+- focus: `{config{enabled, mode: warn|strict|hard, tone: calm|strict|angry, auto_plan, nag, grace, rules[{type: app|title, pattern, label}]}, active: null|{id, start, until, title, block_id, auto, distractions, closed}, sessions[]}`
+- todoist: `{tasks[{id, content, description, project, priority 1-4 (4 = p1), due, time, recurring, minutes, labels[], url}], projects[], synced_at, error}`
+- homework items may have `minutes` (time needed; the planner uses it)
+- settings (v2): `matchShell`, `followShellMode`, `planNotify`, `keepRunning`, `geminiModel`
 
 ## 5. How to add or change a page
 
@@ -160,9 +214,13 @@ Shared components (ready; live demo at `#/components`):
 
 ### Design conventions
 
-- Colours only via CSS variables in `base.css` (`--bg --panel --panel-2
-  --border --text --muted --faint --accent --ok --warn --danger` and `-soft`
-  variants). Never hard-code colours, so both themes work.
+- Colours only via CSS variables in `base.css`. Material 3 roles `--c-<role>`
+  (Caelestia names: primary, primaryContainer, surfaceContainer, ...) are
+  overridden live by `core/theme.js`; app tokens (`--bg --panel --panel-2
+  --panel-3 --border --text --muted --faint --accent --tonal --ok --warn
+  --danger` and `-soft`) are derived from them. Never hard-code colours.
+- Font: Rubik (vendored). Pill buttons, filled inputs (radius 12), custom
+  checkbox / radio / switch (`input.switch`) / select. Run the smoke audit.
 - Layout: `.card`, `.grid.cols-2/3/4`, `.row`, `.toolbar`, `.page-head`,
   `.stat`; lists: `table.list` (turns into cards under 700px; set
   `data-label` on each `td`), `.items > .item`; overdue rows get `.overdue`
@@ -195,6 +253,12 @@ Shared components (ready; live demo at `#/components`):
   The Uzbek selection site points to Sydney. Open question for the user, see
   `docs/research/ico.md`. Cyber topics follow the ICO syllabus.
 - Practice challenges store only the SHA-256 of the flag.
+- v2: Todoist API v1 (`api.todoist.com/api/v1`, the REST v2 API is retired) and Gemini
+  `generativelanguage.googleapis.com/v1beta` (default model `gemini-2.5-flash`), stdlib urllib only.
+- v2: focus mode is opt-in and never kills processes; title rules only warn. Protected windows:
+  this app, the Caelestia shell, terminals.
+- v2: the planner never plans study before school unless `study_before_school` is on, adds rest
+  after school, keeps a break between focus blocks, and stops `wind_down` minutes before sleep.
 - Milestone PRs #55–#58 were each branched from the previous one but target
   `main`, so they can be merged in order (#55, #56, #57, #58, then M6).
 
@@ -208,6 +272,9 @@ NODE_PATH=$(npm root -g) node scripts/e2e.js     # main flows, headless
 ```
 
 ## 8. Known issues / open questions
+
+- v2 on the real machine: check focus mode, plan notifications, Caelestia colours and the
+  background service with `docs/ARCH_TEST.md` §v2.
 
 - The GUI window, Hyprland app id and notifications can't be tested from the cloud: the user runs `docs/ARCH_TEST.md`.
 - ICO vs ICOA (which olympiad the Uzbek 2027 selection is for) is unknown: ask the user.

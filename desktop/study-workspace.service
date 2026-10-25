@@ -1,0 +1,16 @@
+# Study Workspace background service (systemd user unit, installed by install.sh).
+# Keeps the day planner, reminders and focus mode running with the window closed.
+#   systemctl --user status study-workspace
+#   systemctl --user disable --now study-workspace   (turn it off)
+[Unit]
+Description=Study Workspace (planner, reminders, focus mode)
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=@EXEC@ --serve
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

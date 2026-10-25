@@ -56,9 +56,21 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        if self.body_left():
+            # The request body was not read (e.g. POST /api/focus/stop with "{}").
+            # Close the connection so the leftover bytes are not read as the next request.
+            self.close_connection = True
+            self.send_header("Connection", "close")
         self.end_headers()
         if self.command != "HEAD":
             self.wfile.write(body)
+
+    def body_left(self):
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            return True
+        return n > 0 and not getattr(self, "_body_read", False)
 
     def read_body(self, limit=MAX_JSON_BYTES):
         length = self.headers.get("Content-Length")
@@ -70,6 +82,7 @@ class Handler(BaseHTTPRequestHandler):
             raise ApiError(400, "bad Content-Length")
         if n < 0 or n > limit:
             raise ApiError(413, "request too large")
+        self._body_read = True
         return self.rfile.read(n)
 
     def read_json(self):
@@ -80,6 +93,12 @@ class Handler(BaseHTTPRequestHandler):
             return json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, ValueError):
             raise ApiError(400, "invalid JSON")
+
+    def read_object(self):
+        body = self.read_json()
+        if not isinstance(body, dict):
+            raise ApiError(400, "expected a JSON object")
+        return body
 
     def query(self):
         return urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
@@ -120,6 +139,7 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def dispatch(self, method):
+        self._body_read = False
         try:
             if not self.host_ok():
                 raise ApiError(403, "bad host")
@@ -233,6 +253,16 @@ class Handler(BaseHTTPRequestHandler):
                                    "data": str(ctx.paths.data), "portable": ctx.paths.portable,
                                    "notify": reminders.notifier_available()})
 
+        if head in ("plan", "backpack", "now", "theme", "secrets", "todoist", "ai", "focus"):
+            from . import day_api
+            try:
+                out = day_api.handle(ctx, method, head, parts, self.query(), self.read_object)
+            except day_api.Problem as p:
+                raise ApiError(p.status, p.message)
+            if out is not day_api.NOT_HANDLED:
+                return self.send_json(out)
+            raise ApiError(404, "not found")
+
         if head == "data" and len(parts) == 2:
             module = parts[1]
             try:
@@ -287,6 +317,7 @@ class Handler(BaseHTTPRequestHandler):
                             raise ApiError(400, "upload ended early")
                         f.write(chunk)
                         left -= len(chunk)
+                self._body_read = True
                 try:
                     result = exporter.restore(ctx.paths, ctx.storage, tmp)
                 except exporter.BadArchive as e:
@@ -371,6 +402,7 @@ class Handler(BaseHTTPRequestHandler):
             if length > fs.max_upload:
                 raise ApiError(413, "file too large")
             try:
+                self._body_read = True
                 meta = fs.save(self.rfile, length, name)
             except BadName as e:
                 raise ApiError(400, "bad file name: " + str(e))

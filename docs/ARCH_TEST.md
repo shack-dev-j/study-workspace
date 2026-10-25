@@ -52,7 +52,8 @@ python -m unittest discover tests        # expect: OK
 - [ ] Run `study-workspace` twice: two windows open.
 - [ ] `study-workspace --status` shows one server.
 - [ ] Close one window: the other still works (click around, change theme).
-- [ ] Close the last one: within ~10 s `study-workspace --status` says "Not running".
+- [ ] Close the last one: the server keeps running in the background (v2), `study-workspace --status` still shows it.
+      With Settings → General → "Keep running" off, it stops within ~10 s instead.
 
 ## 5. Fallback windows
 
@@ -111,6 +112,25 @@ Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js
 - [ ] **Challenges**: download a file, solve it, the flag is accepted.
 - [ ] Phone-size window (or `Super`+drag the window narrow): the menu collapses and pages stay readable.
 - [ ] Light mode looks right on every page you use.
+
+## 11. Version 2 (planner, focus, Caelestia, background)
+
+- [ ] Install with the one file: `bash study-workspace-install.sh`. It ends with "Done" and says
+      "background service". `systemctl --user status study-workspace` shows **active (running)**.
+- [ ] Log out and in (or reboot): the service is running again without opening the app.
+- [ ] **Colours**: with Caelestia, the app uses your shell colours. Change the wallpaper / scheme
+      (`caelestia scheme set ...`): within 30 s (or when you focus the window) the app follows.
+- [ ] **My day**: the timeline matches your timetable and routines; the now card counts down.
+- [ ] **Notifications**: 5 minutes before a lesson and when a block starts you get a notification.
+- [ ] **Focus**: turn focus mode on, choose Strict, start a 5-minute session, open Steam or Discord
+      (or a window from your block list). You get a warning, then after ~20 s the window closes.
+      The terminal, Caelestia shell and Study Workspace are never closed.
+- [ ] Open YouTube in the browser during focus: a warning only (title rules never close).
+- [ ] Press **Stop session**: no more warnings; it does not start again in the same block.
+- [ ] **Todoist**: paste your token in Settings → Connections, Sync now: your tasks show in My day.
+      Tick one in the app: it is closed in Todoist.
+- [ ] **Gemini**: paste your key, Check key, then on a study block: ⋯ → Split into steps.
+- [ ] `study-workspace --now` prints the current block.
 
 ## Notes
 

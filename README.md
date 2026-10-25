@@ -5,13 +5,15 @@ homework, textbooks with a built-in PDF reader, SAT prep, university
 applications, and cybersecurity olympiad (ICO) training. Everything in one
 fast, calm, offline app.
 
-> Status: version 1.0, every feature is built. Developer notes: `HANDOFF.md`.
+> Status: version 2.0: day planner, focus mode, Todoist and Gemini. Developer notes: `HANDOFF.md`.
 
 ## What is inside
 
 | Area | Pages |
 | --- | --- |
-| **Today** | One screen for the day: homework due soon, SAT and cyber task, habits, lessons, deadlines, the book you were reading, reminders |
+| **My day** | Your day in time blocks: what to do now, when to take a break, what is next, a must-do list, what to pack in your backpack for tomorrow's lessons. Plans itself from homework, deadlines, Todoist, SAT and cyber plans, your timetable and routines |
+| **Focus** | Focus mode for Hyprland: warns about, then closes distracting apps (your list) during study blocks, and nags when work is overdue. Off until you turn it on |
+| **Overview** | One screen for the day: homework due soon, SAT and cyber task, habits, lessons, deadlines, the book you were reading, reminders |
 | **Study** | Subjects (syllabus topics rated 0–5, 9618 Hub import) · Homework and projects with files · Library with a built-in PDF reader and bookmarks · Past papers · Time log with timers · Timetable · Habits · SAT (scores chart, skills, weekly plan) |
 | **Applications** | Universities (imported from your research report, "verify" marks) · Scholarships · Deadlines timeline · Documents checklists · Activities list · Essays with versions · Plan A / Plan B |
 | **Cyber / ICO** | Topics and a weekly plan to the selection date · TryHackMe tracker · 12 offline practice challenges · Writeups |
@@ -19,12 +21,37 @@ fast, calm, offline app.
 
 Press **Ctrl+K** anywhere to search everything.
 
+## Install (one file)
+
+```bash
+bash study-workspace-install.sh
+```
+
+That checks what is missing (and prints the exact `pacman` commands), installs the app for your
+user (no sudo), adds it to your app launcher, and starts it in the background after login.
+Running it again updates the app and never touches your data. Options: `--check`, `--no-service`.
+Build the file yourself with `scripts/make_installer.sh` (or use `./install.sh` from the repo).
+
+## Connect Todoist and Gemini (optional)
+
+Open **Settings → Connections**:
+
+- **Todoist**: in Todoist open Settings → Integrations → Developer, copy the API token, paste it, Save.
+  Tasks sync every 15 minutes and go into your day plan; finishing them in the app closes them in Todoist.
+- **Gemini**: get a free key at https://aistudio.google.com/apikey, paste it, Save, then **Check key**.
+  It adds "Split into steps" to study blocks and a "Coach" button on My day.
+
+Keys are saved only in `data/secrets.json` on your computer (only you can read it). They are never in
+backups, exports or git. Without keys everything else still works offline.
+
 ## First steps
 
-1. Open **Settings**: check the SAT date and target, set the ICO selection date if you know it, and link your folder of textbooks.
-2. **Settings → Remove sample items** deletes the few fake examples (your syllabus topics, SAT skills, scholarships and challenges stay).
-3. **Universities → Import from research report** adds the universities from `docs/research/universities.md`.
-4. **Subjects**: rate each topic 0–5. **Cyber**: rate topics, then press Generate plan.
+1. **Settings → Day planner**: set wake-up and sleep times, routines, and what goes in your backpack for each lesson. Fill in **Timetable** so lessons appear in your day.
+2. **Focus**: turn focus mode on and edit the block list (Hyprland only).
+3. Open **Settings**: check the SAT date and target, set the ICO selection date if you know it, and link your folder of textbooks.
+4. **Settings → Remove sample items** deletes the few fake examples (your syllabus topics, SAT skills, scholarships and challenges stay).
+5. **Universities → Import from research report** adds the universities from `docs/research/universities.md`.
+6. **Subjects**: rate each topic 0–5. **Cyber**: rate topics, then press Generate plan.
 
 ## Main ideas
 
@@ -68,9 +95,12 @@ Then open **Study Workspace** from your app launcher, or run `study-workspace`.
 
 - App: `~/.local/share/study-workspace/app`
 - Your data: `~/.local/share/study-workspace/data` (backups next to it)
-- Launcher: `~/.local/bin/study-workspace` (`--status`, `--stop`, `--browser`, `--no-window`)
+- Launcher: `~/.local/bin/study-workspace` (`--status`, `--stop`, `--browser`, `--no-window`, `--now`)
 - Window: pywebview if installed, otherwise Chromium/Brave in app mode, otherwise your browser.
-  Closing the last window stops the server.
+- Background: a systemd user service (`systemctl --user status study-workspace`) keeps reminders,
+  plan notifications and focus mode running when the window is closed. Turn it off with
+  `systemctl --user disable --now study-workspace`, or Settings → General → keep running.
+- `study-workspace --now` prints what to do now (handy for a bar widget).
 - Uninstall: `./uninstall.sh` (keeps your data unless you type DELETE).
 - Package instead: `cd packaging/arch && makepkg -si`.
 - Manual test list: `docs/ARCH_TEST.md`.

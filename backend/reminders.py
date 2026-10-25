@@ -110,12 +110,19 @@ def notifier_available():
     return shutil.which("notify-send") is not None
 
 
-def send_desktop(title, body, icon=None):
-    """Send one desktop notification. Returns True if notify-send ran."""
+def send_desktop(title, body, icon=None, urgency=None, timeout_ms=None):
+    """Send one desktop notification. Returns True if notify-send ran.
+
+    urgency: None, "low", "normal" or "critical" (critical stays on screen).
+    """
     exe = shutil.which("notify-send")
     if not exe:
         return False
     cmd = [exe, "-a", "Study Workspace"]
+    if urgency in ("low", "normal", "critical"):
+        cmd += ["-u", urgency]
+    if timeout_ms:
+        cmd += ["-t", str(int(timeout_ms))]
     if icon:
         cmd += ["-i", str(icon)]
     cmd += [title, body]

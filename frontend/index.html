@@ -23,12 +23,13 @@
   <div class="app">
     <aside class="sidebar" id="sidebar" aria-label="Main menu">
       <div class="brand">
-        <img src="/icon.svg" alt="" width="28" height="28">
-        <span>Study Workspace</span>
+        <img src="/icon.svg" alt="" width="34" height="34">
+        <span>Study Workspace<small id="brandSub">Plan · focus · study</small></span>
       </div>
       <nav id="nav"></nav>
       <div class="sidebar-foot">
-        <button class="btn ghost small" id="themeBtn" type="button" title="Switch dark / light"></button>
+        <button class="icon-btn tonal" id="themeBtn" type="button" title="Switch dark / light" aria-label="Switch dark / light"></button>
+        <a class="icon-btn" href="#/settings" title="Settings" aria-label="Settings"><span data-icon="settings"></span></a>
       </div>
     </aside>
     <div class="scrim" id="scrim"></div>
@@ -37,9 +38,10 @@
         <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false"></button>
         <h1 class="page-title" id="pageTitle">Today</h1>
         <div class="top-actions">
+          <a class="focus-chip" id="focusChip" href="#/focus" hidden></a>
           <a class="timer-chip" id="timerChip" href="#/time" hidden></a>
           <button class="search-btn" id="searchBtn" type="button" title="Search (Ctrl+K)">
-            <span class="ico" data-icon="search"></span><span class="label">Search</span><kbd>Ctrl K</kbd>
+            <span class="ico" data-icon="search"></span><span class="label">Search everything</span><kbd>Ctrl K</kbd>
           </button>
         </div>
       </header>

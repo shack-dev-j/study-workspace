@@ -47,7 +47,7 @@ export default {
           .sort((a, b) => qsNumber(a.qs_rank) - qsNumber(b.qs_rank));
         fit.forEach(u => used.add(u.id));
         return h('div', { class: 'route' }, h('h3', null, r.title), h('p', { class: 'small muted' }, r.text),
-          fit.length ? h('div', { class: 'row' }, fit.map(u => h('span', { class: 'chip' }, link({ ...u, kind: 'university' }), h('span', { class: 'tiny muted' }, ' QS ' + u.qs_rank)))) : h('p', { class: 'tiny faint' }, 'No university in your list fits yet.'));
+          fit.length ? h('div', { class: 'row' }, fit.map(u => h('span', { class: 'tag-chip' }, link({ ...u, kind: 'university' }), h('span', { class: 'tiny muted' }, ' QS ' + u.qs_rank)))) : h('p', { class: 'tiny faint' }, 'No university in your list fits yet.'));
       }),
       (() => { const unknown = eyufUnis.filter(u => qsNumber(u.qs_rank) == null); return unknown.length ? h('p', { class: 'tiny muted' }, 'QS rank unknown (check it): ', unknown.map(u => u.name).join(', ')) : null; })());
 

@@ -185,7 +185,7 @@ def open_webview(url, wid):
     post(url, "/api/window/open", {"id": wid})
     threading.Thread(target=pinger, daemon=True).start()
     webview.create_window(APP_NAME, f"{url}?wid={wid}", width=1280, height=840, min_size=(380, 500),
-                          background_color="#0f1216", text_select=True)
+                          background_color="#131317", text_select=True)
     try:
         webview.start(private_mode=False)
     finally:
@@ -217,11 +217,40 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="study-workspace", description=f"Open {APP_NAME} in its own window.")
     ap.add_argument("--browser", action="store_true", help="skip pywebview, use a browser in app mode")
     ap.add_argument("--no-window", action="store_true", help="only start the server (it keeps running until --stop)")
+    ap.add_argument("--serve", action="store_true",
+                    help="run the server in the foreground for the background service (systemd); does nothing if one is running")
+    ap.add_argument("--now", action="store_true", help="print what to do now (for bars and scripts)")
     ap.add_argument("--stop", action="store_true", help="stop the running server")
     ap.add_argument("--status", action="store_true", help="show whether the server is running")
     ap.add_argument("--port", type=int, default=8765)
     args = ap.parse_args(argv)
     paths = Paths()
+    if args.serve:
+        from .app import App
+        with start_lock(paths):  # same lock as the window launcher: never two servers
+            if running_url(paths):
+                print("Already running.")
+                return 0
+            app = App(paths, port=args.port)
+            app.write_state()
+        print(f"{APP_NAME} running at {app.url} (data: {paths.data})", flush=True)
+        try:
+            app.serve()
+        except KeyboardInterrupt:
+            pass
+        return 0
+    if args.now:
+        url = running_url(paths)
+        if not url:
+            print("Study Workspace is not running.")
+            return 1
+        try:
+            with urllib.request.urlopen(url + "api/now", timeout=3) as r:
+                print(json.loads(r.read()).get("text", ""))
+            return 0
+        except (OSError, ValueError):
+            print("Could not reach Study Workspace.")
+            return 1
     if args.stop:
         print("Stopped." if stop_server(paths) else "Not running.")
         return 0
