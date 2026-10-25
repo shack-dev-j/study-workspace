@@ -15,6 +15,16 @@ class ServerTests(unittest.TestCase):
             self.assertIn(b"<html", html.lower())
             self.assertTrue(h["Content-Type"].startswith("text/html"))
 
+    def test_example_data_route(self):
+        with TempApp() as t:
+            s, d = t.req("GET", "/api/example/challenges")
+            self.assertEqual(s, 200)
+            self.assertGreaterEqual(len(d["items"]), 10)
+            for c in d["items"]:
+                self.assertRegex(c["flag_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(t.req("GET", "/api/example/../settings")[0], 404)
+            self.assertEqual(t.req("GET", "/api/example/nope")[0], 404)
+
     def test_static_path_escape_blocked(self):
         with TempApp() as t:
             for p in ("/../server.py", "/%2e%2e/server.py", "/vendor/../../server.py", "/research/../../CLAUDE.md"):

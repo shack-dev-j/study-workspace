@@ -45,7 +45,19 @@
   },
   {
    "id": "t7",
-   "name": "Social engineering",
+   "name": "Binary exploitation",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t8",
+   "name": "Programming / misc",
+   "level": 0,
+   "notes": ""
+  },
+  {
+   "id": "t9",
+   "name": "AI security",
    "level": 0,
    "notes": ""
   }

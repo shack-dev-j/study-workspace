@@ -8,14 +8,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in a pull request. "Done" means merged into main.
 
-## Backlog (11)
+## Backlog (5)
 
-- [#38](https://github.com/shack-dev-j/study-workspace/issues/38) Research the ICO (docs/research/ico.md) (M4)
-- [#39](https://github.com/shack-dev-j/study-workspace/issues/39) Cyber topic map (M4)
-- [#40](https://github.com/shack-dev-j/study-workspace/issues/40) Cyber study plan to the selection date (M4)
-- [#41](https://github.com/shack-dev-j/study-workspace/issues/41) TryHackMe tracker (M4)
-- [#42](https://github.com/shack-dev-j/study-workspace/issues/42) Practice CTF challenges (M4)
-- [#43](https://github.com/shack-dev-j/study-workspace/issues/43) Writeups notebook (M4)
 - [#44](https://github.com/shack-dev-j/study-workspace/issues/44) Today screen (M5)
 - [#45](https://github.com/shack-dev-j/study-workspace/issues/45) Weekly review with charts (M5)
 - [#47](https://github.com/shack-dev-j/study-workspace/issues/47) Responsive and accessibility pass (M6)
@@ -25,7 +19,7 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 ## In Progress (0)
 
 
-## Review (23)
+## Review (29)
 
 - [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
 - [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
@@ -50,6 +44,12 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#35](https://github.com/shack-dev-j/study-workspace/issues/35) Activities and awards (application form) (M3)
 - [#36](https://github.com/shack-dev-j/study-workspace/issues/36) Essays with versions (M3)
 - [#37](https://github.com/shack-dev-j/study-workspace/issues/37) Plan A / Plan B view (M3)
+- [#38](https://github.com/shack-dev-j/study-workspace/issues/38) Research the ICO (docs/research/ico.md) (M4)
+- [#39](https://github.com/shack-dev-j/study-workspace/issues/39) Cyber topic map (M4)
+- [#40](https://github.com/shack-dev-j/study-workspace/issues/40) Cyber study plan to the selection date (M4)
+- [#41](https://github.com/shack-dev-j/study-workspace/issues/41) TryHackMe tracker (M4)
+- [#42](https://github.com/shack-dev-j/study-workspace/issues/42) Practice CTF challenges (M4)
+- [#43](https://github.com/shack-dev-j/study-workspace/issues/43) Writeups notebook (M4)
 
 ## Done (15)
 

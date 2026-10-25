@@ -338,6 +338,18 @@ class Handler(BaseHTTPRequestHandler):
             result = research_import.import_into(ctx.storage, ctx.paths, dry_run=bool(body.get("dryRun")))
             return self.send_json(result)
 
+        if head == "example" and len(parts) == 2 and method == "GET":
+            # Built-in content shipped with the app (e.g. practice challenges),
+            # so existing users can add new items without losing their data.
+            try:
+                ctx.storage.check(parts[1])
+            except UnknownModule:
+                raise ApiError(404, "unknown module")
+            p = ctx.paths.example / f"{parts[1]}.json"
+            if not p.is_file():
+                raise ApiError(404, "no example data")
+            return self.send_json(json.loads(p.read_text(encoding="utf-8")))
+
         if head == "samples" and method == "POST":
             from .samples import remove_samples
             return self.send_json({"removed": remove_samples(ctx.storage)})

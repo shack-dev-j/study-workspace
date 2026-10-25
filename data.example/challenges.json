@@ -1,4 +1,187 @@
 {
  "schema_version": 1,
- "items": []
+ "items": [
+  {
+   "id": "c01",
+   "title": "Not a secret",
+   "topic": "Cryptography",
+   "difficulty": "easy",
+   "story": "A classmate says this note is 'encrypted'. Is it?",
+   "files": [
+    {
+     "name": "note.txt",
+     "content": "SUNPe2Jhc2U2NF9pc19ub3RfZW5jcnlwdGlvbn0=\n"
+    }
+   ],
+   "hint": "The text uses only A–Z, a–z, 0–9, + and /, and ends with =. Which encoding looks like that?",
+   "solution": "It is Base64. Decode it: `base64 -d note.txt` (Linux) or CyberChef → From Base64. Base64 is an encoding, not encryption: anyone can reverse it.",
+   "flag_sha256": "1898a16b3e486e27710785685d9e90f1995271b9c11ffd704f1c40e7c0e2ac27"
+  },
+  {
+   "id": "c02",
+   "title": "Roman salad",
+   "topic": "Cryptography",
+   "difficulty": "easy",
+   "story": "An old message from Rome. The letters moved, but not very far.",
+   "files": [
+    {
+     "name": "message.txt",
+     "content": "PJV{jhlzhy_zhshk_zopma_zlclu}\n"
+    }
+   ],
+   "hint": "Each letter is shifted by the same number. There are only 25 shifts to try.",
+   "solution": "Caesar cipher with shift 7. Shift every letter back by 7 (or try all 25 shifts in CyberChef → ROT13 with a custom amount). Braces and underscores do not change.",
+   "flag_sha256": "471210bf760ba4c0becd3f4484d34f76208b2b9af0e3b20057a222acb279cf0a"
+  },
+  {
+   "id": "c03",
+   "title": "Mirror hex",
+   "topic": "Programming / misc",
+   "difficulty": "easy",
+   "story": "These numbers look like hex. But something is also upside down.",
+   "files": [
+    {
+     "name": "data.txt",
+     "content": "7d73647261776b6361625f74695f646165727b4f4349\n"
+    }
+   ],
+   "hint": "First turn the hex into text. Then look at the order of the characters.",
+   "solution": "Hex-decode (`xxd -r -p data.txt`) to get the flag written backwards, then reverse it (`rev`).",
+   "flag_sha256": "b157e2e5903615b51b8a7665263703d7b78609df2ec9da4858baddc74d48d8c8"
+  },
+  {
+   "id": "c04",
+   "title": "Who can run it?",
+   "topic": "Linux",
+   "difficulty": "easy",
+   "story": "Your server shows this file:\n\n    -rwxr-x--x 1 root staff 8432 Oct 25 10:00 backup.sh\n\nThe flag is the permissions in octal, like ICO{644}.",
+   "files": [],
+   "hint": "Split into three groups: owner, group, others. r = 4, w = 2, x = 1.",
+   "solution": "Owner rwx = 4+2+1 = 7, group r-x = 4+1 = 5, others --x = 1. So the flag is ICO{751}.",
+   "flag_sha256": "009368562a41c847560a4026bccf687bfc4d752783a3e7bdccd91e23bd8908cf"
+  },
+  {
+   "id": "c05",
+   "title": "Shout to everyone",
+   "topic": "Networking",
+   "difficulty": "medium",
+   "story": "A host has the address 192.168.37.70/27. What is the broadcast address of its subnet? Flag format: ICO{a.b.c.d}",
+   "files": [],
+   "hint": "/27 means 32 − 27 = 5 host bits, so each subnet has 32 addresses.",
+   "solution": "Subnets of size 32 in the last byte start at 0, 32, 64, 96… 70 is in 64–95. The broadcast address is the last one: 192.168.37.95. Flag ICO{192.168.37.95}.",
+   "flag_sha256": "bdc8a3d049eba36f8b37fc9216e26188fed2767ad67f464ab1c00b3aad2f007a"
+  },
+  {
+   "id": "c06",
+   "title": "Nothing to see here",
+   "topic": "Web security",
+   "difficulty": "easy",
+   "story": "The school club's new web page looks empty. The developer says it is finished.",
+   "files": [
+    {
+     "name": "index.html",
+     "content": "<!doctype html>\n<html>\n<head><title>Cyber Club</title></head>\n<body>\n  <h1>Welcome to the Cyber Club</h1>\n  <p>Page coming soon.</p>\n  <!-- TODO remove before going live: ICO{view_source_is_a_superpower} -->\n</body>\n</html>\n"
+    }
+   ],
+   "hint": "What the browser shows is not everything that is in the file.",
+   "solution": "Open the file in a text editor or use View Source (Ctrl+U). The flag is in an HTML comment.",
+   "flag_sha256": "142235e7ffb7c1fbe203f18723e081260df1f5829eb61a67742325719e088ae9"
+  },
+  {
+   "id": "c07",
+   "title": "Magic numbers",
+   "topic": "Forensics",
+   "difficulty": "medium",
+   "story": "Someone renamed a picture to report.docx to hide it. Here are its first bytes. What kind of file is it really? Flag format: ICO{extension}, lower case.",
+   "files": [
+    {
+     "name": "report.docx.hex",
+     "content": "00000000: 8950 4e47 0d0a 1a0a 0000 000d 4948 4452  .PNG........IHDR\n00000010: 0000 0320 0000 0258 0806 0000 00a1 2a4e  ... ...X......*N\n"
+    }
+   ],
+   "hint": "Files start with 'magic bytes' that tell their real type. The `file` command uses them.",
+   "solution": "89 50 4E 47 0D 0A 1A 0A is the PNG signature (you can even read 'PNG'). A real .docx would start with 50 4B (PK, a zip). Flag ICO{png}.",
+   "flag_sha256": "04fa9be452784f62271927b37544f11ea3f54b2fe2c20b96a6b5ff9f7bf32121"
+  },
+  {
+   "id": "c08",
+   "title": "Night shift",
+   "topic": "Forensics",
+   "difficulty": "medium",
+   "story": "The web server log from last night. One address guessed passwords until it got in. Flag format: ICO{ip address}",
+   "files": [
+    {
+     "name": "auth.log",
+     "content": "Oct 24 21:14:02 web sshd[1201]: Failed password for root from 198.51.100.7 port 51122 ssh2\nOct 24 21:14:09 web sshd[1203]: Accepted publickey for shohjahon from 10.0.0.5 port 40210 ssh2\nOct 24 23:02:11 web sshd[1290]: Failed password for invalid user admin from 203.0.113.45 port 60001 ssh2\nOct 24 23:02:13 web sshd[1290]: Failed password for invalid user admin from 203.0.113.45 port 60002 ssh2\nOct 24 23:02:15 web sshd[1291]: Failed password for invalid user test from 203.0.113.45 port 60004 ssh2\nOct 24 23:02:18 web sshd[1292]: Failed password for root from 203.0.113.45 port 60007 ssh2\nOct 24 23:02:21 web sshd[1293]: Failed password for root from 203.0.113.45 port 60009 ssh2\nOct 24 23:02:24 web sshd[1294]: Failed password for deploy from 203.0.113.45 port 60011 ssh2\nOct 24 23:02:27 web sshd[1295]: Accepted password for deploy from 203.0.113.45 port 60013 ssh2\nOct 24 23:05:40 web sudo:   deploy : TTY=pts/1 ; PWD=/home/deploy ; USER=root ; COMMAND=/bin/bash\nOct 25 07:30:01 web sshd[1402]: Failed password for root from 198.51.100.7 port 51990 ssh2\n"
+    }
+   ],
+   "hint": "Look for many 'Failed password' lines from one address, followed by 'Accepted'.",
+   "solution": "`grep Accepted auth.log` shows two logins; the one from 203.0.113.45 comes right after 6 failed guesses and then uses sudo to get root. Flag ICO{203.0.113.45}.",
+   "flag_sha256": "f564b722f45b18a65ea7af58bf813ba04070a527efd832b369b73dce4a7d97df"
+  },
+  {
+   "id": "c09",
+   "title": "One key to rule them",
+   "topic": "Cryptography",
+   "difficulty": "medium",
+   "story": "This was XOR-encrypted with a key that is only one byte long.",
+   "files": [
+    {
+     "name": "cipher.hex",
+     "content": "6369655145444f7548535e4f7543597544455e754f44455f4d4257\n"
+    }
+   ],
+   "hint": "A one-byte key has only 256 options. You also know the plaintext starts with 'ICO{'.",
+   "solution": "XOR the first byte (0x63) with 'I' (0x49) to get the key 0x2a. XOR every byte with 0x2a (CyberChef: From Hex → XOR key 2a).",
+   "flag_sha256": "65b4cc3a6c268e63c184d01e074d77f4939a3e9f5d65cecbb850079f2bd34224"
+  },
+  {
+   "id": "c10",
+   "title": "The French square",
+   "topic": "Cryptography",
+   "difficulty": "medium",
+   "story": "Like Caesar, but the shift changes with each letter. The key is LEVEL.",
+   "files": [
+    {
+     "name": "vigenere.txt",
+     "content": "TGJ{ztriiicp_rziod_e_gsyr_ozc}\n"
+    }
+   ],
+   "hint": "Vigenère: letter n is shifted by key letter n (A = 0, B = 1 …). Only letters use up the key.",
+   "solution": "Decrypt with key LEVEL (CyberChef → Vigenère Decode). Braces and underscores are skipped and do not use a key letter.",
+   "flag_sha256": "81a799f65edc06fbed49ceaac7c4dc1b0df2a47e2f85cf96fbc03960d75dcde3"
+  },
+  {
+   "id": "c11",
+   "title": "Check, please",
+   "topic": "Reverse engineering",
+   "difficulty": "hard",
+   "story": "This program says OK only for the right flag. Make it say OK.",
+   "files": [
+    {
+     "name": "checker.py",
+     "content": "# checker.py - prints OK for the right flag\nimport sys\n\nSECRET = [73, 68, 65, 110, 110, 70, 92, 2, 74, 76, 35, 18, 32, 51, 7, 54, 28, 71, 78, 245, 241]\n\ndef check(flag):\n    if len(flag) != len(SECRET):\n        return False\n    for i, ch in enumerate(flag):\n        if ord(ch) ^ (i * 7 % 256) != SECRET[i]:\n            return False\n    return True\n\nprint(\"OK\" if check(sys.argv[1]) else \"NO\")\n"
+    }
+   ],
+   "hint": "Each character is XORed with a number that depends only on its position. XOR can be undone with the same number.",
+   "solution": "For each position i, the character is chr(SECRET[i] ^ (i*7 % 256)). In Python: `''.join(chr(s ^ (i*7 % 256)) for i, s in enumerate(SECRET))`.",
+   "flag_sha256": "591516e4145f2c55183a6e9083aef8229603ef1919008675ce08d0d0088d0fb2"
+  },
+  {
+   "id": "c12",
+   "title": "Cookie jar",
+   "topic": "Web security",
+   "difficulty": "medium",
+   "story": "You logged in to a test site and found this cookie. The developer thinks it is safe because it is 'signed'.",
+   "files": [
+    {
+     "name": "cookie.txt",
+     "content": "session=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ3Vlc3QiLCJyb2xlIjoidXNlciIsIm5vdGUiOiJJQ097and0X3BheWxvYWRzX2FyZV9yZWFkYWJsZX0ifQ.c2lnbmF0dXJlLW5vdC1yZWFs\n"
+    }
+   ],
+   "hint": "The cookie has three parts separated by dots. That is a JWT.",
+   "solution": "A JWT is header.payload.signature, each part Base64URL. Decode the middle part: the flag is in the 'note' field. Signing stops changes, it does not hide data.",
+   "flag_sha256": "fbc955b830f6ed8c7b9e404ebd7551da3e165da4077fd22a759f6394b970e97c"
+  }
+ ]
 }
