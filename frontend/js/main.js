@@ -6,7 +6,7 @@ import { h, clear, uid } from './core/dom.js';
 import { icon, hydrateIcons } from './core/icons.js';
 import { api } from './core/api.js';
 import { flushAll } from './core/store.js';
-import { toast } from './core/ui.js';
+import { openSearch, installSearchShortcut, setSearchPages } from './core/search.js';
 
 // [route, label, icon, issue]  (issue = not built yet)
 const NAV = [
@@ -21,8 +21,10 @@ const NAV = [
     ['challenges', 'Challenges', 'flag', 42], ['writeups', 'Writeups', 'note', 43]]],
   ['Me', [['portfolio', 'Portfolio', 'portfolio', 29], ['review', 'Weekly review', 'review', 45], ['settings', 'Settings', 'settings', null]]],
 ];
-const BUILT = new Set(['settings']);  // add a route here when its module exists
+const BUILT = new Set(['settings', 'components']);  // add a route here when its module exists
 const ROUTES = Object.fromEntries(NAV.flatMap(([, items]) => items.map(i => [i[0], i])));
+// Hidden page (not in the menu): live demo of the shared components, for developers.
+ROUTES.components = ['components', 'UI components', 'settings', null];
 
 const app = document.querySelector('.app');
 const main = document.getElementById('main');
@@ -87,7 +89,9 @@ const menuBtn = document.getElementById('menuBtn');
 menuBtn.append(icon('menu'));
 menuBtn.onclick = () => app.classList.toggle('nav-open');
 document.getElementById('scrim').onclick = () => app.classList.remove('nav-open');
-document.getElementById('searchBtn').onclick = () => toast('Search (Ctrl+K) is planned: issue #46');
+document.getElementById('searchBtn').onclick = openSearch;
+setSearchPages(NAV.flatMap(([, items]) => items.map(([r, label]) => ({ title: label, href: '#/' + r }))));
+installSearchShortcut();
 addEventListener('hashchange', route);
 heartbeat();
 route();
