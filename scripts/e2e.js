@@ -189,6 +189,22 @@ test('cyber plan, challenge flag, writeup', async page => {
   ok(w.linkType === 'challenge' && w.linkId === 'c01' && w.body.includes('base64'), 'writeup saved with link');
 });
 
+test('today screen + weekly review', async page => {
+  await page.goto(base + '/#/today');
+  await page.waitForSelector('.today-card');
+  ok((await page.locator('.today-card').count()) === 7, 'Today shows 7 cards');
+  await page.check('.today-card:has-text("Habits") input[type=checkbox] >> nth=1');
+  await sleep(600);
+  const today = await page.evaluate(() => import('/js/core/dates.js').then(m => m.today()));
+  ok(readData('habits').items[1].days[today], 'habit ticked from Today');
+  await page.goto(base + '/#/review');
+  await page.fill('textarea[aria-label="Notes for this week"]', 'Good week');
+  await sleep(600);
+  const wk = await page.evaluate(() => import('/js/core/dates.js').then(m => m.weekKey()));
+  ok(readData('review').weeks[wk].notes === 'Good week', 'weekly note saved');
+  ok(await page.isVisible('.chart svg'), 'bar chart drawn');
+});
+
 (async () => {
   const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));

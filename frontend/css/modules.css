@@ -144,3 +144,16 @@ table.list tr.is-done-soft td:first-child { box-shadow: inset 3px 0 0 var(--ok);
 .writeup-title { font-size: 1.1rem; font-weight: 600; height: 42px; }
 .writeup-body { min-height: 50vh; font-family: var(--mono); font-size: .9rem; }
 .writeup-preview { min-height: 50vh; padding: 4px 2px; }
+
+/* ---------- today ---------- */
+.today-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: var(--gap); }
+.today-head h2 { margin: 0; font-size: 1.3rem; }
+.today-grid { align-items: start; }
+.today-grid > .card + .card { margin-top: 0; }
+.today-card h2 { display: flex; align-items: center; gap: 6px; font-size: 1rem; }
+.today-card h2 .ico { color: var(--accent); }
+.big-task { font-size: 1.05rem; font-weight: 550; margin: 0 0 8px; }
+.reminders-banner { border-color: var(--warn); background: var(--warn-soft); }
+.reminders-banner ul { margin: 6px 0 0; padding-left: 1.2em; }
+.item.now { background: var(--accent-soft); border-radius: 6px; }
+.continue { display: block; }
