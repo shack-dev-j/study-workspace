@@ -2,7 +2,7 @@
 import { h, fill } from '../core/dom.js';
 import { load, save, list } from '../core/store.js';
 import { daysUntil, relative, fmt, today } from '../core/dates.js';
-import { pageHead, button, badge, tabs } from '../core/ui.js';
+import { pageHead, button, badge, tabs, empty } from '../core/ui.js';
 import { editItem } from '../core/crud.js';
 
 const FIELDS = [
@@ -56,7 +56,7 @@ export default {
               h('div', { class: 'tiny muted' }, d.kind, d.estimate ? ' · estimate' : '', d.done ? ' · done' : '')),
             d.estimate ? badge('estimate', 'warn') : null,
             badge(relative(d.date), d.done ? '' : urgency(d.date)));
-        })))) : h('div', { class: 'empty' }, show === 'upcoming' ? 'No upcoming deadlines. Add dates to universities and scholarships, or add your own.' : 'No deadlines yet.'));
+        })))) : empty(show === 'upcoming' ? 'No upcoming deadlines. Add dates to universities and scholarships, or add your own.' : 'No deadlines yet.', null, 'deadline'));
     }
     el.append(pageHead('Every application deadline in one timeline. Red: 7 days or less, yellow: 14, blue: 30. Desktop reminders are sent automatically.',
       tabs([{ value: 'upcoming', label: 'Upcoming' }, { value: 'all', label: 'All' }], show, v => { show = v; el.querySelectorAll('.page-head .tabs button').forEach(b => b.classList.toggle('on', b.textContent.toLowerCase() === v)); draw(); }),

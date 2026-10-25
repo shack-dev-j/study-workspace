@@ -46,7 +46,7 @@ export default {
       pageHead(`Week of ${fmtShort(ws)} – ${fmtShort(end)} (${key}).`,
         button('Previous week', () => go(-1), { icon: 'left', small: true }),
         ws < weekStart(today()) ? button('Next week', () => go(1), { small: true }) : null),
-      h('div', { class: 'grid cols-4 mb' },
+      h('div', { class: 'stats-row mb' },
         stat('Time this week', minutesText(total), totalLast ? `${diff >= 0 ? '+' : '−'}${minutesText(Math.abs(diff))} vs last week` : ''),
         stat('Finished', String(finished.length), 'homework, rooms, papers'),
         stat('Overdue now', String(overdue.length), overdue.length ? 'see below' : 'all clear'),

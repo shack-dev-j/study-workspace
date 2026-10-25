@@ -4,6 +4,7 @@
 // Starts the server on a temporary copy of data.example and opens each route
 // at several screen sizes, dark and light. It reports:
 // - console errors, sideways scrolling, stray "null"/"undefined" text
+// - a focus frame round the page, or content that leaves an empty band
 // - controls without a name (accessibility)
 // - design problems: any button / input / select / checkbox that still has
 //   the browser's default look, text that is too small, missing icons,
@@ -52,7 +53,7 @@ function audit() {
   for (const e of document.querySelectorAll('button, input, select, textarea')) {
     if (!vis(e) || e.closest('.textLayer')) continue;
     const s = getComputedStyle(e);
-    if (!/Rubik/i.test(s.fontFamily) && !/mono|Caskaydia|Cascadia|JetBrains/i.test(s.fontFamily)) problems.push(`default font on <${e.tagName.toLowerCase()}> "${name(e)}"`);
+    if (!/Inter|Rubik/i.test(s.fontFamily) && !/mono|Caskaydia|Cascadia|JetBrains/i.test(s.fontFamily)) problems.push(`default font on <${e.tagName.toLowerCase()}> "${name(e)}"`);
     if (/outset|inset/.test(s.borderStyle)) problems.push(`browser border on <${e.tagName.toLowerCase()}> "${name(e)}"`);
     const bg = s.backgroundColor.replace(/\s/g, '');
     if (e.tagName === 'BUTTON' && /^rgb\((239|240),(239|240),(239|240)\)$/.test(bg)) problems.push(`browser grey button "${name(e)}"`);
@@ -121,6 +122,16 @@ function audit() {
         const scroll = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
         if (/Could not open this page|planned but not built|Could not load/.test(txt)) errs.push('page: ' + txt.slice(0, 160));
         if (scroll) errs.push('horizontal page scroll');
+        // Layout: no focus frame round the page, and the content fills the window (or is centred).
+        const layout = await page.evaluate(() => {
+          const m = document.getElementById('main'), st = getComputedStyle(m);
+          const frame = st.outlineStyle !== 'none' && parseFloat(st.outlineWidth) > 0;
+          const r = m.getBoundingClientRect(), sb = document.getElementById('sidebar').getBoundingClientRect();
+          const left = innerWidth > 860 ? r.left - sb.right : r.left, right = innerWidth - r.right;
+          return { frame, filled: right < 2 || Math.abs(left - right) < 2 };
+        });
+        if (layout.frame) errs.push('focus frame drawn round the page');
+        if (!layout.filled) errs.push('content does not fill the window');
         const bad = /(^|\W)(null|undefined|NaN|\[object Object\])(\W|$)/.exec(txt);
         if (bad) errs.push('stray text: ' + bad[2]);
         // Accessibility: every control needs a name screen readers can read.

@@ -102,7 +102,7 @@ export default {
       const s = info.stats;
       const sessions = (info.sessions || []).slice().reverse();
       fill(logCard, h('div', { class: 'card-head' }, icon('chart'), h('h2', null, 'Today')),
-        h('div', { class: 'grid cols-4' },
+        h('div', { class: 'stats-row' },
           h('div', { class: 'stat' }, h('div', { class: 'label' }, 'Focused'), h('div', { class: 'value' }, minutesText(s.minutes))),
           h('div', { class: 'stat' }, h('div', { class: 'label' }, 'Sessions'), h('div', { class: 'value' }, s.sessions)),
           h('div', { class: 'stat' }, h('div', { class: 'label' }, 'Distractions'), h('div', { class: 'value' }, s.distractions)),

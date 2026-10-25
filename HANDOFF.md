@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. **v2.0: day planner, focus mode, Todoist, Gemini, Caelestia design.** v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
+Last update: 2026-10-25. **v2.1: premium redesign (design system v2.1, see `docs/research/design.md`).** v2.0: day planner, focus mode, Todoist, Gemini, Caelestia colours. v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
 Rules: `CLAUDE.md`. Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`), status in `docs/BOARD.md`.
 Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.md`.
 
@@ -219,16 +219,22 @@ Shared components (ready; live demo at `#/components`):
   overridden live by `core/theme.js`; app tokens (`--bg --panel --panel-2
   --panel-3 --border --text --muted --faint --accent --tonal --ok --warn
   --danger` and `-soft`) are derived from them. Never hard-code colours.
-- Font: Rubik (vendored). Pill buttons, filled inputs (radius 12), custom
-  checkbox / radio / switch (`input.switch`) / select. Run the smoke audit.
-- Layout: `.card`, `.grid.cols-2/3/4`, `.row`, `.toolbar`, `.page-head`,
-  `.stat`; lists: `table.list` (turns into cards under 700px; set
+- Design system v2.1 (research and rules: `docs/research/design.md`): Inter (vendored, Rubik optional in
+  Settings → Appearance), type scale `--fs-xs..3xl` (body 14 px), 4 px spacing `--sp-*`, radius 8 / 12 / 16
+  (controls / cards / dialogs), flat cards with hairline borders, shadows only on floating things,
+  accent only for the primary action, focus ring, active nav and progress. Run the smoke audit.
+- Layout: `main` fills the window up to 1680 px, then centres. Dashboards use `.bento` (12 columns,
+  children `.s-3/.s-4/.s-6/.s-8`, rows end flush); numbers use `.stats-row > .stat` (4 across).
+  Also `.card`, `.grid.cols-2/3/4` (auto-fit), `.row`, `.toolbar`, `.page-head`;
+  lists: `table.list` (turns into cards under 700px; set
   `data-label` on each `td`), `.items > .item`; overdue rows get `.overdue`
   (red), done rows `.is-done`.
+- Charts (`core/charts.js`) redraw at the real pixel width, so labels keep their size.
 - Buttons: `.btn`, `.btn.primary` (one per view), `.btn.ghost`,
   `.btn.danger`, `.btn.small`, `.icon-btn`. Badges: `.badge.ok/warn/danger/accent/verify`.
 - Confidence/levels 0–5: `levelPicker` (colours `--level-0..5`).
-- Simple English UI text. Short labels. Empty states with `empty()`.
+- Simple English UI text. Short labels. Empty states with `empty(text, action, icon)`: icon tile, one sentence, one action.
+- Buttons: default `.btn` is a neutral bordered button; never put a frame round `#main` (smoke checks it).
 
 ## 6. Decisions made
 

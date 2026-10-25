@@ -72,11 +72,14 @@ export default {
     const focusMini = h('div');
     const coachBox = h('div');
 
+    const statsBox = h('section', { class: 'day-stats', 'aria-label': 'Today in numbers' });
+
     fill(el, h('div', { class: 'day-page' },
-      nowCard, coachBox,
+      h('div', { class: 'day-top' }, nowCard, statsBox), coachBox,
       h('div', { class: 'day-grid' },
         h('section', { class: 'card timeline-card' }, tlHead, timeline, unplanned),
-        h('div', { class: 'day-side' }, mustCard, bagCard, upCard, focusMini))));
+        h('div', { class: 'day-side side-a' }, mustCard, upCard, focusMini),
+        h('div', { class: 'day-side side-b' }, bagCard))));
 
     async function fetchAll(rebuild = false) {
       try {
@@ -255,8 +258,26 @@ export default {
       if (!coachBox.firstChild) coachBox.append(h('div', { class: 'coach-row' }, button('Ask the coach about today', coach, { icon: 'sparkle', small: true, kind: 'ghost' })));
     }
 
+    // Four small numbers next to the now card: the day at a glance.
+    function drawStats() {
+      const focusBlocks = plan.blocks.filter(b => b.kind === 'focus');
+      const planned = focusBlocks.reduce((a, b) => a + length(b), 0);
+      const doneBlocks = focusBlocks.filter(b => b.state === 'done').length;
+      const must = plan.must_do || [];
+      const mustLeft = must.filter(m => !m.done).length;
+      const packed = bag.items.filter(i => i.packed).length;
+      const focused = focusInfo?.stats?.minutes || 0;
+      const stat = (label, value, sub, cls = '') => h('div', { class: 'stat ' + cls }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), h('div', { class: 'sub' }, sub));
+      fill(statsBox,
+        stat('Study planned', planned ? minutesText(planned) : '0 min', `${doneBlocks} of ${focusBlocks.length} blocks done`),
+        stat('Must do', String(mustLeft), mustLeft ? 'left today' : 'all done', mustLeft ? 'is-warn' : 'is-ok'),
+        stat('Backpack', `${packed}/${bag.items.length}`, 'packed'),
+        stat('Focused', minutesText(focused), focusInfo?.config?.enabled ? 'focus mode on' : 'focus mode off'));
+    }
+
     function drawAll() {
       if (!plan) return;
+      drawStats();
       drawNow(); drawTimeline(); drawMust(); drawBag(); drawUpcoming(); drawFocusMini(); drawCoach();
     }
 
