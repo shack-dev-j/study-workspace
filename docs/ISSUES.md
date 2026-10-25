@@ -261,9 +261,9 @@ Done when:
 Milestone: M2 Study trackers + Library & files · Labels: feature · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/18)
 
 Checklist:
-- [ ] Copy a pinned PDF.js release (prebuilt `pdf.mjs` + worker) into `vendor/pdfjs/` with its LICENSE
-- [ ] Note version and source in `vendor/README.md`
-- [ ] Load it only when a PDF is opened
+- [x] Copy a pinned PDF.js release (prebuilt `pdf.mjs` + worker) into `vendor/pdfjs/` with its LICENSE
+- [x] Note version and source in `vendor/README.md`
+- [x] Load it only when a PDF is opened
 
 Done when:
 - PDFs render with no internet connection
@@ -606,9 +606,9 @@ Done when:
 Milestone: M5 Dashboard & weekly review · Labels: feature, ui · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/46)
 
 Checklist:
-- [ ] Search box opened by Ctrl+K: homework, books, bookmarks, notes, universities, writeups...
-- [ ] Results grouped by type; Enter opens the item
-- [ ] Server-side search endpoint or client index, fast on all data
+- [x] Search box opened by Ctrl+K: homework, books, bookmarks, notes, universities, writeups...
+- [x] Results grouped by type; Enter opens the item
+- [x] Server-side search endpoint or client index, fast on all data
 
 Done when:
 - Ctrl+K finds anything I saved within a second

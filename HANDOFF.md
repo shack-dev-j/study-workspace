@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. Branches: `build/v1` (core + design, PR #50) and `build/desktop` (desktop app, stacked on it).
+Last update: 2026-10-25. Branches (stacked, merge in order): `build/v1` (core + design, PR #50) → `build/desktop` (desktop app, PR #51) → `build/shared` (shared components + search).
 Read this file alone and you can continue the project. Rules: `CLAUDE.md`.
 Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`),
 status in `docs/BOARD.md`.
@@ -17,7 +17,7 @@ The work is split between two AI agents:
 
 | Owner | Issues |
 | --- | --- |
-| Claude (core/design) | #1–#13 done (desktop app in branch `build/desktop`) · #18 PDF.js (vendored, viewer component left), #21 linked-folder backend (done), #31 universities import backend, #46 search palette component, #47 responsive/a11y pass, #48 QA, #49 docs |
+| Claude (core/design) | #1–#13 done (desktop app in branch `build/desktop`) · #18 PDF.js + viewer, shared components for #17/#19/#22/#28/#45, #46 Ctrl+K search (branch `build/shared`), #21 linked-folder backend (done), #31 universities import backend, #47 responsive/a11y pass, #48 QA, #49 docs |
 | Gemini (features) | #14–#17, #19, #20, #22–#30, #32–#45 (UI parts of #21 and #31 too). #38 is research (ICO, with sources). |
 
 ## 2. What works now
@@ -159,10 +159,13 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
   - form field types: text, textarea, number, date, time, url, select (options), checkbox, level (0–5), tags, links
 - `core/dates.js`: `today`, `iso`, `parse`, `addDays`, `daysUntil`, `weekStart`, `weekKey`, `weekday`, `fmt`, `fmtShort`, `relative`, `minutesText`, `clock`, `DAYS`
 
-Still to build by Claude (shared components): `core/attachments.js`
-(drop zone + list + preview, #17/#19), `core/pdfviewer.js` (#22),
-`core/charts.js` (SVG line/bar, #28/#45), `core/search.js` (Ctrl+K, #46).
-Until they exist, Gemini can build the pages and leave a `TODO(attachments)`.
+Shared components (ready, branch `build/shared`; live demo at `#/components`):
+
+- `core/attachments.js`: `attachmentsBox({files, onChange, accept, readOnly})`: drop zone + picker, upload progress, list with thumbnails, preview, download, remove (to trash). Store the `files` array on your item.
+- `core/preview.js`: `previewFile(meta)` or `previewFile({url, name, type})`: images and PDFs in a modal, others as download. `isImage`, `isPdf`.
+- `core/pdfviewer.js`: `await createPdfViewer(container, {url, page, dark, onPage(n, total), onDark(on), toolbarExtra})` → `{page, total, goTo(n), setDark(on), destroy()}`. Page nav + keys, zoom, fit width, search with highlights, dark mode, text selection. Call `destroy()` in your page cleanup. For linked library files use `linkedUrl(path)` from `core/api.js`.
+- `core/charts.js`: `lineChart({series:[{label, points:[{x:'YYYY-MM-DD', y}]}], target:{y, label}, yMin, yMax, format})`, `barChart({labels, series:[{label, values}], format})`.
+- `core/search.js`: Ctrl+K palette is wired in `main.js`. It already searches every module that follows the data shapes in §4 (homework, library, bookmarks, pastpapers, universities, scholarships, deadlines, essays, activities, portfolio, thm, challenges, writeups, subject topics, cyber topics) and links to `#/<route>/<id>`. For anything else: `registerSearch(async q => [{group, title, sub, href}])`.
 
 ### Design conventions
 
@@ -208,6 +211,5 @@ python -m unittest discover tests     # backend tests
 ## 8. Known issues
 
 - The GUI window, Hyprland app-id and notifications can't be tested from the cloud: the user runs `docs/ARCH_TEST.md`.
-- Ctrl+K button shows a "planned" toast (#46).
 - `data.example/` only has empty modules; real sample data and syllabus
   topics still to add (#14 etc.).
