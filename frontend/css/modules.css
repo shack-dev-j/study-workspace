@@ -1,1 +1,85 @@
-/* Page-specific styles. Add a section per module: /* ---------- homework ---------- */ */
+/* Page-specific styles. One section per page. Colours only via variables. */
+.mt-s { margin-top: 8px; }
+.inline-select { height: 28px; width: auto; padding: 0 6px; font-size: .84rem; }
+input[type=color] { width: 60px; height: 36px; padding: 2px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--panel-2); }
+
+/* ---------- subjects ---------- */
+.subjects-layout { display: grid; grid-template-columns: 260px 1fr; gap: var(--gap); align-items: start; }
+.subject-list { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.subject-tile { display: block; padding: 10px; border-radius: 8px; color: var(--text); border: 1px solid transparent; }
+.subject-tile:hover { background: var(--hover); text-decoration: none; }
+.subject-tile.on { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+.topic-row .levels { flex: 0 0 auto; }
+.note-preview { color: var(--faint); }
+@media (max-width: 900px) {
+  .subjects-layout { grid-template-columns: 1fr; }
+  .subject-list { flex-direction: row; overflow-x: auto; }
+  .subject-tile { min-width: 170px; }
+}
+@media (max-width: 520px) { .topic-row { flex-wrap: wrap; } .topic-row .grow { flex-basis: calc(100% - 50px); } }
+
+/* ---------- homework ---------- */
+.quick-add { display: flex; gap: 8px; align-items: center; padding: 10px; margin-bottom: var(--gap); flex-wrap: wrap; }
+.quick-add input[type=text] { flex: 1 1 240px; }
+.quick-add select, .quick-add input[type=date] { flex: 0 1 auto; }
+
+/* ---------- library + reader ---------- */
+.book { display: flex; flex-direction: column; gap: 8px; }
+.book + .book { margin-top: 0; }
+.book.missing { opacity: .65; }
+.book-open { display: flex; gap: 10px; align-items: flex-start; color: var(--text); }
+.book-open:hover { text-decoration: none; color: var(--accent); }
+.book-icon { width: 38px; height: 46px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.book-title { font-weight: 600; line-height: 1.3; word-break: break-word; }
+.reader-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50vw; }
+.reader-layout { display: grid; grid-template-columns: 1fr 260px; gap: var(--gap); height: calc(100vh - 150px); min-height: 420px; }
+.reader-stage { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.reader-stage > .pdf-viewer { flex: 1; }
+.reader-side { overflow-y: auto; }
+@media (max-width: 900px) {
+  .reader-layout { grid-template-columns: 1fr; height: auto; }
+  .reader-stage { height: calc(100vh - 140px); }
+}
+
+/* ---------- time log ---------- */
+.big-clock { font-size: 2.4rem; font-weight: 700; letter-spacing: .02em; }
+.area-buttons { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-top: 12px; }
+.area-btn { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--panel-2); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.area-btn:hover { border-color: var(--accent); }
+.area-btn.on { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.total-row { display: grid; grid-template-columns: 110px 1fr 80px; gap: 10px; align-items: center; }
+.total-row .num { text-align: right; }
+
+/* ---------- timetable ---------- */
+table.timetable { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 760px; }
+table.timetable th { font-size: .8rem; color: var(--muted); padding: 8px; background: var(--panel-2); border-bottom: 1px solid var(--border); text-align: left; }
+table.timetable tbody th { width: 64px; vertical-align: top; }
+table.timetable thead th:first-child { width: 64px; }
+table.timetable td { padding: 4px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); vertical-align: top; }
+table.timetable .today { background: var(--accent-soft); }
+.slot { display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; padding: 6px 8px; margin-bottom: 4px; border-radius: 7px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+.slot:hover { border-color: var(--accent); }
+.slot-time { font-size: .74rem; color: var(--muted); }
+.slot-title { font-weight: 600; font-size: .9rem; }
+.slot-room { font-size: .76rem; color: var(--faint); }
+
+/* ---------- habits ---------- */
+.habits { padding: 4px 16px; }
+.habit { display: grid; grid-template-columns: minmax(160px, 1.2fr) 130px minmax(200px, 2fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.habit:last-child { border-bottom: 0; }
+.habit-stats { display: flex; flex-direction: column; }
+.habit-strip { display: grid; grid-template-columns: repeat(30, 1fr); gap: 3px; }
+.habit-strip .day { aspect-ratio: 1; min-width: 6px; border-radius: 3px; border: 0; padding: 0; background: var(--panel-2); outline: 1px solid var(--border); cursor: pointer; }
+.habit-strip .day.on { background: var(--ok); outline-color: transparent; }
+.habit-strip .day.is-today { outline: 2px solid var(--accent); }
+@media (max-width: 700px) { .habit { grid-template-columns: 1fr auto; } .habit-strip { grid-column: 1 / -1; } .habit-stats { flex-direction: row; gap: 10px; } }
+
+/* ---------- SAT ---------- */
+.plan-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.skill-group { border-top: 1px solid var(--border); padding: 8px 0; }
+.skill-group summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+.weak-list { margin: 0; padding-left: 1.3em; }
+.weak-list li { padding: 4px 0; }
+
+/* ---------- past papers ---------- */
+table.list tr.is-done-soft td:first-child { box-shadow: inset 3px 0 0 var(--ok); }
