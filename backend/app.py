@@ -11,7 +11,7 @@ import time
 import webbrowser
 from http.server import ThreadingHTTPServer
 
-from . import APP_NAME, VERSION, backup, focus, planner, reminders, secrets_store, todoist
+from . import APP_NAME, VERSION, backup, focus, planner, reminders, secrets_store, seed, todoist
 from .files import FileStore
 from .notifier import PlanNotifier
 from .handler import Handler
@@ -40,6 +40,10 @@ class App:
         self.jobs = jobs
         ensure_data(paths)
         self.storage = Storage(paths.data, paths.backups)
+        try:  # built-in study content (adds only, never changes user data)
+            seed.apply(self.storage, paths, log=self.log)
+        except Exception as e:  # content must never stop the app from starting
+            print(f"content merge skipped: {e!r}")
         self.files = FileStore(paths.files, paths.trash)
         self.windows = WindowTracker()
         self.stopping = threading.Event()

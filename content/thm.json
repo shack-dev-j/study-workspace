@@ -1,0 +1,212 @@
+{
+ "version": 1,
+ "items": [
+  {
+   "id": "thm-whatisnetworking",
+   "name": "What is Networking?",
+   "url": "https://tryhackme.com/room/whatisnetworking",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-introtonetworking",
+   "name": "Intro to Networking",
+   "url": "https://tryhackme.com/room/introtonetworking",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-packetsframes",
+   "name": "Packets & Frames",
+   "url": "https://tryhackme.com/room/packetsframes",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-networkingconcepts",
+   "name": "Networking Concepts",
+   "url": "https://tryhackme.com/room/networkingconcepts",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-nmap01",
+   "name": "Nmap: Live Host Discovery",
+   "url": "https://tryhackme.com/room/nmap01",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-nmap02",
+   "name": "Nmap: Basic Port Scans",
+   "url": "https://tryhackme.com/room/nmap02",
+   "topic": "Networking",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-wiresharktrafficanalysis",
+   "name": "Wireshark: Traffic Analysis",
+   "url": "https://tryhackme.com/room/wiresharktrafficanalysis",
+   "topic": "Forensics",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-trafficanalysisessentials",
+   "name": "Traffic Analysis Essentials",
+   "url": "https://tryhackme.com/room/trafficanalysisessentials",
+   "topic": "Forensics",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-linuxfundamentalspart1",
+   "name": "Linux Fundamentals Part 1",
+   "url": "https://tryhackme.com/room/linuxfundamentalspart1",
+   "topic": "Linux",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-linuxstrengthtraining",
+   "name": "Linux Strength Training",
+   "url": "https://tryhackme.com/room/linuxstrengthtraining",
+   "topic": "Linux",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-linuxfilesystemanalysis",
+   "name": "Linux File System Analysis",
+   "url": "https://tryhackme.com/room/linuxfilesystemanalysis",
+   "topic": "Forensics",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-linprivbasics",
+   "name": "Linux Privilege Escalation basics",
+   "url": "https://tryhackme.com/room/linprivbasics",
+   "topic": "Linux",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-linprivesc",
+   "name": "Linux PrivEsc",
+   "url": "https://tryhackme.com/room/linprivesc",
+   "topic": "Linux",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-owaspjuiceshop",
+   "name": "OWASP Juice Shop",
+   "url": "https://tryhackme.com/room/owaspjuiceshop",
+   "topic": "Web security",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-owaspbrokenaccesscontrol",
+   "name": "OWASP Broken Access Control",
+   "url": "https://tryhackme.com/room/owaspbrokenaccesscontrol",
+   "topic": "Web security",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-vulnversity",
+   "name": "Vulnversity",
+   "url": "https://tryhackme.com/room/vulnversity",
+   "topic": "Web security",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-rrootme",
+   "name": "RootMe",
+   "url": "https://tryhackme.com/room/rrootme",
+   "topic": "Web security",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-cryptographyintro",
+   "name": "Cryptography Basics",
+   "url": "https://tryhackme.com/room/cryptographyintro",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-hashingbasics",
+   "name": "Hashing Basics",
+   "url": "https://tryhackme.com/room/hashingbasics",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-johntheripperbasics",
+   "name": "John the Ripper: The Basics",
+   "url": "https://tryhackme.com/room/johntheripperbasics",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-encryptioncrypto101",
+   "name": "Encryption - Crypto 101",
+   "url": "https://tryhackme.com/room/encryptioncrypto101",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-breakingcryptothesimpleway",
+   "name": "Breaking Crypto the Simple Way",
+   "url": "https://tryhackme.com/room/breakingcryptothesimpleway",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  },
+  {
+   "id": "thm-passwordcracking",
+   "name": "Password Cracking",
+   "url": "https://tryhackme.com/room/passwordcracking",
+   "topic": "Cryptography",
+   "status": "todo",
+   "finished": "",
+   "notes": ""
+  }
+ ]
+}

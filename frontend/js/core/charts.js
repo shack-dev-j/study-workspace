@@ -8,6 +8,7 @@
 
 import { h } from './dom.js';
 import { parse, fmtShort } from './dates.js';
+import { empty } from './ui.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const s = (tag, attrs = {}, ...kids) => {
@@ -26,9 +27,28 @@ function niceTicks(min, max, n = 4) {
   return out;
 }
 
-export function lineChart({ series = [], target = null, yMin, yMax, height = 220, width = 640, format = v => v }) {
+export const lineChart = opts => responsive(lineChartAt, opts);
+export const barChart = opts => responsive(barChartAt, opts);
+
+/** Draw at the real pixel width (and again when it changes), so text keeps its size on wide screens. */
+function responsive(draw, opts) {
+  const first = draw({ ...opts, width: opts.width || 640 });
+  if (!first.classList.contains('chart') || typeof ResizeObserver === 'undefined') return first;
+  let last = 0;
+  const ro = new ResizeObserver(([e]) => {
+    const w = Math.round(e.contentRect.width);
+    if (!w || Math.abs(w - last) < 4) return;
+    last = w;
+    const next = draw({ ...opts, width: w });
+    first.replaceChildren(...next.childNodes);
+  });
+  ro.observe(first);
+  return first;
+}
+
+function lineChartAt({ series = [], target = null, yMin, yMax, height = 220, width = 640, format = v => v }) {
   const pts = series.flatMap(se => se.points.filter(p => parse(p.x) && p.y != null));
-  if (!pts.length) return h('div', { class: 'empty small' }, 'No data yet.');
+  if (!pts.length) return empty('No data yet.', null, 'chart');
   const xs = pts.map(p => parse(p.x).getTime());
   let x0 = Math.min(...xs), x1 = Math.max(...xs);
   if (x0 === x1) { x0 -= 86400000 * 3; x1 += 86400000 * 3; }
@@ -62,13 +82,13 @@ export function lineChart({ series = [], target = null, yMin, yMax, height = 220
   return h('div', { class: 'chart' }, svg, legend(series));
 }
 
-export function barChart({ labels = [], series = [], height = 220, width = 640, format = v => v }) {
-  if (!labels.length) return h('div', { class: 'empty small' }, 'No data yet.');
+function barChartAt({ labels = [], series = [], height = 220, width = 640, format = v => v }) {
+  if (!labels.length) return empty('No data yet.', null, 'chart');
   const max = Math.max(1, ...series.flatMap(se => se.values));
   const pad = { l: 44, r: 8, t: 10, b: 30 };
   const W = width, H = height;
   const gw = (W - pad.l - pad.r) / labels.length;
-  const bw = Math.min(28, (gw - 10) / Math.max(1, series.length));
+  const bw = Math.min(24, (gw - 10) / Math.max(1, series.length));
   const Y = v => H - pad.b - v / max * (H - pad.t - pad.b);
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img' });
   for (const t of niceTicks(0, max)) {

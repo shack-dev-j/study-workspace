@@ -61,6 +61,12 @@ Read `HANDOFF.md` for current status, then `docs/PRD.md`,
   them only through their API routes (see `HANDOFF.md` §4). API keys live in
   `data/secrets.json` (mode 600) and must never be exported, backed up,
   returned by the API or committed.
+- v3: built-in content lives in `content/` (build it with `scripts/build_content.py`)
+  and is merged by `backend/seed.py`, which may only ADD items. Link to past
+  papers, never bundle them. Every link needs a source in `docs/research/sources.md`.
+- v3: the assistant may only change data through the tools in
+  `backend/assistant.py` (validated, logged, undoable); it must never delete
+  without the user's confirmation or touch settings or secrets.
 - Focus mode may only close windows with `hyprctl dispatch closewindow`;
   never kill processes or close the shell, terminals or this app.
 - List pages use `frontend/js/core/crud.js`; keep the data shapes in
@@ -77,6 +83,7 @@ desktop/             launcher script, .desktop file, icons/
 packaging/arch/      PKGBUILD
 install.sh / uninstall.sh   (M1) Arch install helpers
 data.example/        fake sample data (committed)
+content/             built-in study content merged into data (v3)
 data/                real user data (git-ignored, created on first run)
 backups/             daily JSON backups (git-ignored)
 docs/                PRD, ROADMAP, ISSUES, BOARD, research/, ARCH_TEST

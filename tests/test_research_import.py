@@ -78,9 +78,18 @@ class MergeTests(unittest.TestCase):
 
     def test_api_route(self):
         with TempApp() as t:
+            # The built-in content already imported the report on first start.
+            s, d = t.req("GET", "/api/data/universities")
+            n = len(d.get("items", []))
+            self.assertGreater(n, 10)
             s, r = t.req("POST", "/api/import/universities", {"dryRun": True})
             self.assertEqual(s, 200)
-            self.assertGreater(r["added"], 10)
+            self.assertEqual(r["added"], 0)
+            # On an empty list the route imports everything.
+            s, d = t.req("GET", "/api/data/universities")
+            s, _ = t.req("PUT", "/api/data/universities", {"items": [], "_rev": d["_rev"]})
+            s, r = t.req("POST", "/api/import/universities", {"dryRun": True})
+            self.assertEqual(r["added"], n)
             s, d = t.req("GET", "/api/data/universities")
             self.assertEqual(len(d.get("items", [])), 0)
             s, r = t.req("POST", "/api/import/universities", {})

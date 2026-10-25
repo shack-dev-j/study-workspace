@@ -44,7 +44,7 @@ export default {
     const skills = list(data, 'skills');
     data.weeklyPlan = data.weeklyPlan || {};
     const target = Number(settings.satTarget) || 1500;
-    const statsBox = h('div', { class: 'grid cols-4 mb' });
+    const statsBox = h('div', { class: 'stats-row mb' });
     const chartBox = h('div', { class: 'card' });
     const testsBox = h('div', { class: 'card' });
     const skillsBox = h('div', { class: 'card' });

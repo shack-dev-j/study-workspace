@@ -20,12 +20,13 @@ other routes. Problems are raised as Problem(status, message).
   POST /api/ai/breakdown {title,details,minutes}  |  POST /api/ai/coach {date}
   GET  /api/focus                     config, active session, today's stats, Hyprland found?
   POST /api/focus/start {minutes,title} | POST /api/focus/stop
+  POST /api/ai/chat {chat, message} | GET /api/ai/chats[/<id>] | POST /api/ai/undo {id} | POST /api/ai/confirm {id, ok}
   PUT  /api/focus/config {config}
 """
 
 import datetime as dt
 
-from . import focus, gemini, net, planner, secrets_store, theme, todoist
+from . import assistant, focus, gemini, net, planner, secrets_store, theme, todoist
 
 NOT_HANDLED = object()
 
@@ -268,6 +269,20 @@ def handle(ctx, method, head, parts, query, read_json):
                            int(body.get("priority") or 1), body.get("minutes"))
             return {"ok": True, "task": item}
 
+    if head == "ai" and sub in ("chats", "undo", "confirm"):
+        try:
+            if method == "GET" and sub == "chats" and len(parts) == 2:
+                return {"chats": assistant.list_chats(ctx.storage)}
+            if method == "GET" and sub == "chats" and len(parts) == 3:
+                return assistant.get_chat(ctx.storage, parts[2])
+            if method == "POST" and sub == "undo":
+                return assistant.undo(ctx.storage, str(read_json().get("id") or ""))
+            if method == "POST" and sub == "confirm":
+                body = read_json()
+                return assistant.confirm(ctx.storage, str(body.get("id") or ""), bool(body.get("ok")))
+        except assistant.ToolError as e:
+            raise Problem(400, str(e))
+
     if head == "ai":
         key = _key(ctx, "gemini_key", "Gemini API key")
         model = ctx.storage.read("settings").get("geminiModel") or gemini.DEFAULT_MODEL
@@ -280,6 +295,12 @@ def handle(ctx, method, head, parts, query, read_json):
                 raise Problem(400, "title is required")
             return {"steps": _online(gemini.break_down, key, title, str(body.get("details") or "")[:1500],
                                      body.get("minutes"), model)}
+        if method == "POST" and sub == "chat":
+            body = read_json()
+            try:
+                return _online(assistant.send, ctx.storage, key, str(body.get("chat") or ""), body.get("message"), model)
+            except assistant.ToolError as e:
+                raise Problem(400, str(e))
         if method == "POST" and sub == "coach":
             body = read_json()
             plan = planner.get_day(ctx.storage, _day(body.get("date"), dt.date.today()))

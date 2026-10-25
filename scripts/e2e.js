@@ -14,6 +14,34 @@ const ok = (cond, msg) => { console.log((cond ? '✓ ' : '✗ ') + msg); if (!co
 const readData = m => JSON.parse(fs.readFileSync(path.join(home, 'data', m + '.json'), 'utf8'));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// A fake Gemini for the assistant test (SW_GEMINI_BASE points the server at it).
+const http = require('http');
+const gport = 8700 + Math.floor(Math.random() * 90);
+function fakeGemini(body) {
+  const contents = body.contents || [];
+  const last = contents[contents.length - 1] || { parts: [] };
+  const fr = (last.parts || []).find(p => p.functionResponse);
+  const userText = [...contents].reverse().find(c => c.role === 'user' && c.parts.some(p => p.text))?.parts.map(p => p.text).join(' ') || '';
+  const reply = parts => ({ candidates: [{ content: { role: 'model', parts } }] });
+  const call = (name, args) => reply([{ functionCall: { name, args } }]);
+  if (/delete/i.test(userText)) {
+    if (!fr) return call('list_items', { module: 'homework', query: 'Chemistry revision' });
+    if (fr.functionResponse.name === 'list_items') {
+      const id = fr.functionResponse.response.result.items[0].id;
+      return call('delete_item', { module: 'homework', id, reason: 'you asked' });
+    }
+    return reply([{ text: 'Please confirm the delete below.' }]);
+  }
+  if (!fr) return call('add_item', { module: 'homework', fields_json: JSON.stringify({ title: 'Chemistry revision', subject: 'Chemistry', due: '2030-01-10', minutes: 45 }) });
+  return reply([{ text: 'Added **Chemistry revision** for 10 January.' }]);
+}
+const gsrv = http.createServer((req, res) => {
+  let b = ''; req.on('data', d => (b += d)); req.on('end', () => {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(fakeGemini(JSON.parse(b || '{}'))));
+  });
+});
+
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
 
@@ -110,12 +138,10 @@ test('habits tick + SAT import', async page => {
 
 test('universities import, detail edit, documents, deadlines, plans', async page => {
   await page.goto(base + '/#/universities');
-  await page.click('text=Import from research report');
-  await page.waitForSelector('.modal:has-text("to add")');
-  await page.click('.modal .btn.primary');
+  // v3: the research report is imported on first start (built-in content).
   await page.waitForSelector('a.title:has-text("KAIST")');
   let u = readData('universities').items;
-  ok(u.length >= 15 && u.find(x => x.name === 'NUS').qs_rank === '10', 'import adds universities with report ranks');
+  ok(u.length >= 15 && u.find(x => x.name === 'NUS').qs_rank === '10', 'universities preloaded with report ranks');
   await page.click('a.title:has-text("KAIST")');
   await page.waitForSelector('.card h2:has-text("KAIST")');
   ok(await page.isVisible('.badge.verify'), 'verify badges shown on the detail page');
@@ -209,8 +235,8 @@ test('today screen + weekly review', async page => {
 const isoDay = d => d.toISOString().slice(0, 10);
 test('my day: plan, block done, add task, backpack, must-do', async page => {
   await page.goto(base + '/#/day');
-  await page.waitForSelector('.now-card');
-  ok(await page.isVisible('.now-card h2, .now-card .now-title'), 'now card shows what to do');
+  const nowShown = await page.waitForSelector('.now-card .now-title', { timeout: 8000 }).then(() => true, () => false);
+  ok(nowShown, 'now card shows what to do');
   const tomorrow = new Date(Date.now() + 86400000);
   const iso = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
   await page.goto(base + '/#/day/' + iso);
@@ -296,8 +322,41 @@ test('settings: planner, keys, appearance', async page => {
   ok(await page.evaluate(() => document.documentElement.dataset.theme) === 'light', 'light theme applied');
 });
 
+test('assistant: add, undo, confirm delete; content is preloaded', async page => {
+  await fetch(base + '/api/secrets', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Requested-By': 'study-workspace' }, body: JSON.stringify({ gemini_key: 'fake-key' }) });
+  await page.goto(base + '/#/chat');
+  await page.waitForSelector('.idea');
+  await page.fill('textarea[aria-label="Message"]', 'Add chemistry revision');
+  await page.click('button[aria-label="Send"]');
+  await page.waitForSelector('.change-card.act-add');
+  ok(await page.isVisible('.msg.model strong:has-text("Chemistry revision")'), 'answer shown as formatted text');
+  ok(readData('homework').items.some(i => i.title === 'Chemistry revision' && i.minutes === 45), 'assistant added the homework');
+  await page.click('.change-card.act-add button:has-text("Undo")');
+  await page.waitForSelector('.change-card.is-undone');
+  ok(!readData('homework').items.some(i => i.title === 'Chemistry revision'), 'undo removed it');
+  await page.fill('textarea[aria-label="Message"]', 'Add chemistry revision again');
+  await page.press('textarea[aria-label="Message"]', 'Enter');
+  await page.waitForFunction(() => document.querySelectorAll('.change-card.act-add').length === 2, null, { timeout: 8000 }).catch(async e => { await page.screenshot({ path: '/tmp/claude-0/e2e-fail.png' }); throw e; });
+  await page.fill('textarea[aria-label="Message"]', 'delete the chemistry homework');
+  await page.press('textarea[aria-label="Message"]', 'Enter');
+  await page.waitForSelector('.change-card.act-confirm', { timeout: 10000 }).catch(async e => { await page.screenshot({ path: '/tmp/claude-0/e2e-fail.png' }); throw e; });
+  ok(readData('homework').items.some(i => i.title === 'Chemistry revision'), 'nothing deleted before confirming');
+  await page.click('.change-card.act-confirm button:has-text("Delete")');
+  await page.waitForSelector('.change-card.act-delete');
+  ok(!readData('homework').items.some(i => i.title === 'Chemistry revision'), 'deleted after confirming');
+  ok((await page.locator('.chat-link').count()) === 1, 'chat listed on the side');
+  // Built-in content is there before first use.
+  await page.goto(base + '/#/pastpapers');
+  await page.waitForSelector('a:has-text("Paper ↗")');
+  ok(readData('pastpapers').items.length >= 200, 'past papers preloaded');
+  await page.goto(base + '/#/resources');
+  await page.waitForSelector('.res-card');
+  ok((await page.locator('.res-card').count()) >= 30, 'resources page shows the links');
+});
+
 (async () => {
-  const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home } });
+  await new Promise(r => gsrv.listen(gport, '127.0.0.1', r));
+  const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home, SW_GEMINI_BASE: `http://127.0.0.1:${gport}/v1beta` } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
   for (let i = 0; i < 50; i++) { try { await fetch(base + '/api/health'); break; } catch (e) { await sleep(200); } }
   const browser = await chromium.launch();
@@ -320,7 +379,7 @@ test('settings: planner, keys, appearance', async page => {
     ok(!errs.length, 'no console errors' + (errs.length ? ': ' + errs.join(' | ') : ''));
     await ctx.close();
   }
-  await browser.close(); srv.kill();
+  await browser.close(); srv.kill(); gsrv.close();
   if (failed && /Traceback/.test(log)) console.log(log.slice(-3000));
   fs.rmSync(home, { recursive: true, force: true });
   console.log(failed ? `${failed} failed` : 'All flows OK');

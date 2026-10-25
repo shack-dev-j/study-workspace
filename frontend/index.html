@@ -6,15 +6,19 @@
   <meta name="color-scheme" content="dark light">
   <title>Study Workspace</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/vendor/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/components.css">
   <link rel="stylesheet" href="/css/modules.css">
+  <link rel="stylesheet" href="/css/v3.css">
   <script>
     // Apply the saved theme before the page paints (no flash).
     try {
       var t = localStorage.getItem('sw-theme');
       if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
       document.documentElement.dataset.theme = t;
+      var f = localStorage.getItem('sw-font');
+      if (f === 'rubik') document.documentElement.dataset.font = f;
     } catch (e) {}
   </script>
 </head>
@@ -23,7 +27,7 @@
   <div class="app">
     <aside class="sidebar" id="sidebar" aria-label="Main menu">
       <div class="brand">
-        <img src="/icon.svg" alt="" width="34" height="34">
+        <img src="/icon.svg" alt="" width="26" height="26">
         <span>Study Workspace<small id="brandSub">Plan · focus · study</small></span>
       </div>
       <nav id="nav"></nav>

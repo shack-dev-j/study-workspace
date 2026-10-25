@@ -1,0 +1,347 @@
+{
+ "version": 1,
+ "items": [
+  {
+   "id": "res-9709-home",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Cambridge 9709 official page (syllabus, specimen papers)",
+   "url": "https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-mathematics-9709/",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-9709-syl",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "9709 syllabus 2026-2027 (PDF)",
+   "url": "https://www.cambridgeinternational.org/Images/697427-2026-2027-syllabus.pdf",
+   "kind": "syllabus",
+   "note": ""
+  },
+  {
+   "id": "res-9709-pp",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "All 9709 past papers and mark schemes (pastpapers.co)",
+   "url": "https://pastpapers.co/caie/a-level/mathematics-9709",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9709-pmt-p1",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Pure 1 past papers by year (Physics & Maths Tutor)",
+   "url": "https://www.physicsandmathstutor.com/a-level-maths-papers/cie-paper-1/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9709-sme-p1",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Pure 1 past papers and topic questions (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/maths_pure-1/cie/-/pages/past-papers",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9709-sme-p1q",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Pure 1 practice questions by topic (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/maths_pure-1/cie/20/practice-paper-questions/",
+   "kind": "practice",
+   "note": ""
+  },
+  {
+   "id": "res-9709-sme-s1",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Probability & Statistics 1 past papers (Save My Exams)",
+   "url": "https://www.savemyexams.com/a-level/maths_probability--statistics-1/cie/-/pages/past-papers/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9709-sme-s1q",
+   "area": "Study",
+   "subject": "Maths",
+   "title": "Probability & Statistics 1 practice questions (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/maths_probability--statistics-1/cie/20/practice-paper-questions",
+   "kind": "practice",
+   "note": ""
+  },
+  {
+   "id": "res-9702-home",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "Cambridge 9702 official page (syllabus, specimen papers)",
+   "url": "https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-as-and-a-level-physics-9702/",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-9702-syl",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "9702 syllabus 2025-2027 (PDF)",
+   "url": "https://www.cambridgeinternational.org/Images/664565-2025-2027-syllabus.pdf",
+   "kind": "syllabus",
+   "note": ""
+  },
+  {
+   "id": "res-9702-pp",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "All 9702 past papers and mark schemes (pastpapers.co)",
+   "url": "https://pastpapers.co/caie/a-level/physics-9702",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9702-sme",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "AS Physics past papers (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/physics/cie/past-papers/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9702-sme-p2",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "AS Physics Paper 2 past papers (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/physics/cie/past-papers/paper-2",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9702-gt",
+   "area": "Study",
+   "subject": "Physics",
+   "title": "Grade thresholds June 2025 (what mark gets an A)",
+   "url": "https://www.cambridgeinternational.org/Images/740343-physics-9702-june-2025-grade-threshold-table.pdf",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-9618-syl",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "9618 syllabus 2026 (PDF)",
+   "url": "https://www.cambridgeinternational.org/Images/697372-2026-syllabus.pdf",
+   "kind": "syllabus",
+   "note": ""
+  },
+  {
+   "id": "res-9618-upd",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "9618 syllabus update 2027-2029 (PDF)",
+   "url": "https://www.cambridgeinternational.org/Images/747147-2027-2029-syllabus-update.pdf",
+   "kind": "syllabus",
+   "note": ""
+  },
+  {
+   "id": "res-9618-pmt1",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "Paper 1 past papers (Physics & Maths Tutor)",
+   "url": "https://www.physicsandmathstutor.com/past-papers/a-level-computer-science/caie-paper-1/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9618-pmt2",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "Paper 2 past papers (Physics & Maths Tutor)",
+   "url": "https://www.physicsandmathstutor.com/past-papers/a-level-computer-science/caie-paper-2/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9618-sme1",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "AS Paper 1 past papers (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/computer-science/cie/past-papers/paper-1/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9618-sme2",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "AS Paper 2 past papers (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/computer-science/cie/past-papers/paper-2/",
+   "kind": "past papers",
+   "note": ""
+  },
+  {
+   "id": "res-9618-notes",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "AS Computer Science revision notes (Save My Exams)",
+   "url": "https://www.savemyexams.com/as/computer-science/cie/19/revision-notes/",
+   "kind": "notes",
+   "note": ""
+  },
+  {
+   "id": "res-9618-hub",
+   "area": "Study",
+   "subject": "Computer Science",
+   "title": "Your 9618 AS Revision Hub",
+   "url": "https://shack-dev-j.github.io/Claude/",
+   "kind": "practice",
+   "note": "Export progress there, import it in Subjects → Computer Science."
+  },
+  {
+   "id": "res-sat-bb",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "Bluebook: official full-length digital SAT practice tests",
+   "url": "https://bluebook.collegeboard.org/students/practice",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-sat-tests",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "Full-length SAT practice tests (College Board)",
+   "url": "https://satsuite.collegeboard.org/practice/practice-tests",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-sat-prac",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "SAT practice and preparation hub (College Board)",
+   "url": "https://satsuite.collegeboard.org/practice",
+   "kind": "official",
+   "note": ""
+  },
+  {
+   "id": "res-sat-khan",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "Official Digital SAT Prep (Khan Academy, free)",
+   "url": "https://en.khanacademy.org/digital-sat/start",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-sat-khan-math",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "Get ready for SAT Math (Khan Academy)",
+   "url": "https://www.khanacademy.org/get-ready-for-sat-prep-math",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-sat-desmos",
+   "area": "SAT",
+   "subject": "SAT",
+   "title": "Desmos graphing calculator (the one built into Bluebook)",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-pre",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Pre Security path (start here)",
+   "url": "https://tryhackme.com/beginner-path",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-pico",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "picoCTF practice problems (free CTF training)",
+   "url": "https://play.picoctf.org/practice",
+   "kind": "practice",
+   "note": ""
+  },
+  {
+   "id": "res-cy-otw",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "OverTheWire Bandit (Linux wargame)",
+   "url": "https://overthewire.org/wargames/bandit/",
+   "kind": "practice",
+   "note": ""
+  },
+  {
+   "id": "res-cy-chef",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "CyberChef (encode, decode, crypto in the browser)",
+   "url": "https://gchq.github.io/CyberChef/",
+   "kind": "tool",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-crypto",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Cryptography module",
+   "url": "https://tryhackme.com/module/cryptography",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-web",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Web Hacking module",
+   "url": "https://tryhackme.com/module/web-hacking",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-net",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Network Fundamentals module",
+   "url": "https://tryhackme.com/module/network-fundamentals",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-priv",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Privilege Escalation module",
+   "url": "https://tryhackme.com/module/privilege-escalation",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-ws",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Wireshark module",
+   "url": "https://tryhackme.com/module/wireshark",
+   "kind": "course",
+   "note": ""
+  },
+  {
+   "id": "res-cy-thm-nmap",
+   "area": "Cyber",
+   "subject": "Cyber",
+   "title": "TryHackMe Nmap module",
+   "url": "https://tryhackme.com/module/nmap",
+   "kind": "course",
+   "note": ""
+  }
+ ]
+}
