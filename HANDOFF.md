@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. **v2.1: premium redesign (design system v2.1, see `docs/research/design.md`).** v2.0: day planner, focus mode, Todoist, Gemini, Caelestia colours. v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
+Last update: 2026-10-25. **v3.0: AI assistant that can change app data (with undo), built-in study content (past papers, resources, TryHackMe rooms, universities), Resources page.** v2.1: premium redesign (design system v2.1, see `docs/research/design.md`).** v2.0: day planner, focus mode, Todoist, Gemini, Caelestia colours. v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
 Rules: `CLAUDE.md`. Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`), status in `docs/BOARD.md`.
 Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.md`.
 
@@ -9,8 +9,32 @@ Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.
 - M1 core + Arch desktop app: merged (#50–#54).
 - M2–M6 (all feature pages, polish, docs): pull requests #55 (M2), #56 (M3), #57 (M4), #58 (M5), and the M6 PR.
   Each PR is branched from the one before it and targets `main`: merge them in order.
-- Tests: `python -m unittest discover tests` (backend, 97 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (30 pages at 5 sizes, dark/light: console errors, sideways scroll, unnamed controls, design audit) and `node scripts/e2e.js` (12 flows). Both use a temporary data folder.
+- Tests: `python -m unittest discover tests` (backend, 108 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (33 pages at 5 sizes, dark/light: console errors, sideways scroll, unnamed controls, design audit) and `node scripts/e2e.js` (13 flows; the assistant flow uses a local fake Gemini via `SW_GEMINI_BASE`). Both use a temporary data folder.
 - Still to do by the user on the real machine: `docs/ARCH_TEST.md` (window, Hyprland, notifications, big linked PDFs).
+
+### v3.0 (branch `build/v3-ai-content`)
+
+The user asked for: an AI chat that can change anything in the app, and an app that is full of
+real study material before first use (past papers, resources), not "plain".
+
+- **Assistant** (`chat.js`, `backend/assistant.py`): Gemini with function calling. Tools: get_today,
+  list_items, get_item, add_item, update_item, delete_item (only asks; the user confirms in the chat),
+  set_topic_level, replan_day, set_block_state. Each tool validates the area and fields (`SCHEMA`).
+  Every change is logged with before/after in `assistant.json` and has an Undo button; the data file is
+  copied to `backups/assistant/` before the first change of a turn. Secrets and settings are not reachable.
+- **Built-in content** (`content/*.json`, built by `scripts/build_content.py`; merged by `backend/seed.py`
+  on every start): only adds ids the user does not have, never changes user items, remembers what it added
+  in `content.json` so deleted items stay deleted, backs up a file before adding to it. Universities are
+  imported from the research report once, into an empty list. Items carry `"seed": true` (kept by
+  "Remove sample items").
+  - 210 past papers (9709 P1/P5, 9702 P1/P2, 9618 P1/P2, 2021–2025, March/June/November) with question
+    paper and mark scheme links on pastpapers.co (linked, not bundled).
+  - 38 resources: Cambridge syllabuses, past paper archives, Save My Exams / PMT pages, Bluebook,
+    College Board, Khan Academy, Desmos, TryHackMe modules, picoCTF, OverTheWire, CyberChef.
+  - 23 TryHackMe rooms mapped to the Cyber topics, 5 default habits.
+  - Sources and checks: `docs/research/sources.md`.
+- **Resources page** (`resources.js`): links grouped by subject, tabs per area, add / edit your own.
+- Past papers page: Year filter, "Paper ↗" / "Scheme ↗" links (`qpUrl`, `msUrl`).
 
 ### v2.0 (branch `build/v2-planner`)
 
@@ -38,6 +62,8 @@ a must-do list, a backpack list per lesson, OS integration that blocks or closes
 | Route | File | Issue(s) | What it does |
 | --- | --- | --- | --- |
 | `day/<date>` (home) | day.js | v2 | now card, timeline, must-do, backpack, coming up |
+| `chat/<id>` | chat.js | v3 | AI assistant: chat, change cards with Undo, delete confirmations |
+| `resources` | resources.js | v3 | checked links per subject (syllabus, past papers, SAT, cyber) |
 | `focus` | focus.js | v2 | focus mode switch, strictness, block list, sessions |
 | `today` (Overview) | today.js | #44 | homework due ≤3 days, SAT + cyber task, habits, lessons, deadlines, continue reading, reminders |
 | `subjects/<id>` | subjects.js | #14 #15 | topics 0–5, weakest first, notes, bookmark count; 9618 Hub JSON import |
@@ -81,6 +107,9 @@ backend/reminders.py         deadline reminders + notify-send
 backend/windows.py           open-window tracking
 backend/samples.py           remove items with "sample": true
 backend/research_import.py   import universities from docs/research/universities.md (#31)
+backend/assistant.py         v3: Gemini function-calling assistant, change log, undo, confirm
+backend/seed.py              v3: merges content/*.json into data (adds only)
+content/                     v3: built-in content packs (scripts/build_content.py)
 backend/planner.py           v2: builds the day plan (blocks), must-do, backpack
 backend/day_api.py           v2: /api/plan, backpack, now, theme, secrets, todoist, ai, focus routes
 backend/focus.py             v2: Hyprland focus engine (hyprctl), sessions, nag
@@ -143,13 +172,18 @@ All write requests must send header `X-Requested-By: study-workspace`
 | `GET /api/ai/models`, `POST /api/ai/breakdown\|coach` | Gemini |
 | `GET /api/focus`, `POST /api/focus/start {minutes, title}\|stop`, `PUT /api/focus/config {config}` | focus mode |
 
-The server writes `planner`, `focus` and `todoist` itself, so the frontend changes them only through
+| `POST /api/ai/chat {chat, message}` | assistant turn → the chat `{id, title, messages[{role, text, changes[], pending[], resolved[]}]}` |
+| `GET /api/ai/chats`, `GET /api/ai/chats/<id>` | chat list / one chat |
+| `POST /api/ai/undo {id}` | undo one assistant change |
+| `POST /api/ai/confirm {id, ok}` | answer a delete request (ok=true deletes, and the delete can be undone) |
+
+The server writes `planner`, `focus`, `todoist`, `assistant` and `content` itself, so the frontend changes them only through
 the routes above (never `PUT /api/data/...`), to avoid 409 conflicts.
 
 Modules allowed (`backend/storage.py` MODULES): settings, subjects, homework,
 library, bookmarks, pastpapers, timelog, timetable, habits, sat, portfolio,
 universities, scholarships, documents, deadlines, essays, activities, cyber,
-thm, challenges, writeups, review, reminders, planner, focus, todoist. Add a new one there (and a
+thm, challenges, writeups, review, reminders, planner, focus, todoist, resources, content, assistant. Add a new one there (and a
 file in `data.example/`) if you need it.
 
 ### Data shapes (keep to these so reminders, search and Today work)
@@ -180,6 +214,10 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
 - planner: `{config{wake, sleep, focus, short_break, long_break, long_every, min_block, wind_down, max_per_task, school_gap, after_school, study_before_school, routines[{id, title, start, end, days[0-6]}]}, backpack{always[], lessons{"<lesson title>": [items]}}, days{"YYYY-MM-DD": {blocks[{id, kind: lesson|break|routine|event|focus|free|sleep, start, end, title, sub, why, ref{source, id}, state}], packed{"item": true}}}}` (last 60 days kept)
 - focus: `{config{enabled, mode: warn|strict|hard, tone: calm|strict|angry, auto_plan, nag, grace, rules[{type: app|title, pattern, label}]}, active: null|{id, start, until, title, block_id, auto, distractions, closed}, sessions[]}`
 - todoist: `{tasks[{id, content, description, project, priority 1-4 (4 = p1), due, time, recurring, minutes, labels[], url}], projects[], synced_at, error}`
+- resources: `items[{id, area: Study|SAT|Cyber|Applications|Other, subject, title, url, kind, note}]`
+- pastpapers items (v3) may have `title`, `qpUrl`, `msUrl`; built-in items have `seed: true`
+- assistant: `{chats[{id, title, created, updated, messages[{role: user|model, text, at, changes[ids], pending[ids], resolved[]}]}], changes[{id, at, chat, module, action: add|update|delete, item_id, title, before, after, undone}], pending[{id, chat, module, item_id, title, reason}]}` (last 40 chats, 600 changes)
+- content: `{applied{module: [ids added]}, universities_imported, updated}`
 - homework items may have `minutes` (time needed; the planner uses it)
 - settings (v2): `matchShell`, `followShellMode`, `planNotify`, `keepRunning`, `geminiModel`
 
@@ -278,6 +316,11 @@ NODE_PATH=$(npm root -g) node scripts/e2e.js     # main flows, headless
 ```
 
 ## 8. Known issues / open questions
+
+- v3: past paper links follow pastpapers.co's file pattern, checked on several folders (9709 2022
+  Feb/March and 2024 Oct/Nov, 9702 2024 May/June and 2025 March). The 9618 folder name has brackets
+  and could not be fetched from the cloud; if a 9618 link 404s, use the 9618 links on the Resources page.
+- v3: external links open with `target="_blank"`; check on Arch that pywebview opens them in the browser.
 
 - v2 on the real machine: check focus mode, plan notifications, Caelestia colours and the
   background service with `docs/ARCH_TEST.md` §v2.

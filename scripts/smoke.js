@@ -17,7 +17,7 @@ const fs = require('fs'), os = require('os'), path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const out = path.resolve(process.argv[2] || path.join(ROOT, 'smoke-shots'));
 const only = process.argv.slice(3);
-const ROUTES = only.length ? only : ['day', 'chat', 'resources', 'focus', 'today', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat',
+const ROUTES = only.length ? only : ['day', 'chat', 'chat/demo', 'resources', 'focus', 'today', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat',
   'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans',
   'cyber', 'thm', 'challenges', 'writeups', 'portfolio', 'review',
   'settings', 'settings/planner', 'settings/connections', 'settings/appearance', 'settings/data', 'components'];
@@ -104,6 +104,17 @@ function audit() {
   srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
   const base = `http://127.0.0.1:${port}`;
   for (let i = 0; i < 50; i++) { try { await fetch(base + '/api/health'); break; } catch (e) { await new Promise(r => setTimeout(r, 200)); } }
+  // A sample chat so the assistant page is audited with messages, change cards and a delete request.
+  const H = { 'Content-Type': 'application/json', 'X-Requested-By': 'study-workspace' };
+  await fetch(base + '/api/secrets', { method: 'PUT', headers: H, body: JSON.stringify({ gemini_key: 'smoke-test' }) });
+  const now = '2026-10-25T10:00:00';
+  await fetch(base + '/api/data/assistant', { method: 'PUT', headers: H, body: JSON.stringify({
+    _rev: 0, chats: [{ id: 'demo', title: 'Plan my week', created: now, updated: now, messages: [
+      { role: 'user', text: 'Plan my week and add Physics P2 for Thursday', at: now },
+      { role: 'model', text: 'Done. I added **Physics P2 s23** for Thursday (75 min) and planned today:\n\n- 16:00 Physics P2\n- 17:25 Break\n\nShall I remove the old worksheet?', at: now, changes: ['c1', 'c2'], pending: ['p1'] }] }],
+    changes: [{ id: 'c1', at: now, chat: 'demo', module: 'homework', action: 'add', item_id: 'x1', title: 'Physics P2 s23', before: null, after: {}, undone: false },
+      { id: 'c2', at: now, chat: 'demo', module: 'homework', action: 'update', item_id: 'x2', title: 'Kinematics worksheet', before: {}, after: {}, undone: true }],
+    pending: [{ id: 'p1', chat: 'demo', module: 'homework', item_id: 'x2', title: 'Kinematics worksheet Q1-10', reason: 'finished', at: now }] }) });
   const browser = await chromium.launch();
   let problems = 0;
   for (const [w, hgt] of SIZES) {

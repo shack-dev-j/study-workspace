@@ -32,7 +32,7 @@ export default {
 
     const list = h('nav', { class: 'chat-list', 'aria-label': 'Chats' });
     const log = h('div', { class: 'chat-log', role: 'log', 'aria-live': 'polite' });
-    const input = h('textarea', { class: 'chat-input', rows: 1, placeholder: keys.gemini ? 'Ask anything, or tell me what to add or plan…' : 'Add your Gemini key in Settings → Connections first', 'aria-label': 'Message', disabled: !keys.gemini,
+    const input = h('textarea', { class: 'chat-input', rows: 1, placeholder: keys.gemini ? 'Ask, or tell me what to add or plan…' : 'Add a Gemini key to start', 'aria-label': 'Message', disabled: !keys.gemini,
       oninput: grow, onkeydown: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } } });
     const sendBtn = h('button', { class: 'btn primary send-btn', type: 'submit', 'aria-label': 'Send', title: 'Send (Enter)', disabled: !keys.gemini }, icon('send'));
     const form = h('form', { class: 'chat-compose', onsubmit: e => { e.preventDefault(); sendMsg(); } }, input, sendBtn);
@@ -134,9 +134,10 @@ export default {
         const first = !chat;
         chat = res;
         if (first) history.replaceState(null, '', '#/chat/' + chat.id);
+        busy = false; sendBtn.disabled = false;
         drawLog();
-        await refreshList();
-        if (res.messages[res.messages.length - 1].changes.length) await reloadStores();
+        refreshList();
+        if (res.messages[res.messages.length - 1].changes.length) reloadStores();
       } catch (e) {
         toast('Gemini: ' + e.message, 'error');
         input.value = text; grow();
@@ -146,7 +147,7 @@ export default {
       }
     }
 
-    el.append(h('div', { class: 'chat-page' }, list, h('section', { class: 'chat-main' }, log, form,
+    el.append(h('div', { class: 'chat-page' }, list, h('section', { class: 'card chat-main' }, log, form,
       h('p', { class: 'chat-note small muted' }, 'Gemini can make mistakes. Changes are backed up first and can be undone.'))));
     if (args[0]) {
       try { chat = await api.get('/api/ai/chats/' + args[0]); } catch (e) { chat = null; }

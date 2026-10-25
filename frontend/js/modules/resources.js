@@ -34,7 +34,7 @@ export default {
 
     function card(r) {
       const href = safeHref(r.url);
-      return h('article', { class: 'res-card' },
+      return h('article', { class: 'card res-card' },
         h('div', { class: 'res-top' },
           h('span', { class: 'res-ico' }, icon(KIND_ICON[r.kind] || 'link')),
           h('span', { class: 'res-kind' }, r.kind || 'link'),

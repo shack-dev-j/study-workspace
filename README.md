@@ -5,12 +5,14 @@ homework, textbooks with a built-in PDF reader, SAT prep, university
 applications, and cybersecurity olympiad (ICO) training. Everything in one
 fast, calm, offline app.
 
-> Status: version 2.0: day planner, focus mode, Todoist and Gemini. Developer notes: `HANDOFF.md`.
+> Status: version 3.0: AI assistant, built-in past papers and resources, day planner, focus mode, Todoist. Developer notes: `HANDOFF.md`.
 
 ## What is inside
 
 | Area | Pages |
 | --- | --- |
+| **Assistant** | Chat with Gemini about your studies. It can add and change homework, deadlines, past papers, lessons, topic levels and plan your day. Every change has an Undo button, and it never deletes without asking |
+| **Ready on day one** | 210 Cambridge past papers (9709, 9702, 9618, 2021–2025) with links to the paper and mark scheme, 38 checked resource links (syllabuses, SAT practice, cyber training), 23 TryHackMe rooms, universities from your research report and default habits. New content is added on updates without touching your own data |
 | **My day** | Your day in time blocks: what to do now, when to take a break, what is next, a must-do list, what to pack in your backpack for tomorrow's lessons. Plans itself from homework, deadlines, Todoist, SAT and cyber plans, your timetable and routines |
 | **Focus** | Focus mode for Hyprland: warns about, then closes distracting apps (your list) during study blocks, and nags when work is overdue. Off until you turn it on |
 | **Overview** | One screen for the day: homework due soon, SAT and cyber task, habits, lessons, deadlines, the book you were reading, reminders |
@@ -39,6 +41,7 @@ Open **Settings → Connections**:
 - **Todoist**: in Todoist open Settings → Integrations → Developer, copy the API token, paste it, Save.
   Tasks sync every 15 minutes and go into your day plan; finishing them in the app closes them in Todoist.
 - **Gemini**: get a free key at https://aistudio.google.com/apikey, paste it, Save, then **Check key**.
+  It powers the **Assistant** page (chat that can add, change and plan things, with Undo).
   It adds "Split into steps" to study blocks and a "Coach" button on My day.
 
 Keys are saved only in `data/secrets.json` on your computer (only you can read it). They are never in

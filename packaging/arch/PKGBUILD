@@ -3,7 +3,7 @@
 #   cd packaging/arch && makepkg -si
 # Data is stored per user in ~/.local/share/study-workspace (never in /usr).
 pkgname=study-workspace
-pkgver=2.1.0
+pkgver=3.0.0
 pkgrel=1
 pkgdesc="Personal study and life-tracking app (homework, textbooks, SAT, applications, cyber training)"
 arch=('any')

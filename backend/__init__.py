@@ -2,4 +2,4 @@
 
 APP_NAME = "Study Workspace"
 APP_ID = "study-workspace"
-VERSION = "2.1.0"
+VERSION = "3.0.0"

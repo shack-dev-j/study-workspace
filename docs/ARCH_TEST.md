@@ -132,6 +132,18 @@ Every page was tested headless in the cloud (`scripts/smoke.js`, `scripts/e2e.js
 - [ ] **Gemini**: paste your key, Check key, then on a study block: ⋯ → Split into steps.
 - [ ] `study-workspace --now` prints the current block.
 
+## 12. Version 3 (assistant, built-in content)
+
+- [ ] After updating, your own homework, papers and notes are unchanged; Past papers now lists about
+      210 papers, Resources shows about 38 links, TryHackMe lists rooms. Delete one room, restart the
+      app: it does not come back.
+- [ ] Past papers → "Paper ↗" opens the PDF in your browser (try one Maths, one Physics, one Computer
+      Science paper). Note any link that 404s here: ______
+- [ ] Assistant (needs the Gemini key): "Add homework: Physics P2 s23 for Thursday, 75 minutes" adds it,
+      shows a card, and My day plans it. Press Undo: it is gone.
+- [ ] "Delete the Physics P2 homework": a Delete / Keep card appears; nothing is deleted until you press Delete.
+- [ ] "I'm good at quadratics now": Subjects → Maths shows the new level.
+
 ## Notes
 
 Write anything odd here (screenshots help).
