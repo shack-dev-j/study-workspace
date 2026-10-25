@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=Study Workspace
+GenericName=Study planner
+Comment=Homework, textbooks, SAT, applications and cyber training in one place
+Exec=@EXEC@
+Icon=study-workspace
+Terminal=false
+Categories=Education;Office;
+Keywords=study;homework;sat;university;pdf;reader;
+StartupNotify=true
+StartupWMClass=study-workspace

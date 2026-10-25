@@ -1,0 +1,49 @@
+# Maintainer: Shohjahon (shack-dev-j)
+# Build from the repo folder:
+#   cd packaging/arch && makepkg -si
+# Data is stored per user in ~/.local/share/study-workspace (never in /usr).
+pkgname=study-workspace
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Personal study and life-tracking app (homework, textbooks, SAT, applications, cyber training)"
+arch=('any')
+url="https://github.com/shack-dev-j/study-workspace"
+license=('LicenseRef-private')
+depends=('python')
+optdepends=(
+  'python-pywebview: open the app in its own native window (best)'
+  'python-gobject: GTK backend for pywebview'
+  'webkit2gtk-4.1: GTK backend for pywebview'
+  'chromium: fallback window in app mode'
+  'libnotify: desktop notifications for deadlines (notify-send)'
+)
+source=()
+
+_root() { realpath "$startdir/../.."; }
+
+package() {
+  local src app
+  src="$(_root)"
+  app="$pkgdir/usr/share/study-workspace"
+  install -d "$app"
+  cp -r "$src"/{server.py,backend,frontend,vendor,desktop,docs,data.example,README.md} "$app/"
+  find "$app" -name '__pycache__' -type d -prune -exec rm -rf {} +
+  touch "$app/.installed"   # use ~/.local/share/study-workspace for data
+
+  install -d "$pkgdir/usr/bin"
+  sed "s|@APP_DIR@|/usr/share/study-workspace|" "$src/desktop/study-workspace" > "$pkgdir/usr/bin/study-workspace"
+  chmod 755 "$pkgdir/usr/bin/study-workspace"
+
+  install -d "$pkgdir/usr/share/applications"
+  sed "s|@EXEC@|/usr/bin/study-workspace|" "$src/desktop/study-workspace.desktop" \
+    > "$pkgdir/usr/share/applications/study-workspace.desktop"
+
+  install -Dm644 "$src/desktop/icons/study-workspace.svg" \
+    "$pkgdir/usr/share/icons/hicolor/scalable/apps/study-workspace.svg"
+  local d s
+  for d in "$src"/desktop/icons/png/*x*; do
+    s="$(basename "$d")"
+    install -Dm644 "$d/study-workspace.png" "$pkgdir/usr/share/icons/hicolor/$s/apps/study-workspace.png"
+  done
+  install -Dm644 "$src/vendor/pdfjs/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/pdfjs-LICENSE"
+}

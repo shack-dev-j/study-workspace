@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. Branch: `build/v1` (draft PR into `main`).
+Last update: 2026-10-25. Branches: `build/v1` (core + design, PR #50) and `build/desktop` (desktop app, stacked on it).
 Read this file alone and you can continue the project. Rules: `CLAUDE.md`.
 Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`),
 status in `docs/BOARD.md`.
@@ -17,7 +17,7 @@ The work is split between two AI agents:
 
 | Owner | Issues |
 | --- | --- |
-| Claude (core/design) | #1–#7 done · #8 launcher, #9 icon + .desktop, #10 install/uninstall, #11 PKGBUILD, #12 reminders (backend done, tests left), #13 ARCH_TEST, #18 PDF.js (vendored, viewer component left), #21 linked-folder backend (done), #31 universities import backend, #46 search palette component, #47 responsive/a11y pass, #48 QA, #49 docs |
+| Claude (core/design) | #1–#13 done (desktop app in branch `build/desktop`) · #18 PDF.js (vendored, viewer component left), #21 linked-folder backend (done), #31 universities import backend, #46 search palette component, #47 responsive/a11y pass, #48 QA, #49 docs |
 | Gemini (features) | #14–#17, #19, #20, #22–#30, #32–#45 (UI parts of #21 and #31 too). #38 is research (ICO, with sources). |
 
 ## 2. What works now
@@ -35,8 +35,14 @@ The work is split between two AI agents:
   logic, window tracking for auto-shutdown.
 - PDF.js 4.10.38 vendored in `vendor/pdfjs/` (Apache-2.0).
 
-Not built yet: everything listed under "Gemini" above, and Claude's open
-items (#8–#13 desktop parts). `backend/research_import.py` (#31) does not
+- Desktop app (#8–#13): `desktop/study-workspace` launcher (`backend/launcher.py`):
+  reuses or starts the server, opens pywebview → Chromium/Brave `--app` →
+  default browser, server stops after the last window closes. Icons (SVG +
+  PNG 16–512), `.desktop` file, `install.sh` / `uninstall.sh` (keeps data),
+  `packaging/arch/PKGBUILD`, hourly `notify-send` reminders,
+  `docs/ARCH_TEST.md`. 44 tests.
+
+Not built yet: everything listed under "Gemini" above. `backend/research_import.py` (#31) does not
 exist yet; the `/api/import/universities` route expects it.
 
 ## 3. Architecture
@@ -201,7 +207,7 @@ python -m unittest discover tests     # backend tests
 
 ## 8. Known issues
 
-- Launcher, .desktop file, install.sh, uninstall.sh, PKGBUILD not written yet (#8–#11).
+- The GUI window, Hyprland app-id and notifications can't be tested from the cloud: the user runs `docs/ARCH_TEST.md`.
 - Ctrl+K button shows a "planned" toast (#46).
 - `data.example/` only has empty modules; real sample data and syllabus
   topics still to add (#14 etc.).

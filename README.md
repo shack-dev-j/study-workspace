@@ -5,8 +5,8 @@ homework, textbooks with a built-in PDF reader, SAT prep, university
 applications, and cybersecurity olympiad (ICO) training. Everything in one
 fast, calm, offline app.
 
-> Status: **Phase 0 (setup)**. The folder structure is in place; features are
-> being planned in `docs/PRD.md` and `docs/ROADMAP.md`.
+> Status: core system, design system and the Arch desktop app are built.
+> Feature pages are being added (see `HANDOFF.md` and `docs/BOARD.md`).
 
 ## Main ideas
 
@@ -22,8 +22,6 @@ fast, calm, offline app.
 
 ## Run it (development)
 
-The server is built in milestone M1. Once it exists:
-
 ```bash
 python server.py
 ```
@@ -35,13 +33,38 @@ On first run, if `data/` does not exist, it is created from `data.example/`.
 
 ## Install on Arch Linux
 
-Coming in milestone M1 (`install.sh`, `.desktop` file, launcher, PKGBUILD).
+```bash
+./install.sh --check     # shows the exact pacman / yay commands for anything missing
+./install.sh             # installs for your user (no sudo needed)
+```
+
+Recommended packages for the best window and notifications:
+
+```bash
+sudo pacman -S python python-gobject webkit2gtk-4.1 libnotify
+sudo pacman -S python-pywebview      # or: yay -S python-pywebview
+sudo pacman -S mako                  # notification daemon for Hyprland (if you have none)
+```
+
+Then open **Study Workspace** from your app launcher, or run `study-workspace`.
+
+- App: `~/.local/share/study-workspace/app`
+- Your data: `~/.local/share/study-workspace/data` (backups next to it)
+- Launcher: `~/.local/bin/study-workspace` (`--status`, `--stop`, `--browser`, `--no-window`)
+- Window: pywebview if installed, otherwise Chromium/Brave in app mode, otherwise your browser.
+  Closing the last window stops the server.
+- Uninstall: `./uninstall.sh` (keeps your data unless you type DELETE).
+- Package instead: `cd packaging/arch && makepkg -si`.
+- Manual test list: `docs/ARCH_TEST.md`.
+
+Run from the repo folder or a USB drive without installing: `./desktop/study-workspace`
+(data stays in the local `data/` folder).
 
 ## Folder structure
 
 | Folder | What is inside |
 | --- | --- |
-| `server.py` | Entry point: starts the local server (added in M1) |
+| `server.py` | Entry point: starts the local server |
 | `backend/` | Python backend: API, storage, backups, files, notifications |
 | `frontend/` | The app UI: `index.html`, `css/`, `js/core/`, `js/modules/` |
 | `vendor/` | Third-party code copied into the repo (e.g. PDF.js), with licenses |
