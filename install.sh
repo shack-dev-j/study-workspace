@@ -4,12 +4,16 @@
 #   ./install.sh          check dependencies, then install for this user
 #   ./install.sh --check  only check dependencies
 #   ./install.sh --yes    don't ask questions (copy existing repo data: no)
+#   ./install.sh --no-service   don't run in the background after login
 #
 # Installs:
 #   app       -> ~/.local/share/study-workspace/app
 #   launcher  -> ~/.local/bin/study-workspace
 #   menu item -> ~/.local/share/applications/study-workspace.desktop
 #   icons     -> ~/.local/share/icons/hicolor/...
+#   service   -> ~/.config/systemd/user/study-workspace.service (runs in the
+#                background so the planner, reminders and focus mode work
+#                even when the window is closed; falls back to ~/.config/autostart)
 # Your data lives in ~/.local/share/study-workspace/data and is never touched
 # by re-installing.
 set -euo pipefail
@@ -21,13 +25,17 @@ APP="$ROOT/app"
 BIN="$HOME/.local/bin"
 APPS="$DATA_HOME/applications"
 ICONS="$DATA_HOME/icons/hicolor"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+UNIT_DIR="$CONFIG_HOME/systemd/user"
+AUTOSTART="$CONFIG_HOME/autostart"
 
-CHECK_ONLY=0; YES=0
+CHECK_ONLY=0; YES=0; SERVICE=1
 for a in "$@"; do
   case "$a" in
     --check) CHECK_ONLY=1 ;;
     --yes|-y) YES=1 ;;
-    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+    --no-service) SERVICE=0 ;;
+    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
     *) echo "Unknown option: $a"; exit 2 ;;
   esac
 done
@@ -41,11 +49,11 @@ in_repos() { have pacman && pacman -Si "$1" >/dev/null 2>&1; }
 bold "Checking what Study Workspace needs"
 TODO=()
 
-# 1. Python 3.9+ (required)
-if have python3 && python3 -c 'import sys; sys.exit(sys.version_info < (3, 9))'; then
+# 1. Python 3.10+ (required)
+if have python3 && python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))'; then
   ok "Python $(python3 -c 'import platform; print(platform.python_version())')"
 else
-  miss "Python 3.9 or newer is missing (required)"
+  miss "Python 3.10 or newer is missing (required)"
   echo; echo "Install it with:  sudo pacman -S python"; exit 1
 fi
 
@@ -77,6 +85,11 @@ if [ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]; then
   fi
 fi
 
+# 4. Focus mode needs Hyprland (hyprctl). Everything else works without it.
+if have hyprctl; then ok "hyprctl (focus mode can warn about and close distracting apps)"
+else miss "hyprctl not found: focus mode only works on Hyprland (the rest of the app works)"; fi
+if [ -f "${XDG_STATE_HOME:-$HOME/.local/state}/caelestia/scheme.json" ]; then ok "Caelestia colour scheme (the app will match your shell colours)"; fi
+
 if [ ${#TODO[@]} -gt 0 ]; then
   echo; bold "Optional: run these to get every feature"
   for t in "${TODO[@]}"; do echo "  $t"; done
@@ -85,6 +98,12 @@ if [ "$CHECK_ONLY" = 1 ]; then exit 0; fi
 
 echo; bold "Installing to $APP"
 mkdir -p "$ROOT" "$BIN" "$APPS"
+
+# Stop an older version that is still running, so the new one starts fresh.
+if have systemctl && systemctl --user is-active --quiet study-workspace.service 2>/dev/null; then
+  systemctl --user stop study-workspace.service >/dev/null 2>&1 || true
+fi
+if [ -x "$BIN/study-workspace" ]; then "$BIN/study-workspace" --stop >/dev/null 2>&1 || true; fi
 
 # Fresh copy of the app (the app folder never holds your data).
 TMP="$ROOT/.app-new"
@@ -114,6 +133,39 @@ have update-desktop-database && update-desktop-database "$APPS" >/dev/null 2>&1 
 have gtk-update-icon-cache && gtk-update-icon-cache -f -t "$ICONS" >/dev/null 2>&1 || true
 ok "menu entry and icons"
 
+# Background service: keeps the planner, reminders and focus mode running
+# after login, even with the window closed. Never needs root.
+rm -f "$AUTOSTART/study-workspace-background.desktop"
+if [ "$SERVICE" = 1 ]; then
+  if have systemctl && systemctl --user show-environment >/dev/null 2>&1; then
+    mkdir -p "$UNIT_DIR"
+    sed "s|@EXEC@|$BIN/study-workspace|" "$SRC/desktop/study-workspace.service" > "$UNIT_DIR/study-workspace.service"
+    systemctl --user daemon-reload
+    systemctl --user enable study-workspace.service >/dev/null 2>&1 || true
+    systemctl --user restart study-workspace.service || true
+    ok "background service (systemctl --user status study-workspace)"
+  else
+    mkdir -p "$AUTOSTART"
+    cat > "$AUTOSTART/study-workspace-background.desktop" <<DESK
+[Desktop Entry]
+Type=Application
+Name=Study Workspace (background)
+Comment=Planner, reminders and focus mode
+Exec=$BIN/study-workspace --no-window
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+DESK
+    ok "starts in the background after login (autostart)"
+    echo "    Hyprland without uwsm? Add this line to ~/.config/hypr/hyprland.conf:"
+    echo "    exec-once = $BIN/study-workspace --no-window"
+  fi
+else
+  if have systemctl && [ -f "$UNIT_DIR/study-workspace.service" ]; then
+    systemctl --user disable --now study-workspace.service >/dev/null 2>&1 || true
+    rm -f "$UNIT_DIR/study-workspace.service"
+  fi
+fi
+
 # Offer to bring data from a portable copy (the repo folder) the first time.
 if [ -d "$SRC/data" ] && [ ! -d "$ROOT/data" ]; then
   ans="n"
@@ -131,3 +183,4 @@ esac
 
 echo; bold "Done. Open \"Study Workspace\" from your app launcher, or run: study-workspace"
 echo "Your data: $ROOT/data"
+echo "Todoist and Gemini: open Settings → Connections in the app and paste your keys."

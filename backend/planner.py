@@ -315,12 +315,18 @@ def fill(gap_list, pool, cfg):
             if task["minutes"] < 10:
                 pool.pop(0)
             count += 1
+            if not pool:
+                break
+            # Always a break between two focus blocks. A long one after every
+            # few blocks; a short one if the long one leaves no room to work.
             brk = long_b if count % long_every == 0 else short_b
-            # A break only if there is room for more work after it in this gap.
-            if pool and b - (t + brk) >= min_block:
-                blocks.append({"kind": "break", "start": t, "end": t + brk,
-                               "title": "Long break" if brk == long_b else "Break", "sub": ""})
-                t += brk
+            if b - (t + brk) < min_block:
+                brk = short_b
+            if b - (t + brk) < min_block:
+                break  # no room for another block in this gap: the rest is free time
+            blocks.append({"kind": "break", "start": t, "end": t + brk,
+                           "title": "Long break" if brk == long_b else "Break", "sub": ""})
+            t += brk
         if b - t >= 5:
             blocks.append({"kind": "free", "start": t, "end": b, "title": "Free time", "sub": ""})
     return blocks, pool

@@ -31,6 +31,28 @@ class ServerTests(unittest.TestCase):
                 s, _, _ = t.req("GET", p, raw=True)
                 self.assertEqual(s, 404, p)
 
+    def test_unread_body_does_not_break_keep_alive(self):
+        # POST /api/focus/stop ignores its "{}" body. The next request on the
+        # same connection must still work (the leftover must not be parsed).
+        import http.client
+        with TempApp() as t:
+            c = http.client.HTTPConnection("127.0.0.1", t.app.port, timeout=10)
+            h = {"X-Requested-By": "study-workspace", "Content-Type": "application/json"}
+            c.request("POST", "/api/focus/stop", body=b"{}", headers=h)
+            r = c.getresponse(); r.read()
+            self.assertEqual(r.status, 200)
+            try:
+                c.request("GET", "/api/health")
+                r2 = c.getresponse()
+            except (http.client.HTTPException, OSError):
+                c.close()
+                c = http.client.HTTPConnection("127.0.0.1", t.app.port, timeout=10)
+                c.request("GET", "/api/health")
+                r2 = c.getresponse()
+            self.assertEqual(r2.status, 200)
+            self.assertEqual(json.loads(r2.read())["app"], "Study Workspace")
+            c.close()
+
     def test_listens_on_localhost_only(self):
         with TempApp() as t:
             self.assertEqual(t.app.httpd.server_address[0], "127.0.0.1")

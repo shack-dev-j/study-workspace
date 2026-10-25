@@ -205,6 +205,97 @@ test('today screen + weekly review', async page => {
   ok(await page.isVisible('.chart svg'), 'bar chart drawn');
 });
 
+// ---- v2: My day, focus, settings ----
+const isoDay = d => d.toISOString().slice(0, 10);
+test('my day: plan, block done, add task, backpack, must-do', async page => {
+  await page.goto(base + '/#/day');
+  await page.waitForSelector('.now-card');
+  ok(await page.isVisible('.now-card h2, .now-card .now-title'), 'now card shows what to do');
+  const tomorrow = new Date(Date.now() + 86400000);
+  const iso = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+  await page.goto(base + '/#/day/' + iso);
+  await page.waitForSelector('.tl-item');
+  ok((await page.locator('.tl-item').count()) >= 5, 'tomorrow has a timeline of blocks');
+  const plan = readData('planner').days[iso];
+  ok(plan && plan.blocks.some(b => b.kind === 'focus') && plan.blocks.some(b => b.kind === 'break'), 'plan has focus blocks and breaks');
+  const focusIdx = plan.blocks.findIndex(b => b.kind === 'focus');
+  const fb = plan.blocks[focusIdx];
+  await page.click(`button[aria-label="Options for ${fb.title}"] >> nth=0`);
+  await page.click('.modal button:has-text("Done")');
+  await sleep(700);
+  ok(readData('planner').days[iso].blocks.find(b => b.id === fb.id).state === 'done', 'block marked done');
+  await page.click('button:has-text("Add task")');
+  await page.fill('.modal input[name="title"], .modal input[aria-label="What"], .modal .field input >> nth=0', 'Chemistry flashcards');
+  await page.click('.modal .btn.primary');
+  await sleep(900);
+  ok(readData('homework').items.some(i => i.title === 'Chemistry flashcards'), 'added task saved as homework');
+  const bag = page.locator('input[aria-label^="Packed "]').first();
+  const bagName = (await bag.getAttribute('aria-label')).replace('Packed ', '');
+  await bag.check();
+  await sleep(700);
+  const days = readData('planner').days;
+  ok(Object.values(days).some(d => d.packed && d.packed[bagName]), 'backpack tick saved');
+  await page.goto(base + '/#/day');
+  await page.waitForSelector('input[aria-label^="Finish "]');
+  const fin = page.locator('input[aria-label^="Finish "]').first();
+  const finName = (await fin.getAttribute('aria-label')).replace('Finish ', '');
+  await fin.check();
+  await page.waitForSelector('#toasts :text("Finished")', { timeout: 4000 }).catch(() => {});
+  await sleep(500);
+  const t = await page.evaluate(() => import('/js/core/dates.js').then(m => m.today()));
+  const doneHabit = readData('habits').items.some(hb => hb.name === finName && hb.days && hb.days[t]);
+  const doneHw = readData('homework').items.some(i => i.title === finName && i.status === 'done');
+  ok(doneHabit || doneHw, `must-do item finished from My day (${finName})`);
+});
+
+test('focus mode: settings, rules, session', async page => {
+  await page.goto(base + '/#/focus');
+  await page.waitForSelector('input[aria-label="Focus mode on"]');
+  await page.check('input[aria-label="Focus mode on"]');
+  await sleep(700);
+  ok(readData('focus').config.enabled === true, 'focus mode switched on');
+  await page.fill('input[aria-label="What will you work on"]', 'Physics P1');
+  await page.click('button:has-text("Start")');
+  await page.waitForSelector('button:has-text("Stop session")');
+  const st = await (await fetch(base + '/api/focus')).json();
+  ok(st.active && /Physics P1/.test(JSON.stringify(st.active)), 'session started');
+  await page.click('button:has-text("Stop session")');
+  await sleep(700);
+  const st2 = await (await fetch(base + '/api/focus')).json();
+  ok(!st2.active, 'session stopped');
+  const n = readData('focus').config.rules.length;
+  await page.locator('button[aria-label^="Remove "]').first().click();
+  await sleep(900);
+  ok(readData('focus').config.rules.length === n - 1, 'block-list rule removed');
+});
+
+test('settings: planner, keys, appearance', async page => {
+  await page.goto(base + '/#/settings/planner');
+  await page.waitForSelector('input[type=time]');
+  await page.locator('label:has-text("Focus block") input, input[name="focus"]').first().fill('45');
+  await page.click('button:has-text("Save") >> nth=0');
+  await sleep(800);
+  ok(readData('planner').config.focus === 45, 'planner settings saved');
+  await page.goto(base + '/#/settings/connections');
+  await page.fill('input[aria-label="Todoist API token"], input[type=password] >> nth=0', 'fake-token-123');
+  await page.locator('form:has(input[type=password]) .btn.primary').first().click();
+  await sleep(800);
+  const sec = JSON.parse(fs.readFileSync(path.join(home, 'data', 'secrets.json'), 'utf8'));
+  ok(sec.todoist_token === 'fake-token-123', 'token saved in data/secrets.json');
+  ok((fs.statSync(path.join(home, 'data', 'secrets.json')).mode & 0o777) === 0o600, 'secrets file is private (600)');
+  const pub = await (await fetch(base + '/api/secrets')).text();
+  ok(!pub.includes('fake-token-123'), 'API never returns the token');
+  page.once('dialog', d => d.accept());
+  await page.click('button:has-text("Disconnect")');
+  await sleep(500);
+  if (await page.isVisible('.modal .btn.primary, .modal .btn.danger')) await page.locator('.modal .btn.danger, .modal .btn.primary').last().click();
+  await sleep(800);
+  ok(!JSON.parse(fs.readFileSync(path.join(home, 'data', 'secrets.json'), 'utf8')).todoist_token, 'token removed');
+  await page.goto(base + '/#/settings/appearance');
+  await page.click('.tabs button:has-text("Light")');
+  ok(await page.evaluate(() => document.documentElement.dataset.theme) === 'light', 'light theme applied');
+});
+
 (async () => {
   const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
@@ -223,7 +314,8 @@ test('today screen + weekly review', async page => {
     const page = await ctx.newPage();
     const errs = [];
     page.on('pageerror', e => errs.push(String(e)));
-    page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+    // The settings test saves a fake Todoist token, so its sync fails (502) on purpose.
+    page.on('console', m => { if (m.type() === 'error' && !(name.startsWith('settings') && /502/.test(m.text()))) errs.push(m.text()); });
     try { await fn(page, pdf); } catch (e) { ok(false, 'threw: ' + e.message.split('\n')[0]); }
     ok(!errs.length, 'no console errors' + (errs.length ? ': ' + errs.join(' | ') : ''));
     await ctx.close();

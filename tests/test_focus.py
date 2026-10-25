@@ -133,6 +133,16 @@ class EngineTests(unittest.TestCase):
         e.tick()  # stopped by hand: not restarted for the same block
         self.assertIsNone(self.t.app.storage.read("focus")["active"])
 
+    def test_manual_session_stopped_is_not_restarted(self):
+        # Start by hand during a focus block, then stop: auto focus must not
+        # start a new session 4 seconds later.
+        e = self.engine(FakeHypr([]), auto_plan=True)
+        e.plan_now = lambda: {"id": "b2", "kind": "focus", "title": "SAT", "end": "17:30"}
+        e.start(25, "My own work")
+        e.stop(by_user=True)
+        e.tick()
+        self.assertIsNone(self.t.app.storage.read("focus")["active"])
+
     def test_nag_outside_focus(self):
         fake = FakeHypr([win("0x1", "steam")], active="0x1")
         e = self.engine(fake, nag=True)

@@ -185,7 +185,7 @@ def open_webview(url, wid):
     post(url, "/api/window/open", {"id": wid})
     threading.Thread(target=pinger, daemon=True).start()
     webview.create_window(APP_NAME, f"{url}?wid={wid}", width=1280, height=840, min_size=(380, 500),
-                          background_color="#0f1216", text_select=True)
+                          background_color="#131317", text_select=True)
     try:
         webview.start(private_mode=False)
     finally:

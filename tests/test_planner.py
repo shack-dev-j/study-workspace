@@ -162,6 +162,29 @@ class PlannerStorageTests(unittest.TestCase):
             self.assertEqual(s, 200)
             self.assertIn("text", now)
 
+    def test_settings_are_validated(self):
+        with TempApp() as t:
+            s, r = t.req("PUT", "/api/plan/settings", {"config": {"wake": "7:05", "focus": 999, "routines": [
+                {"title": "Gym", "start": "18:00", "end": "19:00", "days": [1, 3, "9", "x"]},
+                {"title": "Broken", "start": "19:00", "end": "18:00"}]},
+                "backpack": {"always": ["Laptop", ""], "lessons": {"Physics": ["Calculator"], "Empty": []}}})
+            self.assertEqual(s, 200)
+            self.assertEqual(r["config"]["wake"], "07:05")
+            self.assertEqual(r["config"]["focus"], 120)
+            self.assertEqual([x["title"] for x in r["config"]["routines"]], ["Gym"])
+            self.assertEqual(r["config"]["routines"][0]["days"], [1, 3])
+            self.assertEqual(r["backpack"], {"always": ["Laptop"], "lessons": {"Physics": ["Calculator"]}})
+            self.assertEqual(t.req("PUT", "/api/plan/settings", {"config": {"sleep": "late"}})[0], 400)
+            # Planned days are kept when settings change.
+            t.req("GET", "/api/plan?date=2026-10-26")
+            t.req("PUT", "/api/plan/settings", {"config": {"focus": 40}})
+            self.assertIn("2026-10-26", t.app.storage.read("planner")["days"])
+            s, r = t.req("PUT", "/api/focus/config", {"config": {"enabled": True, "mode": "nuke", "tone": "calm",
+                                                                 "rules": [{"type": "app", "pattern": "steam"}, {"pattern": ""}]}})
+            self.assertEqual(s, 200)
+            self.assertEqual((r["config"]["enabled"], r["config"]["mode"], r["config"]["tone"]), (True, "strict", "calm"))
+            self.assertEqual(r["config"]["rules"], [{"type": "app", "pattern": "steam", "label": "steam"}])
+
     def test_finish_homework_from_plan(self):
         with TempApp() as t:
             s, _ = t.req("POST", "/api/plan/finish", {"source": "homework", "id": "s1"})

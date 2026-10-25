@@ -22,7 +22,7 @@ ROLES = (
     "background", "onBackground", "surface", "surfaceDim", "surfaceBright", "surfaceContainerLowest",
     "surfaceContainerLow", "surfaceContainer", "surfaceContainerHigh", "surfaceContainerHighest",
     "onSurface", "surfaceVariant", "onSurfaceVariant", "outline", "outlineVariant", "inverseSurface",
-    "inverseOnSurface", "primary", "onPrimary", "primaryContainer", "onPrimaryContainer", "secondary",
+    "inverseOnSurface", "inversePrimary", "primary", "onPrimary", "primaryContainer", "onPrimaryContainer", "secondary",
     "onSecondary", "secondaryContainer", "onSecondaryContainer", "tertiary", "onTertiary",
     "tertiaryContainer", "onTertiaryContainer", "error", "onError", "errorContainer", "onErrorContainer",
     "green", "yellow", "peach", "red", "teal", "mauve",

@@ -57,6 +57,12 @@ Read `HANDOFF.md` for current status, then `docs/PRD.md`,
 - Before pushing UI changes run `scripts/smoke.js` and `scripts/e2e.js`
   (`NODE_PATH=$(npm root -g) node scripts/...`). They use Playwright and are
   developer tools only: the app itself never needs Node or npm.
+- v2: `planner`, `focus` and `todoist` data are written by the server; change
+  them only through their API routes (see `HANDOFF.md` §4). API keys live in
+  `data/secrets.json` (mode 600) and must never be exported, backed up,
+  returned by the API or committed.
+- Focus mode may only close windows with `hyprctl dispatch closewindow`;
+  never kill processes or close the shell, terminals or this app.
 - List pages use `frontend/js/core/crud.js`; keep the data shapes in
   `HANDOFF.md` §4 so search, reminders and the Today page keep working.
 

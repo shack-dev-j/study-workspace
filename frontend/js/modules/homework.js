@@ -16,6 +16,7 @@ export function homeworkFields(subjects) {
     { key: 'due', label: 'Due', type: 'date' },
     { key: 'priority', label: 'Priority', type: 'select', allowEmpty: false, options: [{ value: 'low', label: 'Low' }, { value: 'normal', label: 'Normal' }, { value: 'high', label: 'High' }] },
     { key: 'status', label: 'Status', type: 'select', allowEmpty: false, options: Object.entries(STATUS).map(([value, label]) => ({ value, label })) },
+    { key: 'minutes', label: 'Time needed (min)', type: 'number', min: 10, max: 600, step: 5, hint: 'For the day planner. Empty: 45 / 90 / 120 min by kind.' },
     { key: 'description', label: 'Description', type: 'textarea', wide: true },
   ];
 }

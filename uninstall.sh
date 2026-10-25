@@ -10,10 +10,16 @@ ROOT="$DATA_HOME/study-workspace"
 BIN="$HOME/.local/bin"
 APPS="$DATA_HOME/applications"
 ICONS="$DATA_HOME/icons/hicolor"
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 KEEP=0
 if [ "${1:-}" = "--keep-data" ]; then KEEP=1; fi
 
-# Stop a running server first.
+# Stop and remove the background service, then any running server.
+if command -v systemctl >/dev/null 2>&1 && [ -f "$CONFIG_HOME/systemd/user/study-workspace.service" ]; then
+  systemctl --user disable --now study-workspace.service >/dev/null 2>&1 || true
+fi
+rm -f "$CONFIG_HOME/systemd/user/study-workspace.service" "$CONFIG_HOME/autostart/study-workspace-background.desktop"
+command -v systemctl >/dev/null 2>&1 && systemctl --user daemon-reload >/dev/null 2>&1 || true
 if [ -x "$BIN/study-workspace" ]; then "$BIN/study-workspace" --stop >/dev/null 2>&1 || true; fi
 
 rm -rf "$ROOT/app" "$ROOT/browser-profile"

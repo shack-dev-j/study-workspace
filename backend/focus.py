@@ -212,10 +212,21 @@ class FocusEngine:
         self.seen.clear()
         return sess
 
-    def stop(self):
+    def stop(self, by_user=False):
         now = self.clock()
         self.storage.update("focus", lambda data: self._finish(data, now))
         self.seen.clear()
+        if by_user:
+            self._skip_current_block()
+
+    def _skip_current_block(self):
+        """The user stopped on purpose: do not auto-start again in this plan block."""
+        try:
+            blk = self.plan_now() if self.plan_now else None
+        except Exception:
+            blk = None
+        if blk and blk.get("id"):
+            self.auto_block = blk.get("id")
 
     def _finish(self, data, now):
         a = data.get("active")
