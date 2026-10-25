@@ -1,4 +1,4 @@
-// Assistant (v3): chat with Gemini. It can read the app and add or change
+// Assistant (v3): chat with the AI service chosen in Settings (Groq or Gemini). It can read the app and add or change
 // homework, deadlines, past papers, rooms, lessons, topics and the day plan.
 // Every change shows as a card with Undo; deletes wait for Confirm.
 import { h, fill, clear } from '../core/dom.js';
@@ -19,12 +19,12 @@ const IDEAS = [
   ['Cyber next step', 'Which TryHackMe rooms should I do next for the ICO, based on my weakest cyber topics?'],
 ];
 
-// Gemini's text is shown as safe markdown; images are turned into plain links.
+// The AI's text is shown as safe markdown; images are turned into plain links.
 const md = t => markdown(String(t || '').replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '[$1]($2)'));
 
 export default {
   async render(el, args) {
-    let keys = { gemini: false };
+    let keys = { ai: false, providerName: 'Groq' };
     try { keys = await api.get('/api/secrets'); } catch (e) { /* offline server error shown below */ }
     let chats = [];
     let chat = null;           // {id, title, messages}
@@ -32,9 +32,9 @@ export default {
 
     const list = h('nav', { class: 'chat-list', 'aria-label': 'Chats' });
     const log = h('div', { class: 'chat-log', role: 'log', 'aria-live': 'polite' });
-    const input = h('textarea', { class: 'chat-input', rows: 1, placeholder: keys.gemini ? 'Ask, or tell me what to add or plan…' : 'Add a Gemini key to start', 'aria-label': 'Message', disabled: !keys.gemini,
+    const input = h('textarea', { class: 'chat-input', rows: 1, placeholder: keys.ai ? 'Ask, or tell me what to add or plan…' : `Add a ${keys.providerName} key to start`, 'aria-label': 'Message', disabled: !keys.ai,
       oninput: grow, onkeydown: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } } });
-    const sendBtn = h('button', { class: 'btn primary send-btn', type: 'submit', 'aria-label': 'Send', title: 'Send (Enter)', disabled: !keys.gemini }, icon('send'));
+    const sendBtn = h('button', { class: 'btn primary send-btn', type: 'submit', 'aria-label': 'Send', title: 'Send (Enter)', disabled: !keys.ai }, icon('send'));
     const form = h('form', { class: 'chat-compose', onsubmit: e => { e.preventDefault(); sendMsg(); } }, input, sendBtn);
 
     function grow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 180) + 'px'; }
@@ -97,12 +97,12 @@ export default {
     }
 
     function welcome() {
-      if (!keys.gemini) {
+      if (!keys.ai) {
         return h('div', { class: 'chat-welcome' },
           h('span', { class: 'welcome-ico' }, icon('sparkle')),
           h('h2', null, 'Your study assistant'),
-          h('p', { class: 'muted' }, 'It can plan your week, add homework and deadlines, pick past papers, update topic levels and answer questions about your data. It needs a free Gemini key.'),
-          h('a', { class: 'btn primary', href: '#/settings/connections' }, icon('key'), 'Add Gemini key'));
+          h('p', { class: 'muted' }, `It can plan your week, add homework and deadlines, pick past papers, update topic levels and answer questions about your data. It needs a free ${keys.providerName} API key.`),
+          h('a', { class: 'btn primary', href: '#/settings/connections' }, icon('key'), `Add ${keys.providerName} key`));
       }
       return h('div', { class: 'chat-welcome' },
         h('span', { class: 'welcome-ico' }, icon('sparkle')),
@@ -125,7 +125,7 @@ export default {
 
     async function sendMsg() {
       const text = input.value.trim();
-      if (!text || busy || !keys.gemini) return;
+      if (!text || busy || !keys.ai) return;
       busy = true; sendBtn.disabled = true;
       input.value = ''; grow();
       drawLog(text);
@@ -139,21 +139,21 @@ export default {
         refreshList();
         if (res.messages[res.messages.length - 1].changes.length) reloadStores();
       } catch (e) {
-        toast('Gemini: ' + e.message, 'error');
+        toast(keys.providerName + ': ' + e.message, 'error');
         input.value = text; grow();
         drawLog();
       } finally {
-        busy = false; sendBtn.disabled = !keys.gemini; input.focus();
+        busy = false; sendBtn.disabled = !keys.ai; input.focus();
       }
     }
 
     el.append(h('div', { class: 'chat-page' }, list, h('section', { class: 'card chat-main' }, log, form,
-      h('p', { class: 'chat-note small muted' }, 'Gemini can make mistakes. Changes are backed up first and can be undone.'))));
+      h('p', { class: 'chat-note small muted' }, `${keys.providerName} can make mistakes. Changes are backed up first and can be undone.`))));
     if (args[0]) {
       try { chat = await api.get('/api/ai/chats/' + args[0]); } catch (e) { chat = null; }
     }
     await refreshList();
     drawLog();
-    if (keys.gemini) input.focus({ preventScroll: true });
+    if (keys.ai) input.focus({ preventScroll: true });
   },
 };

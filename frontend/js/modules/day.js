@@ -59,7 +59,7 @@ function dayLabel(d) {
 export default {
   async render(el, args) {
     let date = /^\d{4}-\d{2}-\d{2}$/.test(args[0] || '') ? args[0] : today();
-    let plan = null, bag = null, focusInfo = null, keys = { todoist: false, gemini: false };
+    let plan = null, bag = null, focusInfo = null, keys = { todoist: false, ai: false, providerName: 'AI' };
     let timer = null, lastFetch = 0;
 
     const nowCard = h('section', { class: 'card now-card', 'aria-live': 'polite' });
@@ -135,7 +135,7 @@ export default {
         }
         actions.push(button('Block done', () => setState(cur, 'done'), { icon: 'check' }));
         if (cur.ref && FINISHABLE.has(cur.ref.source)) actions.push(button('Task finished', () => finish(cur.ref, cur.title), { kind: 'ghost' }));
-        if (keys.gemini) actions.push(button('Steps', () => breakDown(cur), { icon: 'sparkle', kind: 'ghost', title: 'Split this task into small steps (Gemini)' }));
+        if (keys.ai) actions.push(button('Steps', () => breakDown(cur), { icon: 'sparkle', kind: 'ghost', title: `Split this task into small steps (${keys.providerName})` }));
       } else if (cur.kind === 'break' && cur.title !== 'Break between lessons') {
         actions.push(button('Skip break', () => setState(cur, 'skipped'), { icon: 'skip' }));
       } else if (cur.kind === 'free') {
@@ -254,7 +254,7 @@ export default {
     }
 
     function drawCoach() {
-      if (!keys.gemini || date !== today()) { clear(coachBox); return; }
+      if (!keys.ai || date !== today()) { clear(coachBox); return; }
       if (!coachBox.firstChild) coachBox.append(h('div', { class: 'coach-row' }, button('Ask the coach about today', coach, { icon: 'sparkle', small: true, kind: 'ghost' })));
     }
 
@@ -299,20 +299,20 @@ export default {
       await refresh();
     }
     async function breakDown(b) {
-      const m = modal({ title: 'Steps for: ' + b.title, body: h('p', { class: 'muted' }, 'Asking Gemini…') });
+      const m = modal({ title: 'Steps for: ' + b.title, body: h('p', { class: 'muted' }, `Asking ${keys.providerName}…`) });
       try {
         const r = await api.post('/api/ai/breakdown', { title: b.title, details: [b.sub, b.why].filter(Boolean).join(', '), minutes: length(b) });
         fill(m.el.querySelector('.modal-body'), r.steps.length
           ? h('ol', { class: 'steps' }, r.steps.map(s => h('li', null, s.step, h('span', { class: 'muted small' }, ` · ${s.minutes} min`))))
           : h('p', null, 'No steps came back.'));
-      } catch (e) { fill(m.el.querySelector('.modal-body'), h('p', null, 'Gemini could not help: ' + e.message)); }
+      } catch (e) { fill(m.el.querySelector('.modal-body'), h('p', null, keys.providerName + ' could not help: ' + e.message)); }
     }
     async function coach() {
       const m = modal({ title: 'Coach', body: h('p', { class: 'muted' }, 'Thinking about your day…') });
       try {
         const r = await api.post('/api/ai/coach', { date });
         fill(m.el.querySelector('.modal-body'), h('p', { class: 'coach-text' }, r.text));
-      } catch (e) { fill(m.el.querySelector('.modal-body'), h('p', null, 'Gemini could not help: ' + e.message)); }
+      } catch (e) { fill(m.el.querySelector('.modal-body'), h('p', null, keys.providerName + ' could not help: ' + e.message)); }
     }
     function blockMenu(b) {
       const acts = [];
@@ -323,7 +323,7 @@ export default {
         acts.push(button('Skip', go(() => setState(b, 'skipped')), { icon: 'skip' }));
       }
       if (b.ref && FINISHABLE.has(b.ref.source)) acts.push(button('Task finished', go(() => finish(b.ref, b.title)), { icon: 'check' }));
-      if (b.kind === 'focus' && keys.gemini) acts.push(button('Split into steps', go(() => breakDown(b)), { icon: 'sparkle' }));
+      if (b.kind === 'focus' && keys.ai) acts.push(button('Split into steps', go(() => breakDown(b)), { icon: 'sparkle' }));
       if (b.ref && LINK_OF[b.ref.source] && b.ref.source !== 'todoist') acts.push(h('a', { class: 'btn', href: LINK_OF[b.ref.source](b.ref.id), onclick: () => m.close() }, icon('right'), 'Open'));
       const m = modal({ title: b.title, body: h('div', null,
         h('p', { class: 'muted' }, `${b.start}–${b.end} · ${(KINDS[b.kind] || KINDS.free).label}${b.sub ? ' · ' + b.sub : ''}${b.why ? ' · ' + b.why : ''}`),

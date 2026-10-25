@@ -1,6 +1,6 @@
 # HANDOFF: Study Workspace
 
-Last update: 2026-10-25. **v3.0: AI assistant that can change app data (with undo), built-in study content (past papers, resources, TryHackMe rooms, universities), Resources page.** v2.1: premium redesign (design system v2.1, see `docs/research/design.md`).** v2.0: day planner, focus mode, Todoist, Gemini, Caelestia colours. v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
+Last update: 2026-10-25. **v3.1: Groq is the default AI (OpenAI-compatible tool calling), Gemini still selectable.** **v3.0: AI assistant that can change app data (with undo), built-in study content (past papers, resources, TryHackMe rooms, universities), Resources page.** v2.1: premium redesign (design system v2.1, see `docs/research/design.md`).** v2.0: day planner, focus mode, Todoist, Gemini, Caelestia colours. v1 (all 49 issues) is on `main`. Read this file alone and you can continue the project.
 Rules: `CLAUDE.md`. Product spec: `docs/PRD.md`. Issues: GitHub #1–#49 (copy in `docs/ISSUES.md`), status in `docs/BOARD.md`.
 Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.md`.
 
@@ -9,7 +9,7 @@ Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.
 - M1 core + Arch desktop app: merged (#50–#54).
 - M2–M6 (all feature pages, polish, docs): pull requests #55 (M2), #56 (M3), #57 (M4), #58 (M5), and the M6 PR.
   Each PR is branched from the one before it and targets `main`: merge them in order.
-- Tests: `python -m unittest discover tests` (backend, 108 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (33 pages at 5 sizes, dark/light: console errors, sideways scroll, unnamed controls, design audit) and `node scripts/e2e.js` (13 flows; the assistant flow uses a local fake Gemini via `SW_GEMINI_BASE`). Both use a temporary data folder.
+- Tests: `python -m unittest discover tests` (backend, 114 tests). Browser checks: `NODE_PATH=$(npm root -g) node scripts/smoke.js` (33 pages at 5 sizes, dark/light: console errors, sideways scroll, unnamed controls, design audit) and `node scripts/e2e.js` (14 flows; the assistant flow uses a local fake Groq via `SW_GROQ_BASE`, Gemini via `SW_GEMINI_BASE`). Both use a temporary data folder.
 - Still to do by the user on the real machine: `docs/ARCH_TEST.md` (window, Hyprland, notifications, big linked PDFs).
 
 ### v3.0 (branch `build/v3-ai-content`)
@@ -17,7 +17,12 @@ Original per-feature specs (now built, kept as reference): `docs/specs/FEATURES.
 The user asked for: an AI chat that can change anything in the app, and an app that is full of
 real study material before first use (past papers, resources), not "plain".
 
-- **Assistant** (`chat.js`, `backend/assistant.py`): Gemini with function calling. Tools: get_today,
+- **AI service** (`backend/ai.py`): `settings.aiProvider` = `groq` (default) or `gemini`; if unset, the first
+  service with a key is used (Groq first). Models: `settings.groqModel` (default `openai/gpt-oss-120b`),
+  `settings.geminiModel`. `backend/groq.py` = OpenAI-format chat completions with tools; `gemini.py` keeps
+  the shared prompts (break_down, coach take `gen=` the provider's generate()).
+- **Assistant** (`chat.js`, `backend/assistant.py`): Groq or Gemini with tool calling (`_chat_openai` /
+  `_chat_gemini`, same tools). Tools: get_today,
   list_items, get_item, add_item, update_item, delete_item (only asks; the user confirms in the chat),
   set_topic_level, replan_day, set_block_state. Each tool validates the area and fields (`SCHEMA`).
   Every change is logged with before/after in `assistant.json` and has an Undo button; the data file is
@@ -48,7 +53,7 @@ a must-do list, a backpack list per lesson, OS integration that blocks or closes
   calm / strict / angry messages; user block list. Closes windows with `hyprctl dispatch closewindow`
   only (never kills processes, never touches the shell, the terminal or this app). Starts by itself in
   focus blocks; nags when work is overdue.
-- **Connections** (Settings): Todoist token and Gemini key. Stored only in `data/secrets.json` (mode 600),
+- **Connections** (Settings): AI service switch, Groq key + model, Gemini key + model, Todoist token. Stored only in `data/secrets.json` (mode 600),
   never in backups, exports, the API or git. Both are optional; everything works offline.
 - **Design**: Material 3 colour roles from Caelestia (`~/.local/state/caelestia/scheme.json`, read by
   `GET /api/theme`, polled every 30 s), Rubik font (vendored), every control styled. `scripts/smoke.js`
@@ -87,7 +92,7 @@ a must-do list, a backpack list per lesson, OS integration that blocks or closes
 | `challenges/<id>` | challenges.js | #42 | 12 offline CTF challenges, SHA-256 flag check |
 | `writeups/<id>` | writeups.js | #43 | markdown notes linked to challenges / rooms |
 | `review/<date>` | review.js | #45 | minutes per area vs last week, finished, overdue, notes |
-| `settings/<tab>` | settings.js | #5 #21 v2 | tabs: general, planner (times, routines, backpack), connections (Todoist, Gemini), appearance, data |
+| `settings/<tab>` | settings.js | #5 #21 v2 | tabs: general, planner (times, routines, backpack), connections (AI service, Groq, Gemini, Todoist), appearance, data |
 | `components` (hidden) | components.js | — | live demo of shared components |
 
 ## 3. Architecture
@@ -107,7 +112,9 @@ backend/reminders.py         deadline reminders + notify-send
 backend/windows.py           open-window tracking
 backend/samples.py           remove items with "sample": true
 backend/research_import.py   import universities from docs/research/universities.md (#31)
-backend/assistant.py         v3: Gemini function-calling assistant, change log, undo, confirm
+backend/ai.py                v3.1: which AI service is active (Groq default, Gemini)
+backend/groq.py              v3.1: Groq OpenAI-compatible chat completions, tool calls, model list
+backend/assistant.py         v3: tool-calling assistant (Groq or Gemini), change log, undo, confirm
 backend/seed.py              v3: merges content/*.json into data (adds only)
 content/                     v3: built-in content packs (scripts/build_content.py)
 backend/planner.py           v2: builds the day plan (blocks), must-do, backpack
@@ -167,9 +174,9 @@ All write requests must send header `X-Requested-By: study-workspace`
 | `GET/POST /api/backpack {date, text, packed}` | backpack list / tick |
 | `GET /api/now` | one line of text for bars (`study-workspace --now`) |
 | `GET /api/theme` | Caelestia colours or `{available: false}` |
-| `GET/PUT /api/secrets` | GET → `{todoist: bool, gemini: bool}` only; PUT `{todoist_token\|gemini_key: "..."}` ("" removes) |
+| `GET/PUT /api/secrets` | GET → `{todoist, groq, gemini: bool, provider, providerName, ai: bool}` only; PUT `{todoist_token\|groq_key\|gemini_key: "..."}` ("" removes) |
 | `POST /api/todoist/sync\|close\|add` | sync now / close a task / add a task |
-| `GET /api/ai/models`, `POST /api/ai/breakdown\|coach` | Gemini |
+| `GET /api/ai/models[?provider=groq\|gemini]`, `POST /api/ai/breakdown\|coach` | active AI service |
 | `GET /api/focus`, `POST /api/focus/start {minutes, title}\|stop`, `PUT /api/focus/config {config}` | focus mode |
 
 | `POST /api/ai/chat {chat, message}` | assistant turn → the chat `{id, title, messages[{role, text, changes[], pending[], resolved[]}]}` |
@@ -219,7 +226,7 @@ of the metadata returned by `POST /api/files`. Sample data: `"sample": true`.
 - assistant: `{chats[{id, title, created, updated, messages[{role: user|model, text, at, changes[ids], pending[ids], resolved[]}]}], changes[{id, at, chat, module, action: add|update|delete, item_id, title, before, after, undone}], pending[{id, chat, module, item_id, title, reason}]}` (last 40 chats, 600 changes)
 - content: `{applied{module: [ids added]}, universities_imported, updated}`
 - homework items may have `minutes` (time needed; the planner uses it)
-- settings (v2): `matchShell`, `followShellMode`, `planNotify`, `keepRunning`, `geminiModel`
+- settings (v2): `matchShell`, `followShellMode`, `planNotify`, `keepRunning`, `geminiModel`, v3.1: `aiProvider`, `groqModel`
 
 ## 5. How to add or change a page
 
@@ -299,6 +306,9 @@ Shared components (ready; live demo at `#/components`):
 - Practice challenges store only the SHA-256 of the flag.
 - v2: Todoist API v1 (`api.todoist.com/api/v1`, the REST v2 API is retired) and Gemini
   `generativelanguage.googleapis.com/v1beta` (default model `gemini-2.5-flash`), stdlib urllib only.
+- v3.1: Groq `api.groq.com/openai/v1/chat/completions` (Bearer key, OpenAI tool calls), models from
+  `/openai/v1/models` minus speech/guard models. Default `openai/gpt-oss-120b` (production model per
+  console.groq.com/docs/models, checked 2026-10-25).
 - v2: focus mode is opt-in and never kills processes; title rules only warn. Protected windows:
   this app, the Caelestia shell, terminals.
 - v2: the planner never plans study before school unless `study_before_school` is on, adds rest

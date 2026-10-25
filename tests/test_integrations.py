@@ -127,12 +127,15 @@ class SecretsTests(unittest.TestCase):
     def test_keys_are_private(self):
         with TempApp() as t:
             s, st = t.req("PUT", "/api/secrets", {"todoist_token": "  abc123 ", "gemini_key": "g-key", "evil": "x"})
-            self.assertEqual((s, st), (200, {"todoist": True, "gemini": True}))
+            self.assertEqual(s, 200)
+            self.assertEqual({k: st[k] for k in ("todoist", "groq", "gemini")}, {"todoist": True, "groq": False, "gemini": True})
+            # Only a Gemini key and no choice made: Gemini is used, so old installs keep working.
+            self.assertEqual((st["provider"], st["ai"]), ("gemini", True))
             p = t.paths.data / "secrets.json"
             self.assertEqual(stat.S_IMODE(os.stat(p).st_mode), 0o600)
             self.assertEqual(json.loads(p.read_text()), {"todoist_token": "abc123", "gemini_key": "g-key"})
             # Never readable through the API.
-            self.assertEqual(t.req("GET", "/api/secrets")[1], {"todoist": True, "gemini": True})
+            self.assertNotIn("g-key", json.dumps(t.req("GET", "/api/secrets")[1]))
             self.assertEqual(t.req("GET", "/api/data/secrets")[0], 404)
             # Not in backups or exports.
             b = backup.make_backup(t.paths.data, t.paths.backups, force=True)
@@ -143,7 +146,7 @@ class SecretsTests(unittest.TestCase):
             self.assertNotIn("data/secrets.json", names)
             self.assertTrue(all("abc123" not in zipfile.ZipFile(out).read(n).decode("utf-8", "ignore") for n in names if n.endswith(".json")))
             # Empty value removes a key.
-            self.assertEqual(t.req("PUT", "/api/secrets", {"todoist_token": ""})[1], {"todoist": False, "gemini": True})
+            self.assertEqual(t.req("PUT", "/api/secrets", {"todoist_token": ""})[1]["todoist"], False)
             self.assertEqual(t.req("PUT", "/api/secrets", {"todoist_token": "x"}, csrf=False)[0], 403)
 
 

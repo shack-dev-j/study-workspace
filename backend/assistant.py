@@ -1,4 +1,4 @@
-"""AI assistant (Gemini with function calling) that can read and change app data.
+"""AI assistant (Groq or Gemini, with tool calling) that can read and change app data.
 
 Safety rules:
 - The model can only use the tools below. Each tool checks the module, the
@@ -10,7 +10,7 @@ Safety rules:
 - The model can never delete: delete_item only creates a "pending" request
   that the user must confirm in the chat (confirm()).
 - The key stays on the server (data/secrets.json); only the chat text and the
-  data the tools return are sent to Gemini.
+  data the tools return are sent to the AI service (Groq or Gemini).
 """
 
 import datetime as dt
@@ -20,7 +20,7 @@ import shutil
 import time
 import uuid
 
-from . import gemini, net, planner
+from . import gemini, groq, net, planner
 
 MAX_ROUNDS = 8
 KEEP_CHATS = 40
@@ -143,10 +143,11 @@ def defaults(module):
 
 # ---------- the engine ----------
 class Assistant:
-    def __init__(self, storage, key, model=None, opener=None, today=None):
+    def __init__(self, storage, key, model=None, opener=None, today=None, provider="gemini"):
         self.storage = storage
         self.key = key
-        self.model = model or gemini.DEFAULT_MODEL
+        self.provider = provider if provider in ("groq", "gemini") else "gemini"
+        self.model = model or (groq if self.provider == "groq" else gemini).DEFAULT_MODEL
         self.opener = opener
         self.today = today or dt.date.today()
         self.backed_up = set()
@@ -360,6 +361,7 @@ class Assistant:
     }
 
     def declarations(self):
+        """Tool list in Gemini's format (types in capitals)."""
         out = []
         for name, (_, desc, params) in self.TOOLS.items():
             d = {"name": name, "description": desc}
@@ -368,6 +370,15 @@ class Assistant:
                                    "required": [k for k, (_, _, req) in params.items() if req]}
             out.append(d)
         return [{"functionDeclarations": out}]
+
+    def openai_tools(self):
+        """Tool list in the OpenAI format used by Groq (JSON schema)."""
+        out = []
+        for name, (_, desc, params) in self.TOOLS.items():
+            out.append({"type": "function", "function": {"name": name, "description": desc, "parameters": {
+                "type": "object", "properties": {k: {"type": t, "description": ds} for k, (t, ds, _) in params.items()},
+                "required": [k for k, (_, _, req) in params.items() if req]}}})
+        return out
 
     def run_tool(self, name, args):
         spec = self.TOOLS.get(name)
@@ -399,6 +410,50 @@ class Assistant:
     # ----- conversation -----
     def chat(self, history, message):
         """history: [{role, text}] of earlier turns. Returns reply text."""
+        if self.provider == "groq":
+            return self._chat_openai(history, message)
+        return self._chat_gemini(history, message)
+
+    def _done(self):
+        return "I stopped after several steps. Here is what I changed so far." if self.changes else "That took too many steps. Try a simpler request."
+
+    def _chat_openai(self, history, message):
+        messages = [{"role": "system", "content": self.system()}]
+        messages += [{"role": "user" if h["role"] == "user" else "assistant", "content": h["text"]}
+                     for h in history[-20:] if h.get("text")]
+        messages.append({"role": "user", "content": message})
+        tools = self.openai_tools()
+        for _ in range(MAX_ROUNDS):
+            try:
+                r = groq.call(self.key, messages, model=self.model, tools=tools, opener=self.opener)
+            except net.NetError as e:
+                # Groq answers 400 when the model wrote a broken tool call; one retry usually fixes it.
+                if e.status != 400 or "function" not in str(e).lower():
+                    raise
+                r = groq.call(self.key, messages, model=self.model, tools=tools, opener=self.opener)
+            msg = groq.message_of(r)
+            calls = [c for c in (msg.get("tool_calls") or []) if isinstance(c, dict)]
+            if not calls:
+                text = (msg.get("content") or "").strip()
+                return text or ("Done." if self.changes else "I have no answer to that.")
+            # Send back only what the API accepts (not "reasoning" etc.).
+            messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": [
+                {"id": c.get("id"), "type": "function", "function": {"name": (c.get("function") or {}).get("name"),
+                                                                     "arguments": (c.get("function") or {}).get("arguments") or "{}"}}
+                for c in calls]})
+            for c in calls:
+                fn = c.get("function") or {}
+                try:
+                    args = json.loads(fn.get("arguments") or "{}")
+                    if not isinstance(args, dict):
+                        raise ValueError
+                    result = self.run_tool(fn.get("name"), args)
+                except ValueError:
+                    result = {"error": "arguments must be a JSON object"}
+                messages.append({"role": "tool", "tool_call_id": c.get("id"), "content": json.dumps(result, ensure_ascii=False)[:20000]})
+        return self._done()
+
+    def _chat_gemini(self, history, message):
         contents = [{"role": "user" if h["role"] == "user" else "model", "parts": [{"text": h["text"]}]}
                     for h in history[-20:] if h.get("text")]
         contents.append({"role": "user", "parts": [{"text": message}]})
@@ -420,7 +475,7 @@ class Assistant:
                 result = self.run_tool(c.get("name"), c.get("args") or {})
                 responses.append({"functionResponse": {"name": c.get("name"), "response": {"result": result}}})
             contents.append({"role": "user", "parts": responses})
-        return "I stopped after several steps. Here is what I changed so far." if self.changes else "That took too many steps. Try a simpler request."
+        return self._done()
 
 
 # ---------- chat log, undo, confirm ----------
@@ -441,21 +496,21 @@ def public_chat(data, chat):
     return {"id": chat["id"], "title": chat.get("title", ""), "created": chat.get("created"), "messages": msgs}
 
 
-def send(storage, key, chat_id, message, model=None, opener=None, today=None):
+def send(storage, key, chat_id, message, model=None, opener=None, today=None, provider="gemini"):
     message = str(message or "").strip()[:4000]
     if not message:
         raise ToolError("message is empty")
     data = storage.read("assistant")
     chat = next((c for c in data.get("chats", []) if c["id"] == chat_id), None)
     history = [{"role": m["role"], "text": m.get("text", "")} for m in (chat or {}).get("messages", [])]
-    a = Assistant(storage, key, model=model, opener=opener, today=today)
+    a = Assistant(storage, key, model=model, opener=opener, today=today, provider=provider)
     a.chat_id = chat_id if chat else uuid.uuid4().hex[:10]
     try:
         reply = a.chat(history, message)
     except net.NetError as e:
         if not a.changes and not a.pending:
             raise
-        reply = f"Gemini stopped with an error ({e}). The changes below were already made; undo them if you like."
+        reply = f"{'Groq' if a.provider == 'groq' else 'Gemini'} stopped with an error ({e}). The changes below were already made; undo them if you like."
     now = dt.datetime.now().isoformat(timespec="seconds")
 
     def save(d):

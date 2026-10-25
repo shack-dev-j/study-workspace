@@ -1,4 +1,4 @@
-"""API keys for the optional online features (Todoist, Gemini).
+"""API keys for the optional online features (Todoist, Groq, Gemini).
 
 Stored in data/secrets.json with file mode 600 (only you can read it).
 - Never sent back to the browser: the API only says whether a key is set.
@@ -13,7 +13,7 @@ import tempfile
 from pathlib import Path
 
 FILE = "secrets.json"
-KEYS = ("todoist_token", "gemini_key")
+KEYS = ("todoist_token", "groq_key", "gemini_key")
 
 
 def _path(data_dir):
@@ -65,4 +65,4 @@ def write(data_dir, updates):
 
 def status(data_dir):
     s = read(data_dir)
-    return {"todoist": bool(s.get("todoist_token")), "gemini": bool(s.get("gemini_key"))}
+    return {"todoist": bool(s.get("todoist_token")), "groq": bool(s.get("groq_key")), "gemini": bool(s.get("gemini_key"))}
