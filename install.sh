@@ -108,7 +108,7 @@ if [ -x "$BIN/study-workspace" ]; then "$BIN/study-workspace" --stop >/dev/null 
 # Fresh copy of the app (the app folder never holds your data).
 TMP="$ROOT/.app-new"
 rm -rf "$TMP"; mkdir -p "$TMP"
-for item in server.py backend frontend vendor desktop docs data.example README.md CLAUDE.md HANDOFF.md; do
+for item in server.py backend frontend vendor desktop docs data.example content README.md CLAUDE.md HANDOFF.md; do
   if [ -e "$SRC/$item" ]; then cp -r "$SRC/$item" "$TMP/"; fi
 done
 find "$TMP" -name '__pycache__' -type d -prune -exec rm -rf {} +

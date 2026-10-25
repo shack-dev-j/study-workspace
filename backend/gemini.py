@@ -9,11 +9,13 @@ The app works fully without it.
 """
 
 import json
+import os
 import re
 
 from . import net
 
-BASE = "https://generativelanguage.googleapis.com/v1beta"
+# SW_GEMINI_BASE lets the browser tests (scripts/e2e.js) use a local fake Gemini.
+BASE = os.environ.get("SW_GEMINI_BASE") or "https://generativelanguage.googleapis.com/v1beta"
 DEFAULT_MODEL = "gemini-2.5-flash"
 
 
@@ -41,6 +43,17 @@ def generate(key, prompt, model=None, json_mode=False, opener=None, max_tokens=4
     except (KeyError, IndexError, TypeError):
         reason = (r.get("promptFeedback") or {}).get("blockReason") if isinstance(r, dict) else None
         raise net.NetError("Gemini gave no answer" + (f" ({reason})" if reason else ""))
+
+
+def call(key, contents, model=None, tools=None, system=None, opener=None, max_tokens=4096):
+    """Raw generateContent call (used by the chat assistant with function calling)."""
+    body = {"contents": contents, "generationConfig": {"temperature": 0.4, "maxOutputTokens": max_tokens}}
+    if tools:
+        body["tools"] = tools
+    if system:
+        body["systemInstruction"] = {"parts": [{"text": system}]}
+    return net.request("POST", f"{BASE}/models/{_model(model)}:generateContent",
+                       headers={"x-goog-api-key": key}, body=body, opener=opener, timeout=60)
 
 
 def list_models(key, opener=None):

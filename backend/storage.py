@@ -23,6 +23,7 @@ MODULES = {
     "scholarships", "documents", "deadlines", "essays", "activities", "cyber",
     "thm", "challenges", "writeups", "review", "reminders",
     "planner", "focus", "todoist",
+    "resources", "content", "assistant",
 }
 
 MAX_JSON_BYTES = 20 * 1024 * 1024

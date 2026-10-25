@@ -16,7 +16,7 @@ const fs = require('fs'), os = require('os'), path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const out = path.resolve(process.argv[2] || path.join(ROOT, 'smoke-shots'));
 const only = process.argv.slice(3);
-const ROUTES = only.length ? only : ['day', 'focus', 'today', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat',
+const ROUTES = only.length ? only : ['day', 'chat', 'resources', 'focus', 'today', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat',
   'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans',
   'cyber', 'thm', 'challenges', 'writeups', 'portfolio', 'review',
   'settings', 'settings/planner', 'settings/connections', 'settings/appearance', 'settings/data', 'components'];

@@ -27,7 +27,7 @@ package() {
   src="$(_root)"
   app="$pkgdir/usr/share/study-workspace"
   install -d "$app"
-  cp -r "$src"/{server.py,backend,frontend,vendor,desktop,docs,data.example,README.md} "$app/"
+  cp -r "$src"/{server.py,backend,frontend,vendor,desktop,docs,data.example,content,README.md} "$app/"
   find "$app" -name '__pycache__' -type d -prune -exec rm -rf {} +
   touch "$app/.installed"   # use ~/.local/share/study-workspace for data
 

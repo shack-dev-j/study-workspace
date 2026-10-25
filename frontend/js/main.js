@@ -11,10 +11,10 @@ import { setTheme as applyTheme, startThemeSync, onThemeChange } from './core/th
 
 // [route, label, icon, issue]  (issue = not built yet)
 const NAV = [
-  ['', [['day', 'My day', 'day', null], ['focus', 'Focus', 'target', null], ['today', 'Overview', 'today', 44]]],
+  ['', [['day', 'My day', 'day', null], ['chat', 'Assistant', 'sparkle', null], ['focus', 'Focus', 'target', null], ['today', 'Overview', 'today', 44]]],
   ['Study', [['subjects', 'Subjects', 'subjects', 14], ['homework', 'Homework', 'homework', 16], ['library', 'Library', 'library', 20],
     ['pastpapers', 'Past papers', 'papers', 24], ['time', 'Time log', 'time', 25], ['timetable', 'Timetable', 'calendar', 26],
-    ['habits', 'Habits', 'habits', 27], ['sat', 'SAT', 'sat', 28]]],
+    ['habits', 'Habits', 'habits', 27], ['sat', 'SAT', 'sat', 28], ['resources', 'Resources', 'globe', null]]],
   ['Applications', [['universities', 'Universities', 'uni', 30], ['scholarships', 'Scholarships', 'scholarship', 32],
     ['deadlines', 'Deadlines', 'deadline', 34], ['documents', 'Documents', 'docs', 33], ['activities', 'Activities', 'activities', 35],
     ['essays', 'Essays', 'essay', 36], ['plans', 'Plan A / B', 'plan', 37]]],
@@ -22,7 +22,7 @@ const NAV = [
     ['challenges', 'Challenges', 'flag', 42], ['writeups', 'Writeups', 'note', 43]]],
   ['Me', [['portfolio', 'Portfolio', 'portfolio', 29], ['review', 'Weekly review', 'review', 45], ['settings', 'Settings', 'settings', null]]],
 ];
-const BUILT = new Set(['day', 'focus', 'settings', 'components', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat', 'portfolio', 'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans', 'cyber', 'thm', 'challenges', 'writeups', 'today', 'review']);  // add a route here when its module exists
+const BUILT = new Set(['day', 'chat', 'resources', 'focus', 'settings', 'components', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat', 'portfolio', 'universities', 'scholarships', 'deadlines', 'documents', 'activities', 'essays', 'plans', 'cyber', 'thm', 'challenges', 'writeups', 'today', 'review']);  // add a route here when its module exists
 const ROUTES = Object.fromEntries(NAV.flatMap(([, items]) => items.map(i => [i[0], i])));
 // Hidden page (not in the menu): live demo of the shared components, for developers.
 ROUTES.components = ['components', 'UI components', 'settings', null];

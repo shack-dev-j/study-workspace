@@ -1,0 +1,30 @@
+{
+ "version": 1,
+ "items": [
+  {
+   "id": "h-pp",
+   "name": "One past paper question set (30 min)",
+   "days": {}
+  },
+  {
+   "id": "h-sat",
+   "name": "SAT practice (30 min, Khan Academy or Bluebook)",
+   "days": {}
+  },
+  {
+   "id": "h-thm",
+   "name": "Cyber practice (one TryHackMe task or picoCTF problem)",
+   "days": {}
+  },
+  {
+   "id": "h-bag",
+   "name": "Pack the backpack the evening before",
+   "days": {}
+  },
+  {
+   "id": "h-sleep",
+   "name": "In bed by 22:30",
+   "days": {}
+  }
+ ]
+}
