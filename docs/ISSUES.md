@@ -12,12 +12,12 @@ Status is tracked in [BOARD.md](BOARD.md).
 Milestone: M1 Core app + Arch desktop app · Labels: feature · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/1)
 
 Checklist:
-- [ ] `server.py` entry point using `http.server` (ThreadingHTTPServer)
-- [ ] Serve `frontend/` and `vendor/` as static files with correct MIME types
-- [ ] Bind to 127.0.0.1 by default; `--host`, `--port` flags; default port 8765
-- [ ] `GET /api/health` returns app name, version, data folder
-- [ ] Clean shutdown on Ctrl+C and on `POST /api/shutdown` (localhost only)
-- [ ] Unit test: server starts on a free port and answers /api/health
+- [x] `server.py` entry point using `http.server` (ThreadingHTTPServer)
+- [x] Serve `frontend/` and `vendor/` as static files with correct MIME types
+- [x] Bind to 127.0.0.1 by default; `--host`, `--port` flags; default port 8765
+- [x] `GET /api/health` returns app name, version, data folder
+- [x] Clean shutdown on Ctrl+C and on `POST /api/shutdown` (localhost only)
+- [x] Unit test: server starts on a free port and answers /api/health
 
 Done when:
 - `python server.py` starts with no extra packages on Linux, Windows and macOS
@@ -29,12 +29,12 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, data · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/2)
 
 Checklist:
-- [ ] `backend/paths.py`: portable mode when run from the repo/USB (a `portable` marker file or `data/` next to the app), otherwise `$XDG_DATA_HOME/study-workspace` (default `~/.local/share/study-workspace`)
-- [ ] Windows: `%APPDATA%/StudyWorkspace`; macOS: `~/Library/Application Support/StudyWorkspace`
-- [ ] On first run, copy `data.example/` to the data folder only if it does not exist
-- [ ] Never overwrite an existing data folder
-- [ ] Create `data.example/` with fake sample JSON for each module
-- [ ] Tests for both modes and for 'existing data is left alone'
+- [x] `backend/paths.py`: portable mode when run from the repo/USB (a `portable` marker file or `data/` next to the app), otherwise `$XDG_DATA_HOME/study-workspace` (default `~/.local/share/study-workspace`)
+- [x] Windows: `%APPDATA%/StudyWorkspace`; macOS: `~/Library/Application Support/StudyWorkspace`
+- [x] On first run, copy `data.example/` to the data folder only if it does not exist
+- [x] Never overwrite an existing data folder
+- [x] Create `data.example/` with fake sample JSON for each module
+- [x] Tests for both modes and for 'existing data is left alone'
 
 Done when:
 - Fresh start creates data from the example; a second start changes nothing
@@ -45,13 +45,13 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, data · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/3)
 
 Checklist:
-- [ ] `backend/storage.py`: read/write one JSON file per module (`data/<module>.json`)
-- [ ] Safe write: write temp file in the same folder, fsync, `os.replace`
-- [ ] File lock (threading lock) so two requests can't corrupt a file
-- [ ] Every file has `schema_version`; a `migrations.py` hook that backs up before migrating
-- [ ] `GET /api/data/<module>` and `PUT /api/data/<module>`; module names checked against an allowlist
-- [ ] Reject bodies over a size limit and invalid JSON with a clear error
-- [ ] Tests: round trip, invalid module name, crash-safe write leaves old file intact
+- [x] `backend/storage.py`: read/write one JSON file per module (`data/<module>.json`)
+- [x] Safe write: write temp file in the same folder, fsync, `os.replace`
+- [x] File lock (threading lock) so two requests can't corrupt a file
+- [x] Every file has `schema_version`; a `migrations.py` hook that backs up before migrating
+- [x] `GET /api/data/<module>` and `PUT /api/data/<module>`; module names checked against an allowlist
+- [x] Reject bodies over a size limit and invalid JSON with a clear error
+- [x] Tests: round trip, invalid module name, crash-safe write leaves old file intact
 
 Done when:
 - Saving from the UI updates the JSON file and the old version is never half-written
@@ -62,13 +62,13 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, data · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/4)
 
 Checklist:
-- [ ] `POST /api/files` (multipart or raw body with filename header) stores into `data/files/<id>/<safe-name>`
-- [ ] Sanitize names: strip folders, block `..`, absolute paths, NUL, hidden names; keep extension
-- [ ] Resolve final path and check it is inside `data/files/` (also blocks symlink escape)
-- [ ] `GET /api/files/<id>` streams the file with the right Content-Type and supports Range requests (for PDFs)
-- [ ] `DELETE /api/files/<id>` moves the file to `data/trash/` instead of deleting
-- [ ] Size limit (configurable, default 200 MB)
-- [ ] Tests: normal upload, `../evil`, absolute path, very long name, download, range request
+- [x] `POST /api/files` (multipart or raw body with filename header) stores into `data/files/<id>/<safe-name>`
+- [x] Sanitize names: strip folders, block `..`, absolute paths, NUL, hidden names; keep extension
+- [x] Resolve final path and check it is inside `data/files/` (also blocks symlink escape)
+- [x] `GET /api/files/<id>` streams the file with the right Content-Type and supports Range requests (for PDFs)
+- [x] `DELETE /api/files/<id>` moves the file to `data/trash/` instead of deleting
+- [x] Size limit (configurable, default 200 MB)
+- [x] Tests: normal upload, `../evil`, absolute path, very long name, download, range request
 
 Done when:
 - Uploaded files land only in `data/files/`; every bad name in the tests is rejected or cleaned
@@ -79,10 +79,10 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, data · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/5)
 
 Checklist:
-- [ ] On start and once a day while running, zip all `data/*.json` into `backups/YYYY-MM-DD.zip` (JSON only, no files)
-- [ ] Keep the last 14 backups, remove older ones (only files that match the backup name pattern)
-- [ ] `GET /api/backups` lists backups; `POST /api/backups` makes one now
-- [ ] Tests: backup created once per day, 15th backup removes the oldest, other files untouched
+- [x] On start and once a day while running, zip all `data/*.json` into `backups/YYYY-MM-DD.zip` (JSON only, no files)
+- [x] Keep the last 14 backups, remove older ones (only files that match the backup name pattern)
+- [x] `GET /api/backups` lists backups; `POST /api/backups` makes one now
+- [x] Tests: backup created once per day, 15th backup removes the oldest, other files untouched
 
 Done when:
 - After 15 days there are exactly 14 backups and no user file was removed
@@ -92,10 +92,10 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, data · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/6)
 
 Checklist:
-- [ ] `GET /api/export` streams one zip: all JSON + `files/` + a `manifest.json` (app version, date, schema versions)
-- [ ] `POST /api/restore` accepts that zip: check manifest, check every entry path (no zip-slip), make a backup first, then replace
-- [ ] Settings screen buttons: Export all data, Restore from file (with a confirm step)
-- [ ] Tests: export then restore gives identical data; a zip with `../` entries is refused
+- [x] `GET /api/export` streams one zip: all JSON + `files/` + a `manifest.json` (app version, date, schema versions)
+- [x] `POST /api/restore` accepts that zip: check manifest, check every entry path (no zip-slip), make a backup first, then replace
+- [x] Settings screen buttons: Export all data, Restore from file (with a confirm step)
+- [x] Tests: export then restore gives identical data; a zip with `../` entries is refused
 
 Done when:
 - I can move all my data to another computer with one file
@@ -106,12 +106,12 @@ Done when:
 Milestone: M1 Core app + Arch desktop app · Labels: feature, ui · [GitHub](https://github.com/shack-dev-j/study-workspace/issues/7)
 
 Checklist:
-- [ ] `frontend/index.html`, `css/base.css` with CSS variables for dark (default) and light themes
-- [ ] Sidebar with all sections; collapses to a menu button under 800px
-- [ ] Hash router (`#/homework`), lazy-load each module from `js/modules/`
-- [ ] `js/core/api.js` (fetch wrapper, error toast), `js/core/store.js` (load/save module data, debounced save)
-- [ ] Theme toggle saved in settings; follows system theme the first time
-- [ ] Empty placeholder page for each future module
+- [x] `frontend/index.html`, `css/base.css` with CSS variables for dark (default) and light themes
+- [x] Sidebar with all sections; collapses to a menu button under 800px
+- [x] Hash router (`#/homework`), lazy-load each module from `js/modules/`
+- [x] `js/core/api.js` (fetch wrapper, error toast), `js/core/store.js` (load/save module data, debounced save)
+- [x] Theme toggle saved in settings; follows system theme the first time
+- [x] Empty placeholder page for each future module
 
 Done when:
 - The app loads offline in under 1 second on a laptop, works on a phone-width screen, and the theme toggle remembers my choice

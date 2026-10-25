@@ -8,26 +8,16 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in the pull request to be merged.
 
-## Backlog (49)
+## Backlog (39)
 
-- [#1](https://github.com/shack-dev-j/study-workspace/issues/1) Python server skeleton (M1)
-- [#2](https://github.com/shack-dev-j/study-workspace/issues/2) Data folder: XDG vs portable mode, first-run setup (M1)
-- [#3](https://github.com/shack-dev-j/study-workspace/issues/3) Safe JSON storage and module API (M1)
-- [#4](https://github.com/shack-dev-j/study-workspace/issues/4) File upload and download with path safety (M1)
-- [#5](https://github.com/shack-dev-j/study-workspace/issues/5) Automatic daily backup (M1)
-- [#6](https://github.com/shack-dev-j/study-workspace/issues/6) Export everything to a zip and restore from it (M1)
-- [#7](https://github.com/shack-dev-j/study-workspace/issues/7) App shell: sidebar, router, themes, API client (M1)
-- [#8](https://github.com/shack-dev-j/study-workspace/issues/8) Desktop launcher `study-workspace` (M1)
 - [#9](https://github.com/shack-dev-j/study-workspace/issues/9) App icon and .desktop file (M1)
 - [#10](https://github.com/shack-dev-j/study-workspace/issues/10) install.sh and uninstall.sh for Arch (M1)
 - [#11](https://github.com/shack-dev-j/study-workspace/issues/11) PKGBUILD (optional makepkg install) (M1)
-- [#12](https://github.com/shack-dev-j/study-workspace/issues/12) Deadline reminders with notify-send (M1)
 - [#13](https://github.com/shack-dev-j/study-workspace/issues/13) M1 tests and docs/ARCH_TEST.md (M1)
 - [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
 - [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
 - [#16](https://github.com/shack-dev-j/study-workspace/issues/16) Homework and assignments (M2)
 - [#17](https://github.com/shack-dev-j/study-workspace/issues/17) File attachments on homework (M2)
-- [#18](https://github.com/shack-dev-j/study-workspace/issues/18) Vendor PDF.js (M2)
 - [#19](https://github.com/shack-dev-j/study-workspace/issues/19) Attachment previews (PDF and images) (M2)
 - [#20](https://github.com/shack-dev-j/study-workspace/issues/20) Library: books and resources (upload) (M2)
 - [#21](https://github.com/shack-dev-j/study-workspace/issues/21) Library: linked folders (no copying) (M2)
@@ -60,11 +50,21 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#48](https://github.com/shack-dev-j/study-workspace/issues/48) Full QA and data safety check (M6)
 - [#49](https://github.com/shack-dev-j/study-workspace/issues/49) README, CLAUDE.md, HANDOFF.md and final summary (M6)
 
-## In Progress (0)
+## In Progress (3)
 
+- [#8](https://github.com/shack-dev-j/study-workspace/issues/8) Desktop launcher `study-workspace` (M1)
+- [#12](https://github.com/shack-dev-j/study-workspace/issues/12) Deadline reminders with notify-send (M1)
+- [#18](https://github.com/shack-dev-j/study-workspace/issues/18) Vendor PDF.js (M2)
 
-## Review (0)
+## Review (7)
 
+- [#1](https://github.com/shack-dev-j/study-workspace/issues/1) Python server skeleton (M1)
+- [#2](https://github.com/shack-dev-j/study-workspace/issues/2) Data folder: XDG vs portable mode, first-run setup (M1)
+- [#3](https://github.com/shack-dev-j/study-workspace/issues/3) Safe JSON storage and module API (M1)
+- [#4](https://github.com/shack-dev-j/study-workspace/issues/4) File upload and download with path safety (M1)
+- [#5](https://github.com/shack-dev-j/study-workspace/issues/5) Automatic daily backup (M1)
+- [#6](https://github.com/shack-dev-j/study-workspace/issues/6) Export everything to a zip and restore from it (M1)
+- [#7](https://github.com/shack-dev-j/study-workspace/issues/7) App shell: sidebar, router, themes, API client (M1)
 
 ## Done (0)
 
