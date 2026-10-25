@@ -1,4 +1,138 @@
 {
  "schema_version": 1,
- "items": []
+ "items": [
+  {
+   "id": "sch-mext",
+   "name": "MEXT (Japanese Government Scholarship)",
+   "pays": "Tuition, a monthly allowance (¥117,000 in the 2027 guidelines) and airfare. Includes a preparatory year.",
+   "requirements": "Under 25. Written tests in Math, Science, English and Japanese, plus an interview.",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "No work obligation mentioned in the report (Plan A).",
+   "link": "",
+   "status": "Researching",
+   "notes": "2027 cycle in Uzbekistan: deadline 25 May 2026, exams and interviews June–July. Report: read the 2028 call (deadline about late May 2027); apply only if the embassy confirms you can. Backup for 2029. Kyoto iUP can also recommend students for MEXT.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline",
+    "link"
+   ]
+  },
+  {
+   "id": "sch-gks",
+   "name": "GKS (Global Korea Scholarship), embassy + university (UIC) routes",
+   "pays": "1 year of Korean language + 4 years of degree study. Pays tuition, airfare and a monthly allowance.",
+   "requirements": "2027 rule: born after 1 March 2002. Uzbekistan embassy quota: only 3 places (1 general, 1 R-GKS, 1 for overseas Koreans). University route (UIC): open to all countries, 100 places.",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "No work obligation mentioned in the report (Plan A backup).",
+   "link": "",
+   "status": "Researching",
+   "notes": "2027 cycle: embassy route 15–30 September 2026, final results around 7 January 2027. Check the 2028 rules in September 2027. The UIC route is often a better chance.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline",
+    "link"
+   ]
+  },
+  {
+   "id": "sch-csc",
+   "name": "Chinese Government Scholarship (CSC)",
+   "pays": "Tuition, housing and a monthly allowance (2028 amount not verified).",
+   "requirements": "Apply through the Chinese embassy (Type A) or the university (Type B). The CSCA test is required for CSC applicants from 2026.",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "",
+   "link": "",
+   "status": "Researching",
+   "notes": "Report could not check the 2028 allowance amount.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline",
+    "link",
+    "obligation",
+    "pays"
+   ]
+  },
+  {
+   "id": "sch-sh",
+   "name": "Stipendium Hungaricum",
+   "pays": "Tuition, a dorm place or HUF 40,000 a month for rent, health insurance and HUF 43,700 a month.",
+   "requirements": "Uzbekistan is eligible. At bachelor's level law, sport and arts are excluded, so CS is fine. Apply on two systems: the online portal and Uzbekistan's sending partner (the Ministry).",
+   "deadline": "2028-01-15",
+   "deadline_estimate": true,
+   "obligation": "No work obligation mentioned in the report (Plan A). Not compatible with El-Yurt Umidi (Hungarian universities are not QS top 300).",
+   "link": "",
+   "status": "Researching",
+   "notes": "2026/27 deadline was 15 January 2026. Expect about November 2027 – mid-January 2028 for 2028 entry. Safest full scholarship.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "link"
+   ]
+  },
+  {
+   "id": "sch-eyuf",
+   "name": "El-Yurt Umidi Foundation (EYUF)",
+   "pays": "Full tuition, visa costs, a round trip once a year, living, food, medical insurance, local transport, books and database access. A maximum amount per scholar is set by the Board.",
+   "requirements": "Bachelor's: 30 or younger, IELTS 6.0+. Uses the QS ranking. Documents: application letter, acceptance letter, attestat, language certificate, motivation essay. No-competition routes: QS top 100 + full tuition grant; QS top 300 + full grant (travel + housing); QS top 20 + 50%+ grant + Presidential School graduate. Otherwise open competition (test + interview).",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "5 years of continuous full-time work in Uzbekistan after a bachelor's. Breaking the contract: you and your guarantors pay back double.",
+   "link": "https://eyuf.uz",
+   "status": "Researching",
+   "notes": "Applications at el-yurt.uz. 2026 first competition: 3–24 April 2026. Ask before relying on it: is a conditional offer accepted? Is your university on the list? Which ranking year? Telegram @eyufadmissionbot, phone +998 71 203 14 41. Cannot be combined with a foreign grant that already pays everything.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline"
+   ]
+  },
+  {
+   "id": "sch-kaist",
+   "name": "KAIST Scholarship",
+   "pays": "Free tuition for 8 semesters (normal tuition KRW 6,866,000 a year), KRW 350,000 a month and national health insurance.",
+   "requirements": "Given to every admitted international undergraduate. Teaching in English, no Korean test. SAT not compulsory.",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "No work obligation mentioned in the report (Plan A).",
+   "link": "",
+   "status": "Researching",
+   "notes": "2027 entry: early round closed 22 October 2026, regular round closes 14 January 2027. Expect about late October 2027 and mid-January 2028. KAIST is QS 65, so El-Yurt Umidi may add its scholarship without a competition: confirm with the fund.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline",
+    "link"
+   ]
+  },
+  {
+   "id": "sch-iup",
+   "name": "Kyoto iUP",
+   "pays": "Admission-fee waiver and full or partial tuition waivers for 4.5 years (tuition ¥535,800 a year + ¥282,000 admission fee). Up to ¥120,000 a month during the preparatory course, then merit-based scholarships. Dorm room for the first 12 months.",
+   "requirements": "6-month preparatory course (October), then a 4-year degree from April. No Japanese needed at the start; later years are taught in Japanese.",
+   "deadline": "",
+   "deadline_estimate": false,
+   "obligation": "No work obligation mentioned in the report (Plan A).",
+   "link": "",
+   "status": "Researching",
+   "notes": "October 2027 entry: applications 2 November – 3 December 2026. Expect November–December 2027 for October 2028 entry. Essay and interview matter.",
+   "sources": [
+    "docs/research/universities.md"
+   ],
+   "verify": [
+    "deadline",
+    "link"
+   ]
+  }
+ ]
 }

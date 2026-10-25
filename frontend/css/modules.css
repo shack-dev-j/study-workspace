@@ -83,3 +83,42 @@ table.timetable .today { background: var(--accent-soft); }
 
 /* ---------- past papers ---------- */
 table.list tr.is-done-soft td:first-child { box-shadow: inset 3px 0 0 var(--ok); }
+
+/* ---------- universities + documents ---------- */
+.doc-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.doc-row:last-child { border-bottom: 0; }
+.doc-row .row { flex-wrap: nowrap; }
+.doc-row .doc-name { flex: 1; height: 30px; }
+.doc-row.st-ready .doc-name, .doc-row.st-sent .doc-name { border-color: color-mix(in srgb, var(--ok) 50%, var(--border)); }
+.doc-row .attachments { margin-top: 6px; }
+.doc-row .dropzone { padding: 6px; font-size: .8rem; }
+.clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------- deadlines ---------- */
+.month + .month { margin-top: var(--gap); }
+.month-title { color: var(--muted); font-size: .9rem; text-transform: uppercase; letter-spacing: .06em; }
+.date-box { display: flex; flex-direction: column; align-items: center; width: 44px; flex: 0 0 auto; line-height: 1.1; }
+.date-box strong { font-size: 1.2rem; }
+.date-box span { font-size: .72rem; color: var(--muted); }
+.item.past { opacity: .6; }
+.item.is-done .title { text-decoration: line-through; color: var(--faint); }
+
+/* ---------- activities ---------- */
+.activity textarea { min-height: 70px; }
+
+/* ---------- essays ---------- */
+.essay-layout { display: grid; grid-template-columns: 1fr 300px; gap: var(--gap); align-items: start; }
+.essay-layout > .card + .card { margin-top: 0; }
+.essay-prompt { font-weight: 600; white-space: pre-wrap; }
+.essay-text { min-height: 55vh; font-size: 1rem; line-height: 1.7; margin: 8px 0; }
+.essay-view { white-space: pre-wrap; }
+.over-limit { color: var(--danger); font-weight: 600; }
+@media (max-width: 900px) { .essay-layout { grid-template-columns: 1fr; } }
+
+/* ---------- plans ---------- */
+.plan-list { padding-left: 1.2em; margin: 0; }
+.plan-list > li { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.plan-list > li:last-child { border-bottom: 0; }
+.route { padding: 10px 0; border-top: 1px solid var(--border); }
+.chip { display: inline-flex; align-items: center; gap: 2px; padding: 3px 10px; border-radius: 99px; background: var(--panel-2); border: 1px solid var(--border); font-size: .88rem; }
+.ask-box { border-color: var(--warn); background: var(--warn-soft); }

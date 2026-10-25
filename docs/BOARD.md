@@ -8,16 +8,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in a pull request. "Done" means merged into main.
 
-## Backlog (19)
+## Backlog (11)
 
-- [#30](https://github.com/shack-dev-j/study-workspace/issues/30) Universities table (M3)
-- [#31](https://github.com/shack-dev-j/study-workspace/issues/31) Import docs/research/universities.md (M3)
-- [#32](https://github.com/shack-dev-j/study-workspace/issues/32) Scholarships list (M3)
-- [#33](https://github.com/shack-dev-j/study-workspace/issues/33) Documents checklist per university (M3)
-- [#34](https://github.com/shack-dev-j/study-workspace/issues/34) Deadlines timeline with warnings (M3)
-- [#35](https://github.com/shack-dev-j/study-workspace/issues/35) Activities and awards (application form) (M3)
-- [#36](https://github.com/shack-dev-j/study-workspace/issues/36) Essays with versions (M3)
-- [#37](https://github.com/shack-dev-j/study-workspace/issues/37) Plan A / Plan B view (M3)
 - [#38](https://github.com/shack-dev-j/study-workspace/issues/38) Research the ICO (docs/research/ico.md) (M4)
 - [#39](https://github.com/shack-dev-j/study-workspace/issues/39) Cyber topic map (M4)
 - [#40](https://github.com/shack-dev-j/study-workspace/issues/40) Cyber study plan to the selection date (M4)
@@ -33,7 +25,7 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 ## In Progress (0)
 
 
-## Review (15)
+## Review (23)
 
 - [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
 - [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
@@ -50,6 +42,14 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 - [#27](https://github.com/shack-dev-j/study-workspace/issues/27) Habits with streaks (M2)
 - [#28](https://github.com/shack-dev-j/study-workspace/issues/28) SAT tracker (M2)
 - [#29](https://github.com/shack-dev-j/study-workspace/issues/29) Portfolio (M2)
+- [#30](https://github.com/shack-dev-j/study-workspace/issues/30) Universities table (M3)
+- [#31](https://github.com/shack-dev-j/study-workspace/issues/31) Import docs/research/universities.md (M3)
+- [#32](https://github.com/shack-dev-j/study-workspace/issues/32) Scholarships list (M3)
+- [#33](https://github.com/shack-dev-j/study-workspace/issues/33) Documents checklist per university (M3)
+- [#34](https://github.com/shack-dev-j/study-workspace/issues/34) Deadlines timeline with warnings (M3)
+- [#35](https://github.com/shack-dev-j/study-workspace/issues/35) Activities and awards (application form) (M3)
+- [#36](https://github.com/shack-dev-j/study-workspace/issues/36) Essays with versions (M3)
+- [#37](https://github.com/shack-dev-j/study-workspace/issues/37) Plan A / Plan B view (M3)
 
 ## Done (15)
 
