@@ -237,3 +237,5 @@ mark { background: var(--warn-soft); color: inherit; border-radius: 3px; padding
 .preview-img { text-align: center; }
 .preview-img img { max-width: 100%; max-height: 75vh; border-radius: 8px; }
 @media (max-width: 600px) { .pdf-search { width: 120px !important; } .preview-pdf { height: calc(100vh - 140px); } }
+@media (max-width: 700px) { table.list td:empty { display: none; } }
+.grid > .card + .card, .grid > .stat + .stat { margin-top: 0; }

@@ -21,7 +21,7 @@ const NAV = [
     ['challenges', 'Challenges', 'flag', 42], ['writeups', 'Writeups', 'note', 43]]],
   ['Me', [['portfolio', 'Portfolio', 'portfolio', 29], ['review', 'Weekly review', 'review', 45], ['settings', 'Settings', 'settings', null]]],
 ];
-const BUILT = new Set(['settings', 'components']);  // add a route here when its module exists
+const BUILT = new Set(['settings', 'components', 'subjects', 'homework', 'library', 'pastpapers', 'time', 'timetable', 'habits', 'sat', 'portfolio']);  // add a route here when its module exists
 const ROUTES = Object.fromEntries(NAV.flatMap(([, items]) => items.map(i => [i[0], i])));
 // Hidden page (not in the menu): live demo of the shared components, for developers.
 ROUTES.components = ['components', 'UI components', 'settings', null];
@@ -93,5 +93,7 @@ document.getElementById('searchBtn').onclick = openSearch;
 setSearchPages(NAV.flatMap(([, items]) => items.map(([r, label]) => ({ title: label, href: '#/' + r }))));
 installSearchShortcut();
 addEventListener('hashchange', route);
+addEventListener('sw-reloaded', route); // data changed in another window: redraw
+import('./modules/time.js').then(m => m.startTimerChip()).catch(() => {});
 heartbeat();
 route();

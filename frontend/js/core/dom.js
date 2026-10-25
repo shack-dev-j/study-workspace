@@ -35,6 +35,9 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 export function clear(el) { while (el.firstChild) el.firstChild.remove(); return el; }
 
+/** Replace the children of el (null / false children are skipped). */
+export function fill(el, ...children) { clear(el); return append(el, children); }
+
 /** Escape text for the rare places that build HTML strings. */
 export function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

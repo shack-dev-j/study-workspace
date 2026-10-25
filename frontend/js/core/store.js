@@ -44,6 +44,8 @@ async function flush(module) {
       toast('This was changed in another window, so it was reloaded. Please redo your last change.', 'error');
       cache[module] = await api.get('/api/data/' + module);
       emit(module, true);
+      // Pages hold the old object, so redraw the current page with the fresh data.
+      dispatchEvent(new CustomEvent('sw-reloaded', { detail: module }));
     } else {
       s.dirty = true;
       toast('Could not save: ' + e.message, 'error');

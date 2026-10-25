@@ -8,23 +8,8 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 
 "Review" means: built and tested, waiting in a pull request. "Done" means merged into main.
 
-## Backlog (34)
+## Backlog (19)
 
-- [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
-- [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
-- [#16](https://github.com/shack-dev-j/study-workspace/issues/16) Homework and assignments (M2)
-- [#17](https://github.com/shack-dev-j/study-workspace/issues/17) File attachments on homework (M2)
-- [#19](https://github.com/shack-dev-j/study-workspace/issues/19) Attachment previews (PDF and images) (M2)
-- [#20](https://github.com/shack-dev-j/study-workspace/issues/20) Library: books and resources (upload) (M2)
-- [#21](https://github.com/shack-dev-j/study-workspace/issues/21) Library: linked folders (no copying) (M2)
-- [#22](https://github.com/shack-dev-j/study-workspace/issues/22) PDF reader (M2)
-- [#23](https://github.com/shack-dev-j/study-workspace/issues/23) Bookmarks with notes (M2)
-- [#24](https://github.com/shack-dev-j/study-workspace/issues/24) Past papers tracker (M2)
-- [#25](https://github.com/shack-dev-j/study-workspace/issues/25) Time logging (M2)
-- [#26](https://github.com/shack-dev-j/study-workspace/issues/26) Weekly timetable (M2)
-- [#27](https://github.com/shack-dev-j/study-workspace/issues/27) Habits with streaks (M2)
-- [#28](https://github.com/shack-dev-j/study-workspace/issues/28) SAT tracker (M2)
-- [#29](https://github.com/shack-dev-j/study-workspace/issues/29) Portfolio (M2)
 - [#30](https://github.com/shack-dev-j/study-workspace/issues/30) Universities table (M3)
 - [#31](https://github.com/shack-dev-j/study-workspace/issues/31) Import docs/research/universities.md (M3)
 - [#32](https://github.com/shack-dev-j/study-workspace/issues/32) Scholarships list (M3)
@@ -48,8 +33,23 @@ search `repo:shack-dev-j/study-workspace` and add all issues.
 ## In Progress (0)
 
 
-## Review (0)
+## Review (15)
 
+- [#14](https://github.com/shack-dev-j/study-workspace/issues/14) Subjects and syllabus topics with confidence (M2)
+- [#15](https://github.com/shack-dev-j/study-workspace/issues/15) Import progress from the 9618 Revision Hub (M2)
+- [#16](https://github.com/shack-dev-j/study-workspace/issues/16) Homework and assignments (M2)
+- [#17](https://github.com/shack-dev-j/study-workspace/issues/17) File attachments on homework (M2)
+- [#19](https://github.com/shack-dev-j/study-workspace/issues/19) Attachment previews (PDF and images) (M2)
+- [#20](https://github.com/shack-dev-j/study-workspace/issues/20) Library: books and resources (upload) (M2)
+- [#21](https://github.com/shack-dev-j/study-workspace/issues/21) Library: linked folders (no copying) (M2)
+- [#22](https://github.com/shack-dev-j/study-workspace/issues/22) PDF reader (M2)
+- [#23](https://github.com/shack-dev-j/study-workspace/issues/23) Bookmarks with notes (M2)
+- [#24](https://github.com/shack-dev-j/study-workspace/issues/24) Past papers tracker (M2)
+- [#25](https://github.com/shack-dev-j/study-workspace/issues/25) Time logging (M2)
+- [#26](https://github.com/shack-dev-j/study-workspace/issues/26) Weekly timetable (M2)
+- [#27](https://github.com/shack-dev-j/study-workspace/issues/27) Habits with streaks (M2)
+- [#28](https://github.com/shack-dev-j/study-workspace/issues/28) SAT tracker (M2)
+- [#29](https://github.com/shack-dev-j/study-workspace/issues/29) Portfolio (M2)
 
 ## Done (15)
 
