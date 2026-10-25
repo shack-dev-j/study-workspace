@@ -122,3 +122,25 @@ table.list tr.is-done-soft td:first-child { box-shadow: inset 3px 0 0 var(--ok);
 .route { padding: 10px 0; border-top: 1px solid var(--border); }
 .chip { display: inline-flex; align-items: center; gap: 2px; padding: 3px 10px; border-radius: 99px; background: var(--panel-2); border: 1px solid var(--border); font-size: .88rem; }
 .ask-box { border-color: var(--warn); background: var(--warn-soft); }
+
+/* ---------- cyber plan ---------- */
+.weeks { display: flex; flex-direction: column; gap: 6px; max-height: 70vh; overflow-y: auto; }
+.week { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+.week.current { border-color: var(--accent); background: var(--accent-soft); }
+.week summary { display: flex; align-items: center; gap: 4px; cursor: pointer; list-style: none; }
+.week summary::-webkit-details-marker { display: none; }
+.week-tasks { padding: 8px 0 4px 4px; }
+.check.is-done { color: var(--faint); text-decoration: line-through; }
+
+/* ---------- challenges ---------- */
+.challenge-card { color: var(--text); display: block; }
+.challenge-card:hover { border-color: var(--accent); text-decoration: none; }
+.challenge-card.solved { border-color: color-mix(in srgb, var(--ok) 50%, var(--border)); }
+.grid > .challenge-card + .challenge-card { margin-top: 0; }
+.flag-form input { flex: 1 1 240px; font-family: var(--mono); }
+.prose pre { white-space: pre-wrap; }
+
+/* ---------- writeups ---------- */
+.writeup-title { font-size: 1.1rem; font-weight: 600; height: 42px; }
+.writeup-body { min-height: 50vh; font-family: var(--mono); font-size: .9rem; }
+.writeup-preview { min-height: 50vh; padding: 4px 2px; }

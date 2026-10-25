@@ -157,6 +157,38 @@ test('essays versions + activities counter', async page => {
   ok(await page.isVisible('.counter.over'), 'counter turns red past the limit');
 });
 
+test('cyber plan, challenge flag, writeup', async page => {
+  await page.goto(base + '/#/cyber');
+  await page.click('.topic-row >> nth=0 >> .levels button[data-l="4"]');
+  await page.click('button:has-text("Generate plan")');
+  await sleep(700);
+  const cy = readData('cyber');
+  ok(cy.plan.weeks.length === 16 && !cy.plan.weeks[0].focus.includes('Networking'), '16-week plan, weakest topics first');
+  await page.check('.week.current input[type=checkbox] >> nth=0');
+  await sleep(600);
+  ok(readData('cyber').plan.weeks[0].tasks[0].done, 'task tick saved');
+  await page.goto(base + '/#/challenges/c01');
+  await page.fill('.flag-form input', 'ICO{wrong}');
+  await page.click('button:has-text("Check flag")');
+  ok(await page.isVisible('text=Not correct'), 'wrong flag rejected');
+  await page.fill('.flag-form input', 'ICO{base64_is_not_encryption}');
+  await page.click('button:has-text("Check flag")');
+  await sleep(600);
+  ok(readData('challenges').items.find(c => c.id === 'c01').solved, 'right flag marks the challenge solved');
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('button:has-text("note.txt")')]);
+  ok(dl.suggestedFilename() === 'note.txt', 'challenge file downloads');
+  await page.goto(base + '/#/writeups');
+  await page.click('button:has-text("New writeup")');
+  await page.waitForSelector('.writeup-body');
+  await page.selectOption('select[aria-label="Linked to"]', 'challenge:c01');
+  await page.fill('.writeup-body', '## Solved\n`base64 -d`');
+  await page.click('.tabs button:has-text("Preview")');
+  ok(await page.isVisible('.writeup-preview h2:has-text("Solved")'), 'markdown preview renders');
+  await sleep(600);
+  const w = readData('writeups').items[0];
+  ok(w.linkType === 'challenge' && w.linkId === 'c01' && w.body.includes('base64'), 'writeup saved with link');
+});
+
 (async () => {
   const srv = spawn('python3', ['server.py', '--no-browser', '--port', String(port)], { cwd: ROOT, env: { ...process.env, STUDY_WORKSPACE_HOME: home } });
   let log = ''; srv.stdout.on('data', d => (log += d)); srv.stderr.on('data', d => (log += d));
